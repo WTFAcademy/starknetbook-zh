@@ -1,4 +1,5 @@
 {
+  
   "private": true,
   "scripts": {
     "pre-release": "standard-version --prerelease --skip.changelog --releaseCommitMessageFormat 'chore(prerelease): {{currentTag}}'",
