@@ -1,64 +1,64 @@
 [id="blocks"]
 
-= Blocks in Starknet
+= Starknet 中的区块
 
-In Starknet, a block consists of a list of transactions and a block header. Blocks represent batches of transactions linked together by the hash of the preceding block in the chain. This connection of blocks forms a chain, as hashes are cryptographically generated from the block data. This structure ensures security and prevents fraud, as any alteration in a historical block would invalidate all subsequent blocks due to changes in their hashes. Consequently, every participant in the blockchain would quickly detect the discrepancy.
+在 Starknet 中，一个区块由一系列交易和一个区块头组成。代表一系列交易的区块通过该条链中前一个区块的哈希连接在一起。这些区块的连接形成了一个链，因为哈希是从区块数据中加密生成的。这种结构确保了安全性并防止欺诈，因为历史区块的任何改动都会使所有后续区块因其哈希值的变化而无效。因此，区块链中的每个参与者都会很快发现这种变化。
 
 image::tx-block.png[tx-block]
 
-== Block Header
+== 区块头
 
-The block header consists of the following fields:
+区块头由以下字段组成：
 
 [cols="1,1,4,1",options="header"]
 |===
-| Name | Type | Description | Implemented
-| parent_block_hash | FieldElement | The hash of this block’s parent | ✓
-| block_number | Integer | The number (height) of this block | ✓
-| global_state_root | FieldElement | The state commitment after this block | ✓
-| sequencer_address | FieldElement | The Starknet address of the sequencer who created this block | ✓
-| block_timestamp | Timestamp | The time the sequencer created this block before executing transactions | ✓
-| transaction_count | Integer | The number of transactions in a block | ✓
-| transaction_commitment | FieldElement | A commitment to the transactions included in the block | ✓
-| event_count | Integer | The number of events | ✓
-| event_commitment | FieldElement | A commitment to the events produced in this block | ✓
-| protocol_version | Integer | The version of the Starknet protocol used when creating this block |
-| extra_data | FieldElement | Extraneous data that might be useful for running transactions |
+| 名称 | 类型 | 描述 | 执行状态
+| parent_block_hash | FieldElement | 该区块的父区块的哈希值 | ✓
+| block_number | Integer | 该区块的编号（区块高度） | ✓
+| global_state_root | FieldElement | 该区块之后的状态承诺 | ✓
+| sequencer_address | FieldElement | 创建该区块的排序起的 Starknet 地址 | ✓
+| block_timestamp | Timestamp | 在执行交易前，排序器创建此区块的时间 | ✓
+| transaction_count | Integer | 区块中的交易数量 | ✓
+| transaction_commitment | FieldElement | 对区块内交易的承诺 | ✓
+| event_count | Integer | 事件的数量 | ✓
+| event_commitment | FieldElement | 对该区块产生的事件的承诺 | ✓
+| protocol_version | Integer | 创建该区块时使用的 Starknet 协议版本 |
+| extra_data | FieldElement | 对执行交易可能有用的外部数据 |
 |===
 
-[NOTE]
+[附注]
 ====
-The commitment fields *event_commitment* and *transaction_commitment* are the roots of a height 64 binary Merkle Patricia tree.
+承诺字段 *event_commitment* 和 *transaction_commitment* 是一个高度为 64 的二进制压缩前缀树的根部。
 
-The leaf at index _i_ corresponds to the hash of the *_i′th_* event for *event_commitment* and *_h(transaction hash,signature)_* for *invoke transaction_commitment*.
+索引为 _i_ 的子节点对应 *event_commitment* 中的 *_i′th_* 事件哈希，而 *_h(哈希交易，签名)_* 对应 *invoke transaction_commitment*.
 
-For other types of transactions, we use *h(0,0)*.
+对于其他类型的交易，我们使用 *h(0,0)*。
 ====
 
-== Block Hash
+== 区块哈希
 
-The block hash is defined as the Pedersen hash over the header’s elements.
+区块哈希指的是区块头的元素上的 Pedersen 哈希。
 
-Poseidon is a family of hash functions designed for being very efficient as algebraic circuits. As such, they may be very useful in ZK proving systems such as STARKs and others.
+Poseidon 是一个哈希函数系列，被设计为非常有效的代数电路。因此，它们在 ZK 证明系统中可能非常有用，如 STARKs 和其他。
 
 [.formula, frame="single", options="header", background_color="#e6f3ff"]
 |===
 | latexmath:[h(B) = h(block_number, global_state_root, sequencer_address, block_timestamp, transaction_count, transaction_commitment, event_count, event_commitment, 0, 0, parent_block_hash)]
 |===
 
-Where *_h_* is the Pedersen hash.
+其中 *_h_* 是 Pedersen 的哈希。
 
-[NOTE]
+[附注]
 ====
-Zeros inside the hash computation of an object are used as placeholders, to be replaced in the future by meaningful fields.
+哈希计算中的零是占位符，在未来会被有意义的字段替换。
 ====
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing
