@@ -1,31 +1,31 @@
 [id="sharp"]
 
-= SHARP (Shared Prover) in Starknet
+= Starknet中 的 SHARP（共享证明器）
 
-SHARP is like public transportation for proofs on Starknet, aggregating multiple Cairo programs to save costs and boost efficiency. It uses recursive proofs, allowing parallelization and optimization, making it more affordable for all users. Critical services like the gateway, validator, and Prover work together with a stateless design for flexibility. SHARP’s adoption by StarkEx, Starknet, and external users (trough the Cairo Playground) highlights its significance and potential for future optimization.
+SHARP 就像 Starknet 上的证明的公共交通，聚合多个 Cairo 程序以节省成本并提高效率。它使用递归证明，允许并行化和优化，使所有用户都能负担得起。网关、验证器和证明器等关键服务与无状态设计一起工作以实现灵活性。 SHARP 被 StarkEx、Starknet 和外部用户（通过 Cairo Playground）采用，凸显了其重要性和未来优化的潜力。
 
-This chapter will discuss SHARP, how it has evolved to incorporate recursive proofs, and its role in reducing costs and improving efficiency within the Starknet network.
+本章将讨论 SHARP，它是如何演变为合并递归证明的，以及它在降低成本和提高 Starknet 网络效率方面的作用。
 
-== What is SHARP?
+== 什么是 SHARP？
 
-SHARP, which stands for "Shared Prover", is a mechanism used in Starknet that aggregates multiple Cairo programs from different users, each containing different logic. These Cairo programs are then executed together, generating a single proof common to all the programs. Rather than sending the proof directly to the Solidity Verifier in Ethereum, it is initially sent to a STARK Verifier program written in Cairo. The STARK Verifier generates a new proof to confirm that the initial proofs were verified, which can be sent back into SHARP and the STARK Verifier. This recursive proof process will be discussed in more detail later in this chapter. Ultimately, the last proof in the series is sent to the Solidity Verifier on Ethereum. In other words, there are many proofs generated until we reach Ethereum and the Solidity Verifier.
+SHARP是“Shared Prover（共享证明器）”的缩写，是 Starknet 中使用的一种机制，用于聚合来自不同用户的多个包含不同逻辑的 Cairo 程序。然后将这些 Cairo 程序一起执行，生成适用于所有程序的单个证明。与直接将证明发送到以太坊中的 Solidity 验证器不同，它最初被发送到用 Cairo 编写的 STARK 验证器程序中。STARK 验证器生成一个新的证明以确认初始证明已经被验证，该证明可以被发送回 SHARP 和 STARK 验证器。这种递归证明过程将在本章后面进行更详细地讨论。最终，系列中的最后一个证明被发送到以太坊上的 Solidity 验证器。换句话说，直到达到以太坊和 Solidity 验证器之前，会生成许多证明。
 
-The primary benefit of SHARP system lies in its ability to decrease costs and enhance efficiency within the Starknet network. It achieves this by aggregating multiple Cairo jobs, which are individual sets of computations. This aggregation allows the protocol to leverage the exponential amortization offered by STARK proofs.
+SHARP 系统的主要好处在于它能够降低成本并提高 Starknet 网络内的效率。它通过聚合多个 Cairo 作业来实现这一点，这些作业是单独的计算集。这种聚合使协议能够利用 STARK 证明提供的指数摊销。
 
-Exponential amortization means that as the computational load of the proofs increases, the cost of verifying those proofs rises at a slower logarithmic rate than the computation increase. In other words, the computation itself grows slower than the verification cost. As a result, the cost of each transaction within the aggregated set is significantly reduced, making the overall process more cost-effective and accessible for users.
+指数摊销是指随着证明的计算量增加，验证这些证明的成本上升的对数速度比计算增加的速度更慢。换句话说，计算本身增长的速度比验证成本的增长速度更慢。因此，聚合集合中每笔交易的成本显著降低，使整个过程更具成本效益，用户门槛也更低。
 
-[NOTE]
+[附注]
 ====
-In SHARP and Cairo context, "jobs" refer to the individual Cairo programs or tasks submitted by different users. These jobs contain specific logic or computations that must be executed on the Starknet network.
+在 SHARP 和 Cairo 上下文中，“作业”指由不同用户提交的单个 Cairo 程序或任务。这些作业包含必须在 Starknet 网络上执行的特定逻辑或计算。
 ====
 
-Additionally, SHARP allows smaller users with limited computation to benefit from joining other jobs and share the cost of generating the proofs. This collaborative approach is similar to using public transportation instead of a private car, where the cost is distributed among all participants, making it more affordable for everyone.
+此外，SHARP 允许计算能力有限的小型用户从加入其他任务中受益，并分担生成证明的成本。这种协作方法类似于使用公共交通而不是私家车，成本将在在所有参与者之间进行分摊，使每个人都更能承受。
 
-== Recursive Proofs in SHARP
+== SHARP 中的递归证明
 
-One of the most powerful features of SHARP is its use of recursive proofs. Rather than directly sending the generated proofs to the Solidity Verifier, they are first sent to a STARK Verifier program written in Cairo. This Verifier, which is also a Cairo Program, receives the proof and creates a new Cairo job that is sent to the Prover. The Prover then generates a new proof to confirm that the initial proofs were verified. These new proofs can be sent back into SHARP and the STARK Verifier, restarting the process.
+SHARP 最强大的特点之一是它使用递归证明。它们不是直接将生成的证明发送到 Solidity 验证器，而是首先发送到用 Cairo 编写的 STARK 验证器程序。这个验证器也是一个 Cairo 程序，它接收证明并创建一个新的 Cairo 作业发送给证明器。 证明器然后生成一个新的证明来确认初始证明已被验证。这些新的证明可以发送回 SHARP 和 STARK 验证器，重新启动该过程。
 
-This process continues recursively, with each new proof being sent to the Cairo Verifier until a trigger is reached. At this point, the last proof in the series is sent to the Solidity Verifier on Ethereum. This approach allows for greater parallelization of the computation and reduces the time and cost associated with generating and verifying proofs.
+这个过程递归地继续，每个新的证明都被发送到 Cairo 验证器，直到达到一个触发点。此时，系列中的最后一个证明被发送到以太坊上的 Solidity 验证器。这种方法允许计算的更大并行化，并减少与生成和验证证明相关的时间和成本。
 
         Generated Proofs
                 |
@@ -51,69 +51,69 @@ This process continues recursively, with each new proof being sent to the Cairo 
        Solidity Verifier
 
 
-At first glance, recursive proofs may seem more complex and time-consuming. However, there are several benefits to this approach:
+乍一看，递归证明似乎更复杂、更耗时。但是，这种方法有几个好处：
 
-. *Parallelization*: Recursive proofs allow for work parallelization, reducing user latency and improving SHARP efficiency.
-. *Cheaper on-chain costs*: Parallelization enables SHARP to create larger proofs, which would have previously been limited by the availability of large cloud machines (which are rare and limited). As a result, on-chain costs are reduced.
-. *Lower cloud costs*: Since each job is shorter, the required memory for processing is reduced, resulting in lower cloud costs.
-. *Optimization*: Recursive proofs enable SHARP to optimize for various factors, including latency, on-chain costs, and time to proof.
-. *Cairo support*: Recursive proofs only require support in Cairo, without the need to add support in the Solidity Verifier.
+. *并行化*: 递归证明可以实现工作并行化，减少用户延迟并提高 SHARP 效率。
+. *更便宜的链上成本*: 并行化使 SHARP 能够创建更大的证明，这在以前会受到大型云机器可用性的限制（这些机器是罕见的，也是有限的）。因此，链上成本降低了。
+. *降低云计算成本*: 由于每个作业的时间较短，处理所需的内存就会减少，从而降低云计算成本。
+. *优化*: 递归证明使 SHARP 能够针对各种因素进行优化，包括延迟、链上成本和证明时间。
+. *Cairo 支持*: 递归证明只需要 Cairo 支持，不需要在Solidity 验证器中添加支持。
 
 
-[NOTE]
+[附注]
 ====
-Latency in Starknet encompasses the time taken for processing, confirming, and including transactions in a block. It is affected by factors like network congestion, transaction fees, and system efficiency. Minimizing latency ensures faster transaction processing and user feedback.
+Starknet 中的延迟包括处理、确认和将交易包含在一个区块中所花费的时间。它受到网络拥堵、交易费用和系统效率等因素的影响。最大限度地减少延迟可确保更快的交易处理和用户反馈。
 
-Time to proof, however, specifically pertains to the duration required to generate and verify cryptographic proofs for transactions or operations.
+然而，证明时间具体涉及到为交易或操作生成和验证加密证明所需的时间。
 ====
 
-== SHARP Backend Architecture and Data Pipeline
+== SHARP 后端架构和数据管道
 
-SHARP back end architecture consists of several services that work together to process Cairo jobs and generate proofs. These services include:
+SHARP 后端架构由多个服务组成，这些服务协同工作以处理 Cairo 作业并生成证明。这些服务包括：
 
-. *Gateway*: Cairo jobs enter SHARP through the gateway.
-. *Job Creator*: It prevents job duplication and ensures that the system operates consistently, regardless of multiple identical requests.
-. *Validator*: This is the first important step. The validator service runs validation checks on each job, ensuring they meet the requirements and can fit within the prover machines. Invalid jobs are tagged as such and do not proceed to the Prover.
-. *Scheduler*: The scheduler service creates "trains" that aggregate jobs and send them to the Prover. Recursive jobs are paired and sent to the Prover together.
-. *Cairo Runner*: This service runs Cairo for the Prover’s needs. The Cairo Runner service runs Cairo programs, executing the necessary computations and generating the execution trace as an intermediate result. The Prover then uses this execution trace.
-. *Prover*: The Prover computes the proofs for each train (that contains a few jobs).
-. *Dispatcher*: The Dispatcher serves two functions in the SHARP system. 
-    .. In the case of a recursive proof, the Dispatcher runs the Cairo Verifier program on the proof it has received from the Prover, resulting in a new Cairo job that goes back to the Validator.
-    .. In the case of a proof that needs to go on chain (e.g., to Ethereum), the Dispatcher creates "packages" from the proof, which can then be sent to the Blockchain Writer. 
-. *Blockchain Writer*: Once the packages have been created by the Dispatcher, they are sent to the Blockchain Writer. The Blockchain Writer is responsible for sending the packages to the appropriate blockchain (e.g., Ethereum) for verification. This is an important step in the SHARP system, as it ensures that the proofs are properly verfied and that the transactions are securely recorded on the blockchain.
-. *Catcher*: The Catcher monitors blockchain (e.g., Ethereum) transactions to ensure that they have been accepted. While the Catcher is relevant for internal monitoring purposes, it is important to note that if a transaction fails, the fact won't be registered on-chain in the fact registry. As a result, the soundness of the system is still preserved even without the catcher.
+. *网关*: Cairo 作业通过网关进入 SHARP。
+. *作业生成器*: 它可以防止作业重复，并确保系统始终如一地运行，而不管多个相同的请求。
+. *验证者*: 这是第一个重要步骤。验证器服务对每个作业进行验证检查，确保它们符合要求并能适应验证器机器。无效的作业会被标记为无效，并且不会继续进入证明器。
+. *调度程序*: 调度程序服务创建聚合作业并将它们发送到证明者的“火车”。递归作业被配对，并一起发送到证明器。
+. *Cairo 运行器*: 该服务运行 Cairo 以满足证明器的需求。 Cairo 运行器服务运行 Cairo 程序，执行必要的计算并生成执行跟踪作为中间结果。然后，证明器使用此执行跟踪。
+. *证明器*: 证明者器计算每列火车（包含一些工作）的证明。
+. *分派程序*: 分派程序在 SHARP 系统中有两个功能。
+    .. 在递归证明的情况下，调度器在它从证明器那里收到的证明上运行 Cairo 验证者程序，从而产生一个新的 Cairo 作业返回给验证者。
+    .. 在证明需要上链的情况下（例如到以太坊），调度器从证明创建“包”，然后可以将其发送给区块链编写器。
+. *区块链编写器*: 一旦分派程序创建了包，它们就会被发送到区块链编写器。 区块链编写器负责将包发送到适当的区块链（例如以太坊）进行验证。这是 SHARP 系统中的重要一步，因为它确保证明得到正确的验证，并且交易被安全地记录在区块链上。
+. *捕捉器*: 捕捉器监控区块链（例如，以太坊）交易以确保它们已被接受。虽然捕捉器与内部监控目的相关，但重要的是要注意，如果交易失败，事实将不会在事实注册表中注册在链上。因此，即使没有捕捉器，系统的健全性仍然得以保留。
 
-SHARP is designed to be stateless (each Cairo job is executed in its own context and has no dependency on other jobs), allowing for greater flexibility in processing jobs.
+SHARP 被设计为无状态的（每个 Cairo 作业都在其自己的上下文中执行，并且不依赖于其他作业），使得处理作业时有更大的灵活性。
 
-== Current SHARP Users
+== 当前 SHARP 的用户
 
-Currently, the primary users of SHARP include:
+目前，SHARP的主要用户包括：
 
 * StarkEx
 * Starknet
-* External users who use the Cairo Playground
+* 使用 Cairo Playground 的外部用户
 
-== Challenges and Optimization
+== 面临的挑战和优化
 
-Optimizing the Prover involves numerous challenges and potential projects on which the Starkware team and the community are currently working:
+优化证明器涉及众多挑战，以及 Starkware 团队和社区目前正在开展的潜在项目：
 
-* Exploring more efficient hash functions: SHARP is constantly exploring more efficient hash functions for Cairo, the Prover, and Solidity.
-* Investigating smaller fields: Investigating smaller fields for recursive proof steps could lead to more efficient computations.
-* Adjusting various parameters: SHARP is continually adjusting various parameters of the STARK protocol, such as FRI parameters and block factors.
-* Optimizing the Cairo code: SHARP is optimizing the Cairo code to make it faster, resulting in a faster recursive prover.
-* Developing dynamic layouts: This will allow Cairo programs to scale resources depending on their needs.
-* Improving scheduling algorithm: This is another optimization path that can be taken. It is not within the Prover itself.
+* 探索更高效的哈希函数：SHARP 不断为 Cairo、证明器和 Solidity 探索更高效的哈希函数。
+* 调查较小的域：为递归证明步骤研究更小的域，可以带来更有效的计算。
+* 调整各种参数：SHARP 不断调整 STARK 协议的各种参数，如 FRI 参数和块因子。
+* 优化 Cairo 代码：SHARP 优化 Cairo 代码以使其更快，从而产生更快的递归证明器。
+* 开发动态布局：这将允许 Cairo 程序根据其需求扩展资源。
+* 改进调度算法：这是另一条可以采取的优化路径。它不在证明器本身内部。
 
-In particular, dynamic layouts (you can learn more about layouts here (TODO)) will allow Cairo programs to scale resources depending on their needs. This can lead to more efficient computation and better utilization of resources. Dynamic layouts allow SHARP to determine the required resources for a specific job and adjust the layout accordingly instead of relying on predefined layouts with fixed resources. This approach can provide tailored solutions for each job, improving overall efficiency.
+特别是，动态布局（你们可以在此处了解有关布局的更多信息 (TODO)）将允许 Cairo 程序根据他们的需要扩展资源。这可以产生更有效的计算和更好的资源利用。动态布局允许 SHARP 确定特定作业所需的资源并相应地调整布局，而不是依赖具有固定资源的预定义布局。这种方法可以为每项工作提供量身定制的解决方案，从而提高整体效率。
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）].
 ====
 
-== Conclusion
+== 结论
 
-In conclusion, SHARP is a critical component of Starknet’s architecture, providing a more efficient and cost-effective solution for processing Cairo programs and verifying their proofs. By leveraging the power of STARK technology and incorporating recursive proofs, SHARP plays a vital role in improving the overall performance and scalability of the Starknet network. The stateless nature of SHARP and the reliance on the cryptographic soundness of the STARK proving system make it an innovative and valuable addition to the blockchain ecosystem.
+总之，SHARP 是 Starknet 架构的关键组成部分，为处理 Cairo 程序和验证其证明提供了更高效、更具成本效益的解决方案。通过利用 STARK 技术的力量并结合递归证明，SHARP 在提高 Starknet 网络的整体性能和可扩展性方面发挥着至关重要的作用。 SHARP 的无状态性质和对 STARK 证明系统的密码学安全性的依赖，使其成为区块链生态系统的一个创新和有价值的补充。
