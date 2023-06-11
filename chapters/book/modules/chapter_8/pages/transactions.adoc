@@ -1,49 +1,48 @@
 [id="transactions"]
 
-= The Lifecycle of Transactions
+= 交易的生命周期
 
-On Starknet Alpha the two types of transactions are `DEPLOY` or `INVOKE`.
-They go through the following lifecycle as they are submitted from the clients to the sequencer:
+在 Starknet Alpha 上，有 DEPLOY 或 INVOKE 两种交易类型。当它们从客户端提交给排序器时，会经历以下生命周期：
 
 [.highlight, frame="single", options="header", background_color="#f5f5f5"]
 |===
-| NOT_RECEIVED \-> RECEIVED \-> PENDING \-> REJECTED || ACCEPTED_ON_L2 \-> ACCEPTED_ON_L1
+| 未接收 \-> 已接收 \-> 待处理 \-> 拒绝 || L2_已接收 \-> L1_已接收
 |===
 
 
-== Transaction status
+== 交易状态
 
-=== NOT_RECEIVED
+=== 未接收
 
-Transaction is not yet known to the sequencer.
+交易还没有被排序器所接收。
 
-=== RECEIVED
+=== 已接收
 
-Transaction was received by the sequencer. Transaction will now either execute successfully or be rejected.
+排序器收到交易。现在要么成功执行交易，要么拒绝交易。
 
-=== PENDING
+=== 待处理
 
-Transaction executed successfully and entered the pending block.
+交易成功执行并进入待处理区块。
 
-=== REJECTED
+=== 拒绝
 
-Transaction executed unsuccessfully and thus was skipped. Or the block may be rejected on L1, thus resulting a status of *REJECTED*.
+交易执行不成功，因此被跳过。或者该区块可能在 L1 上被拒绝，从而导致 *拒绝* 状态。
 
-=== ACCEPTED_ON_L2
+=== L2_已接收
 
-Transaction passed validation and entered an actual created block on Starknet.
+交易通过验证并进入 Starknet 上的实际创建区块。
 
-=== ACCEPTED_ON_L1
+=== L1_已接收
 
-Transaction was accepted on-chain.
+交易在链上被接收。
 
-== The pending block
+== 待处理区块
 
-During the construction of the block, as it is accumulating new transactions, the block’s status is *PENDING*. While status is *PENDING*, new transactions are dynamically added to the block. Once the sequencer decides to *close* the block, it becomes *ACCEPTED_ON_L2* and its hash is computed.
+在区块的构建过程中，当它累积新的交易时， 区块处于 *待处理* 状态。当处于 *待处理* 状态时，新的交易会动态地添加到区块中。一旦排序器决定 *关闭* 区块, 交易就进入了 *L2_已接收* 并计算出它的哈希值。
 
-== Transaction receipt
+== 交易收据
 
-The transaction receipt contains basic transaction details (block identifiers and the index within the block), a summary of the execution resources used by the transaction, the events emitted, a list of messages sent to L1, and a consumed L1 message (in case the transaction invokes an L1 handler). The following is an example of a receipt:
+交易收据包含基本的交易细节（区块标识符和区块内的索引），交易使用的执行资源的摘要，发出的事件，发送到 L1 的消息列表，以及已使用的 L1 消息（如果交易调用了 L1 处理程序）。以下是收据示例：
 
 [source,python]
 ----
