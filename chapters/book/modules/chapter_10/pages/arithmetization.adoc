@@ -1,275 +1,273 @@
 [id="arithmetization"]
 
-= Arithmetization
+= 算术化
 
-The goal of the STARK protocol is to verify computations succinctly and transparently. It follows three steps:
+STARK 协议的目标是简洁而透明地验证计算。它遵循三个步骤：
 
-. The first step in a STARK is called _arithmetization_, and it is the translation (often referred to as '`reduction`') of the problem of verifying a computation to the problem of checking that a certain polynomial, which can be evaluated efficiently on the verifier's side (this is the '`succinctly`' part), is of low degree. Arithmetization is useful since it enables the use of tools from the realm of Error Correction Codes that efficiently test low degree-ness.
-. However, arithmetization itself only translates a Computational Integrity statement into a polynomial, setting the scene for the next phase in STARK, which is another interactive protocol that involves a prover that attempts to convince a verifier that the polynomial is indeed of low degree. The verifier is convinced that the polynomial is of low degree if and only if the original computation is correct (except for an infinitesimally small probability).
-. In the last step of STARK, the interactive protocol is transformed into a single non-interactive proof, that can be posted to a blockchain and publicly verified by anyone.
+. STARK 的第一步被称为 _算术化_，它是将验证计算的问题转换 (通常指 '`约减`') 为检查某个多项式是否具有低度的问题。该多项式可以在验证者方高效地进行评估 (这是'`简洁`' 的部分)。 算术化非常有用，因为它让使用来自纠错码领域的工具来高效地测试低度性成为可能。
+. 然而，算术化本身只是将计算完整性语句转换为多项式，为 STARK 的下一阶段奠定了基础。该阶段是另一种交互式协议，其中涉及一个试图说服验证者多项式确实低度的证明器。
+. 在 STARK 的最后一步，交互式协议被转换成一个单一的非交互式证明，可以发布到区块链，并由所有人公开验证。
 
-Arithmetization itself is composed of two steps. The first is generating an execution trace and polynomial constraints, the second is transforming these two objects into a single low-degree polynomial. In terms of prover-verifier interaction, what really goes on is that the prover and the verifier agree on what the polynomial constraints are in advance. The prover then generates an execution trace, and in the subsequent interaction, the prover tries to convince the verifier that the polynomial constraints are satisfied over this execution trace, unseen by the verifier. Let's review each step.
+算术化本身由两个步骤组成。第一步是生成执行跟踪和多项式约束，第二步是将这两个对象转换为单个低度多项式。在证明器-验证者交互方面，实际上发生的是证明器和验证者事先就多项式约束达成一致。然后，证明器生成一个执行轨迹，在随后的交互中，证明器试图说服验证者，在验证者是看不到的情况下，这个执行轨迹是满足多项式约束的。让我们来回顾一下每个步骤。
 
-== Step 1: Generating an execution trace and a set of polynomial constraints
+== 第 1 步：生成执行轨迹和多项式约束集合
 
-The first step takes some CI statement (such as "`the fifth transaction in block 7218290 is correct`"), and translate it into formal algebraic language. This serves two purposes: 1) it defines the claim succinctly in an unambiguous way, and 2) it embeds the claim in an algebraic domain. This embedding is what allows the second step of arithmetization, which reduces the CI statement to a claim about the degree of a specific polynomial.
+第一步，取一段计算完整性语句（CI）（例如“区块 7218290 中的第五笔交易是正确的”），并将其翻译成形式化的代数语言。这有两个目的：1) 它以明确的方式简洁地定义了声明，2) 它将声明嵌入代数域中。这种嵌入算术化的第二步的基础，它将计算完整性语句简化为关于特定多项式次数的声明。
 
-The algebraic representation that we use has two main components: 1) an execution trace, and 2) a set of polynomial constraints. The execution trace is a table that represents the steps of the underlying computation, where each row represents a single step. The set of polynomial constraints is constructed such that all of them are satisfied if and only if the trace represents a valid computation. While the execution trace may be very long, we will work with a succinct set of polynomial constraints.
+我们使用的代数表示法主要由两个组成部分组成：1）执行轨迹，2）多项式约束集合。执行轨迹是表示基础计算步骤的表格，其中每一行表示一个单独的步骤。多项式约束集合的构造是这样的：当且仅当轨迹表示有效计算时，所有约束都被满足。虽然执行轨迹可能非常长，但我们将使用一组简洁的多项式约束集合。
 
-The type of execution trace that we're looking to generate must have the special trait of being succinctly testable -- each row can be verified relying only on rows that are close to it in the trace, and the same verification procedure is applied to each pair of rows. This trait directly affects the size of the proof. To exemplify what we mean by being succinctly testable, let's go back to the supermarket receipt, and add another column for the running total:
+我们要生成的执行轨迹类型必须具有简洁可测试的特性——每一行只能依赖于跟它在轨迹中与之相邻的行进行验证，而且对每一对行都应用相同的验证程序。这种特性直接影响证明的大小。为了举例说明我们所说的简明可测试，让我们回到超市收据的例子，再添加一个用于累计总额的列：
 
 image::receipt2.png[receipt2]
 
-This simple addition allows us to verify each row individually, given its previous row.
+这个简单的添加使我们在给定前一行的情况下单独验证每一行。
 
-We can, for example, examine these two rows:
+例如，我们可以检查这两行：
 
 image::receipt3.png[receipt3]
 
-We would be convinced that this particular step of the computation (i.e. the number 16.41) is correct since 12.96+3.45=16.41. Notice that the same constraint is applied to each pair of rows. This is what we mean by succinct constraints.
+由于 12.96+3.45=16.41，我们将确信这个特定的计算步骤（即数字 16.41）是正确的。请注意，相同的约束应用于每一对行。这就是我们所说的简洁约束的意思。
 
-Let's proceed with the polynomial constraints. We rewrite the supermarket receipt (with the running total) in the form of a table:
+让我们继续进行多项式约束。我们将超市收据（带有累计总额）以表格形式重写：
 
 image::receipt4.png[receipt4]
 
-Denote the value of the cell in the $i$-th row and $j$-th column by $A_{i,j}$. We can now rephrase the correctness conditions as this set of polynomial constraints:
+用 $A_{i,j}$ 表示第 $i$ 行和第 $j$ 列中单元格的值。我们现在可以将正确性条件改写为这组多项式约束：
 
 image::constraints.png[constraints]
 
-These are linear polynomial constraints in Ai,j. If the set of polynomial constraints we use are of high degree, this has an adverse effect on the proof length and the time it takes to generate it. Consequently, linear constraints are the best we can hope for. Notice that (2) is really a single constraint applied multiple times, and the whole size of the set is independent of the length of the receipt.
+这些是 Ai,j 中的线性多项式约束。如果我们使用的多项式约束集合是高度的，这会对证明长度和生成它所需的时间产生不利影响。因此，线性约束是我们所能期望的最好结果。请注意，(2) 实际上是多次应用的单个约束，并且整个约束集合的整体大小与收据的长度无关。
 
-In sum, we took a CI problem of verifying a supermarket receipt, and transformed it into a succinctly testable execution trace, and a corresponding set of polynomial constraints that hold if and only if the total sum in the original receipt is correct.
+总而言之，我们采用了一个验证超市收据的计算完整性（CI）问题，并将其转化为一个简洁的可测试执行轨迹，及其相应的多项式约束集合，当且仅当原始收据中的总金额正确时，这些约束才成立。
 
-Let's see a more complex example: the Collatz Conjecture.
+让我们看一个更复杂的例子：Collatz 猜想。
 
-In 1937, a German mathematician named Lothar Collatz presented a conjecture in the field of number theory. At first glance this conjecture might seem merely a cute math puzzle, but in fact it is a hard open problem in number theory. It caught the attention of many mathematicians over the years, and acquired a lot of synonyms (e.g., the $3n + 1$ conjecture, the Ulam conjecture, Kakutani's problem and many more). Paul Erdős once said about this conjecture: "`Mathematics may not be ready for such problems`".
+1937年，德国数学家 Lothar Collatz 在数论领域提出了一个猜想。乍一看，这个猜想似乎只是一个可爱的数学难题，但实际上它是数论中的一个难解的开放问题。多年来，它引起了许多数学家的注意，并获得了很多同义词（例如 $3n + 1$ 猜想、Ulam 猜想、Kakutani 问题等等）。Paul Erdős 曾对这个猜想说过：“数学可能还没有准备好应对这种问题。”
 
-A Collatz sequence starts with any positive integer, where each subsequent element in the sequence is obtained from the previous one as follows:
+Collatz 序列以任意正整数开始，其中序列中的每个后续元素都是从前一个元素获得的，如下所示：
 
-If the previous element is even: divide it by 2.
-If the previous element is odd and greater than 1: multiply it by 3 and add 1.
-If the previous element is 1, stop.
-Let's consider a simple example where the initial term is 52:
+如果前一个元素是偶数：除以 2。
+如果前一个元素是奇数且大于 1：乘以 3，并加 1。
+如果前一个元素为 1，则停止。
+让我们考虑一个初始项为 52 的简单示例：
 
 $52 \-> 26 \-> 13 \-> 40 \-> 20 \-> 10 \-> 5 \-> 16 \-> 8 \-> 4 \-> 2 \-> 1$.
 
-*Collatz Conjecture*: for any positive integer we start with, the sequence always reaches 1.
+*Collatz 猜想*：对于我们开始的任何正整数，序列总是到达 1。
 
-Unfortunately, resolving the Collatz Conjecture is beyond the scope of this tutorial. Instead, we will consider the problem of verifying a computation that checks the conjecture for a particular starting integer.
+不幸的是，解决 Collatz 猜想超出了本教程的范围。相反，我们将考虑验证一个计算的问题，检查特定起始整数的猜想是否成立的问题。
 
-The Collatz Sequence Execution Trace
-The CI statement is: "`A Collatz sequence that starts with 52, ends with 1 after 11 iterations`".
+Collatz 序列执行轨迹
+计算完整性（CI ）语句是：“一个以 52 开始的 Collat​​z 序列，在 11 次迭代后以 1 结束”。
 
-Let A be the execution trace of the sequence's computation. The i-th row, denoted by Ai, represents the i-th number in the sequence. All numbers are represented as binary strings, to make it easier to express the odd/even condition with polynomials. Ai,j equals to the j-th least significant bit of the i-th number of the sequence. For example, A0=001011: the first term is 52, its binary representation is 110100 and then we reverse the bits`' order (bit reversal order simplifies indexing in the polynomial constraints notation).
+设 A 为序列计算的执行轨迹。第 i 行，用 Ai 表示，代表序列中的第 i 个数字。所有数字都表示为二进制字符串，以便更容易用多项式表示奇数/偶数条件。 Ai,j 等于序列的第 i 个数的第 j 个最小有效位。例如，A0=001011：第一项是 52，它的二进制表示是 110100，然后我们反转比特顺序（比特反转顺序简化了多项式约束符号中的索引）。
 
-Here is the execution trace of the above Collatz sequence that starts with 52:
+这是上面以 52 开头的 Collatz 序列的执行轨迹：
 
 image::collatz.png[collatz]
 
-Note that here the trace has 6 columns because 6 bits are enough to represent even the largest number in the sequence. Had we started the sequence with 51, the next number would have been 154, so the trace of such a sequence would have required at least 8 columns.
+请注意，这里的轨迹有 6 列，因为 6 位足以表示序列中最大的数字。如果我们从 51 开始这个序列，下一个数字应该是 154，所以这样一个序列的踪迹至少需要 8 列。
 
-Recall that the polynomial constraints we are looking for are such that all of them are satisfied if and only if the trace A describes the given Collatz sequence (starting with 52, ending with 1, and the transition from any two consecutive rows is done correctly). In our example, the trace A is of size 6x12, i.e., it represents a Collatz sequence of 12 6-bit numbers. The set of polynomial constraints are the following ($n=12$, $m=6$):
+回顾一下，我们正在寻找的多项式约束是这样的：当且仅当轨迹 A 描述给定的 Collatz 序列（从 52 开始，以 1 结束，并且从任意两个连续行的转换都是正确的）时，所有的约束都被满足。在我们的示例中，迹线 A 的大小为 6x12，即它表示 12 个 6 位数字的 Collatz 序列。多项式约束集合如下（$n=12$，$m=6$）：
 
 image::collatz2.png[collatz2]
 
-Let's go over each of the constraints. The first three are straightforward:
+让我们回顾一下每个约束条件。前三个是很直观的：
 
-. holds if and only if the first row is a binary representation of 52.
-. holds if and only if the last row is a binary representation of 1.
-. holds if and only if the trace contains only bits (a number is equal to its square if and only if it is either 0 or 1).
+. 当且仅当第一行是 52 的二进制表示时才成立。
+. 当且仅当最后一行是 1 的二进制表示时才成立。
+. 当且仅当轨迹只包含比特时才成立（当且仅当一个数字是 0 或 1 时才等于其平方）。
 
-The fourth set of constraints defines the heart of the succinct computation of the sequence, i.e., the connection between every two consecutive rows. The ability to express computational constraints as a recurring pattern of local constraints (i.e. succinctness), is fundamental to the verifier being exponentially faster than a naive replay of the computation.
+第四组约束定义了序列简洁计算的核心，即每两个连续行之间的连接。将计算约束表达为局部约束的重复模式（即简洁性）的能力，对于验证者比单纯的计算重播快上数倍的根本。
 
-Let's examine the constraints themselves carefully.
+让我们仔细检查约束本身。
 
-For any $i<n-1$, denote:
+对于任何 $i<n-1$，表示：
 
 image::collatz3.png[collatz3]
 
-Hence, for each $i<n-1$, we get the following constraint:
+因此，对于每个 $i<n-1$，我们得到以下约束：
 
 image::collatz4.png[collatz4]
 
-$A_{i,0}$ is the least significant bit of the $i$-th number, which determines its parity as an integer, so this constraint describes the Collatz sequence rule.
+$A_{i,0}$ 是第 $i$ 个数字的最小有效位，这决定了它作为整数的奇偶性，所以这个约束描述了 Collatz 序列规则。
 
-To sum up, all constraints are satisfied if and only if the trace represents a valid computation of a Collatz sequence.
+总而言之，当且仅当轨迹表示 Collatz 序列的有效计算时，所有约束都得到满足。
 
-Note that any Collatz sequence of length n, can be represented using a trace of size n*m where m is the maximum number of bits in the representation of a number in the sequence, and the corresponding polynomial constraints are modified accordingly. Note that the polynomial constraints do not grow with n and m, but remain simple and concise.
+请注意，任何长度为 n 的 Collatz 序列都可以使用大小为 n*m 的迹线来表示，其中 m 是序列中数字的最大表示比特数，相应的多项式约束也会相应地进行修改。请注意，多项式约束不会随着 n 和 m 的增加而增长，而是保持简单明了。
 
-Given a specific first term for a Collatz sequence, a simple computer program can output the execution trace and the polynomial constraints. We have seen how a CI statement about a Collatz sequence can be transformed into an execution trace and a succinctly-described set of polynomial constraints. Similar methods can be used to transform any computation, and in general, any CI statement can be translated into this form.
+对于给定 Collatz 序列的特定首项，一个简单的计算机程序可以输出执行轨迹和多项式约束。我们已经看到了如何将关于 Collatz 序列的计算完整性语句转化为执行轨迹和简洁描述的多项式约束集合。类似的方法可以用来转换任何计算，一般来说，任何计算完整性语句都可以被转化为这种形式。
 
-The details, however, matter a great deal. While there are many ways in which an execution trace (and a set of polynomial constraints) may describe a specific computation, only a handful of them result in a small STARK proof which can be constructed efficiently. Much of the effort in Starkware is devoted to designing reductions that lead to good polynomial constraints, which we call AIR (Algebraic Intermediate Representation), as much of the performance of our systems depends on it.
+然而，细节至关重要。虽然有很多种方式可以描述特定计算的执行轨迹（和多项式约束集合），但只有少数几种方式能够生成高效构建的小型 STARK 证明。Starkware 在很大程度上致力于设计能够产生良好多项式约束的约简方法，我们称之为 AIR（代数中间表示），因为我们系统的很多性能取决于它。
 
-== Step 2: Transform the execution trace and the set of polynomial constraints into a single low-degree polynomial
+== 第 2 步：将执行轨迹和多项式约束集合转换为单个低度多项式
 
-Using a Fibonacci sequence, we will show how the prover can combine the execution trace and the polynomial constraints to obtain a polynomial that is guaranteed to be of low degree if and only if the execution trace satisfies the polynomial constraints that we started with. Moreover, we will show how the domain over which the polynomial is considered allows the verifier to evaluate it succinctly. We also briefly discuss how error correction codes play a role in STARKs.
+使用斐波那契数列，我们将展示证明器如何将执行轨迹和多项式约束结合起来，得到一个多项式，当且仅当执行轨迹满足我们开始时的多项式约束时，保证其为低度。此外，我们将展示考虑多项式的域如何允许验证者简洁地对其进行评估。我们还简要讨论了纠错码如何在 STARK 中发挥作用。
 
-[XXX Should we add fine fields here? We will assume familiarity with finite groups, polynomials over finite fields, and the previous posts in this series.]
+回顾一下，我们的目标是使得验证者能够向证明器提出极少数量的问题，并在有高度准确性保证的情况下决定接受还是拒绝证明。理想情况下，验证者希望要求证明器在执行轨迹中的几个（随机）位置提供数值，并检查这些位置的多项式约束是否成立。一个正确的执行轨迹自然会通过这个测试。然而，构造一个完全错误的执行轨迹，并且只在一个地方违反约束，以此达到完全不同的结果，并且通过少量随机查询来识别这个错误是高度不可能的。
 
-Recall that our goal is to make it possible for a verifier to ask a prover a very small number of questions, and decide whether to accept or reject the proof with a guaranteed high level of accuracy. Ideally, the verifier would like to ask the prover to provide the values in a few (random) places in the execution trace, and check that the polynomial constraints hold for these places. A correct execution trace will naturally pass this test. However, it is not hard to construct a completely wrong execution trace, that violates the constraints only at a single place, and, doing so, reach a completely far and different outcome. Identifying this fault via a small number of random queries is highly improbable.
+解决类似问题的常用技术是 https://en.wikipedia.org/wiki/Error_detection_and_correction[*纠错码*].
 
-Common techniques that address similar problems are https://en.wikipedia.org/wiki/Error_detection_and_correction[*Error Correction Codes*].
+纠错码通过用更长的字符串替换原始字符串，将一组字符串（其中一些可能彼此非常相似）转换为一组成对非常不同的字符串。
 
-Error Correction Codes transform a set of strings, some of which may be very similar to one another, into a set of strings that are pairwise very different, by replacing the original strings with longer strings.
+有趣的是，多项式可以用于构建良好的纠错代码，因为在一个远大于 $d$ 的域上评估的两个次数为 $d$ 的多项式在几乎所有地方都是不同的（要理解这一点，需要注意不同的次数为 $d$的 多项式之间的差异是一个次数为 $d$ 的非零多项式，因此最多有 $d$ 个零点）。这种编码被称为 *里德-所罗门* 代码。
 
-Interestingly, polynomials can be used to construct good error correction codes, since two polynomials of degree d, evaluated on a domain that is considerably larger than $d$, are different almost everywhere (to see this, notice that the difference between distinct degree-$d$ polynomials is a non-zero polynomial of degree $d$, hence has at most $d$ zeros). Such codes are called *Reed-Solomon* codes.
+观察到这一点，我们可以通过将其视为对某个域上的多项式的评估，并在更大的域上评估这个相同的多项式来扩展执行轨迹。以类似的方式扩展不正确的执行轨迹，会导致截然不同的字符串，这反过来又使验证者可以使用少量查询来区分这些情况。
 
-Observing that, we can extend the execution trace by thinking of it as an evaluation of a polynomial on some domain, and evaluating this same polynomial on a much larger domain. Extending in a similar fashion an incorrect execution trace, results in a vastly different string, which in turn makes it possible for the verifier to distinguish between these cases using a small number of queries.
+因此，我们的计划是：1) 将执行轨迹改写为多项式；2) 将其扩展到一个大的域，；3) 使用多项式约束，将其转化为另一个多项式，当且仅当执行轨迹有效时，保证其为低度。
 
-Our plan is therefore to 1) rephrase the execution trace as a polynomial, 2) extend it to a large domain, and 3) transform that, using the polynomial constraints, into yet another polynomial that is guaranteed to be of low degree if and only if the execution trace is valid.
+*玩具示例：Boolean 执行轨迹*
 
-*Toy Example: Boolean Execution Trace*
+假设我们要验证的计算完整性（CI）语句是“证明者有一个由 512个 数字组成的序列，其中所有数字要么是 0，要么是 1”，我们希望通过读取远少于 512 个数字来进行验证。让我们来看看如何通过执行轨迹和多项式约束来表达这个玩具示例：
 
-Suppose that the CI statement in question is "`The prover has a sequence of 512 numbers, all of which are either 0 or 1`", which we would like to verify by reading substantially less than 512 numbers. Let's see what kind of execution trace and polynomial constraints express this toy example:
-
-. The execution trace has $512$ rows, each row containing a single cell with either zero or one in it.
-. The polynomial constraint we use here is simply $A_\{ᵢ}⋅A_\{ᵢ}-A_\{ᵢ}=0$, where $A_\{ᵢ}$ denotes the $i$-th cell in this single-column execution trace (a number is equal to its square if and only if it is either 0 or 1).
+. 执行轨迹有 $512$ 行，每行包含一个单元格，其中包含 0 或 1。
+. 我们在这里使用的多项式约束只是 $A_\{ᵢ}⋅A_\{ᵢ}-A_\{ᵢ}=0$，其中 $A_\{ᵢ}$ 表示这个单列执行轨迹中的第 $i$ 个单元格（当且仅当一个数字为 0 或 1 时，它等于其平方）。
 
 [cols=3*]
 |===
-| In order to rephrase this execution trace in terms of polynomials, we specify the field we will be working in -- we go with $Z_{₉₆₇₆₉}$, obtained from the set of integers ${0,1,...,96768}$ with addition and multiplication modulo $96769$. Next we pick a subgroup $G$ of $Z_{₉₆₇₆₉}{caret}{_}$ (we use $F_$ to denote the multiplicative group of $F$; the multiplicative group is obtained by omitting the zero element from the field) such that $
+| 为了根据多项式重新表述这个执行轨迹，我们指定了我们将在其中工作的字段 -- 我们使用 $Z_{₉₆₇₆₉}$，从整数集 ${0,1,...,96768}$ 集合中获得加法和乘法模数 $96769$。接下来我们选择 $Z_{₉₆₇₆₉}{caret}{_}$ 的子群 $G$ ，（我们使用 $F_$ 表示 $F$ 的乘法群，乘法群是通过从域中省略零元素获得的），使得 $
 | G
-| =512$, and some generator $g$ of $G$. The existence of such a subgroup is guaranteed since $512$ divides the size of this group (which is $96768$).
+| =512$，以及 $G$ 的某个生成器 $g$。这样一个子组的存在是有保证的，因为 $512$ 除以除以这个群的大小（是 $96768$ ）。
 |===
 
-We now think of the elements in the execution trace as evaluations of some polynomial f(x) of degree less than 512 in the following way: the i-th cell contains the evaluation of f on the generator's i-th power.
+我们现在将执行轨迹中的元素视为对一些度数小于 512 的多项式 f(x) 的评估，方法如下：第 i 个单元格包含 f 在生成器的第 i 次方的评估。
 
-Formally:
+正式地：
 
 image::generator.png[generator]
 
-Such a polynomial of degree at most 512 can be computed by interpolation, and we then proceed to evaluate it on a much larger domain (choosing this domain's size directly translates into the soundness error, the bigger it is -- the smaller the soundness error), forming a special case of Reed-Solomon codeword.
+这样一个度数最多为 512 的多项式可以通过插值计算出来，然后我们在更大的域上对其进行评估 （选择这个域的大小直接转化为稳健性误差，它越大--稳健性误差越小），形成里德-所罗门代码的一个特例。
 
-Lastly, we use this polynomial to create another one, whose low degreeness depends on the constraint being satisfied over the execution trace.
+最后，我们使用这个多项式创建另一个多项式，其低度取决于在执行轨迹上满足的约束条件。
 
-To do so, we must go on a tangent and discuss roots of polynomials.
+为此，我们必须切入正题，讨论多项式的根。
 
-A basic fact about polynomials and their roots is that if $p(x)$ is a polynomial, then $p(a)=0$ for some specific value $a$, if and only if there exists a polynomial $q(x)$ such that $(x-a)q(x)=p(x)$, and $deg(p)=deg(q)+1$.
+关于多项式及其根的一个基本事实是，如果 $p(x)$ 是一个多项式，则对于某个特定值 $a$，$p(a)=0$，当且仅当存在多项式 $q(x )$，才使得 $(x-a)q(x)=p(x)$ ，并且 $deg(p)=deg(q)+1$。
 
-Moreover, for all $x≠a$, we can evaluate $q(x)$ by computing:
+此外，对于所有 $x≠a$，我们可以通过计算来评估 $q(x)$：
 
 image::root.png[root]
 
-By induction, a similar fact is true for $k$ roots. Namely, if $a_\{ᵢ}$ is a root of p for all $i=0..k-1$, then there exists a polynomial $q$ of degree $deg(p)-k$, and in all but these $k$ values, it is exactly equal to:
+通过归纳，类似的事实对于 $k$ 根也是成立的。即，如果 $a_{ᵢ}$ 是所有 $i=0..k-1$ 的 p 的根，则存在一个度数为 $deg(p)-k$ 的多项式 $q$，并且除了这些 $k$ 值之外的所有值，它完全等于：
 
 image::kroots.png[kroots]
 
-Rephrasing the polynomial constraint in terms of f yields the following polynomial:
+用 f 来重新表述多项式约束，可以得到以下多项式：
 
 image::polConstraint.png[polConstraint]
 
-We have defined $f$ such that the roots of this expression are $1$, $g$, $g²$, $...$, $g⁵¹¹$ if and only if the cells in the execution trace are $0$ or $1$. We can define:
+我们定义了 $f$，当且仅当执行跟踪中的单元格为 $0$ 或 $1$ 时，此表达式的根为 $1$、$g$、$g²$、$… $、$g⁵¹¹$。我们可以定义：
 
 image::polConstraint2.png[polConstraint2]
 
-And we know from the previous paragraph that there exists a polynomial of degree at most $2·deg(f)-512$ that agrees with $p$ on all $x ∉{1, g, g{caret}\{2}, ..., g{caret}\{511}}$ if and only if the execution trace is indeed a list of 512 bits (i.e., 0 or 1). Note that earlier on, the prover has extended the execution trace to a larger domain, so querying for the polynomial values in that domain is well defined.
+从上一段我们知道，存在一个度数最多为 $2·deg(f)-512$ 的多项式，在所有 $x∉{1, g, g{caret}{2}, ..., g{caret}{511}}$ 上与 $p$ 一致， 当且仅当执行轨迹确实是 512 比特的列表（即 0 或 1）。请注意，早些时候，证明器已将执行轨迹扩展到更大的域，因此在该域中查询多项式值是明确定义的。
 
-If there exists a protocol by which the prover can convince (such that the verifier is convinced if and only if the prover is not cheating) the verifier that this polynomial is of low degree, such that in it the verifier only asks for values outside the execution trace, then indeed the verifier will be convinced about the truthfulness of the CI statement only when it is true. In fact, in the next post, we will show a protocol that does exactly that, with some very small probability of error. For the time being -- let's take a look at another example, that is still simple, but not completely trivial, and see how the reduction works in that case.
+如果存在一种协议，通过该协议证明器可以说服验证者（当且仅当证明器没有作弊时，验证者才会相信）多项式的度数很低，满足的条件是验证者只会要求执行轨迹之外的值，那么当且仅当计算完整性（CI）语句为真时，验证者才会相信其真实性。实际上，在下一篇文章中，我们将展示一个协议，正是通过这种方式完成的，但存在一定的错误概率。目前，让我们来看看另一个例子，它仍然很简单，但并非完全微不足道，看看在这种情况下如何进行约简。
 
-*Not so trivial example: Fibonacci*
+*不那么微不足道的例子：斐波那契*
 
-The example that we use next is that of correctly computing a Fibonacci sequence in $Z_{₉₆₇₆₉}$ to the $512$-th place. The sequence is defined formally by:
+我们接下来使用的示例是正确计算 $Z_{₉₆₇₆₉}$ 中的斐波那契数列到第 $512$ 的位置。该序列正式定义为：
 
 image::fibonacci1.png[fibonacci1]
 
-And our claim (i.e., the CI statement) is that $a_{₅₁₁}=62215$.
+我们的声明（即 CI 声明）是 $a_{₅₁₁}=62215$。
 
-We can create an execution trace for this CI statement by simply writing down all 512 numbers:
+我们可以通过简单地记下所有 512 个数字来为这个计算完整性（CI）语句创建执行诡异：
 
 image::fibonacci2.png[fibonacci2]
 
-The polynomial constraints that we use are
+我们使用的多项式约束是
 
 image::fibonacci3.png[fibonacci3]
 
-Now we translate into Polynomials.
+现在我们将其转化为多项式。
 
-Here, too, we define a polynomial $f(x)$ of degree at most $512$, such that the elements in the execution trace are evaluations of $f$ in powers of some generator $g$.
+在这里，我们也定义了一个度数最多为 $512$ 的多项式 $f(x)$，以便执行轨迹中的元素是 $f$ 的某个生成器 $g$ 的平方的评估。
 
-Formally:
+正式地：
 
 image::fibonacci4.png[fibonacci4]
 
-Expressing the polynomial constraints in terms of $f$ instead of $A$, we get:
+用 $f$ 而不是 $A$ 表示多项式约束，我们得到：
 
 image::fibonacci5.png[fibonacci5]
 
-Since a composition of polynomials is still a polynomial -- substituting the $Aᵢ$ in the constraints with $f(gⁱ)$ still means these are polynomial constraints.
+由于多项式的组合仍然是多项式 -- 用 $f(gⁱ)$ 代替约束中的 $Aᵢ$ 仍然意味着这些是多项式约束。
 
-Note that 1, 2, and 4 are constraints that refer to a single value of $f$, we refer to them as boundary constraints.
+请注意，1、2 和 4 是引用 $f$ 的单个值的约束，我们将它们称为边界约束。
 
-The Fibonacci recurrence relation, in contrast, embodies a set of constraints over the entire execution trace, and it may be alternatively rephrased as:
+相比之下，斐波那契递归关系体现了对整个执行轨迹的约束集合，它可以被重新表述为：
 
 image::fibonacci6.png[fibonacci6]
 
-The use of a generator to index the rows of the execution trace allows us to encode the notion of "`next row`" as a simple algebraic relation. If x is some row in the execution trace, then $gx$ is the next row, $g²x$ is the row after that, $g⁻¹x$ is the previous row and so on.
+使用生成器来索引执行轨迹的行，允许我们将“下一行”的概念编码为简单的代数关系。如果 x 是执行轨迹中的某一行，则 $gx$ 是下一行，$g²x$ 是之后的行，$g⁻¹x$ 是前一行，依此类推。
 
-The recurrence relation polynomial: $f(g²x)-f(gx)-f(x)$ is zero for every $x$ that indexes a row in the execution trace, except for the last two. It means that 1, $g$, $g²$, $...$, $g⁵⁰⁹$ are all roots of this recurrence relation polynomial (and it is of degree at most 510), so we can construct $q(x)$ as follows:
+递归关系多项式：$f(g²x)-f(gx)-f(x)$对于执行轨迹中每一行的索引 $x$ 都是零，最后两行除外。也就是说1, $g$, $g²$, $...$, $g⁵⁰⁹$ 都是这个递归关系多项式的根（且度数最多为 510），所以我们可以如下构建 $q(x)$ ：
 
 image::fibonacci7.png[fibonacci7]
 
-In STARK lore, this is often referred to as the composition polynomial. Indeed, when the original execution trace obeys the Fibonacci recurrence relation, this expression agrees with some polynomial whose degree is at most 2 (recall that the degree of f is at most 512) on all but these 510 values: 1, $g$, $g²$, $...$, $g⁵⁰⁹$. However, the term composition polynomial is somewhat misleading, as when the execution trace does not satisfy the polynomial constraint -- the evaluations of this expression differ from any low degree polynomial in many places. In other words -- it is close to a low-degree polynomial if and only if the original CI is correct, which indeed was our goal.
+在STARK的背景中，这通常被称为组合多项式。实际上，当原始的执行轨迹符合斐波那契递归关系时，这个表达式与一些多项式一致，其度数最多为 2（回想一下 f 的度数最多为 512），除了以下 510 个值：1, $g$, $g²$, $... $, $g⁵⁰⁹$。 然而，术语组合多项式”有些误导性，因为当执行轨迹不满足多项式约束时 -- 这个表达式的计算结果与任何低度多项式在许多地方都不同。换句话说，它只有在原始的计算完整性语句正确时才接低度多项式，而这确实是我们的目标。
 
-This concludes the promised reduction, that translates the problem of checking whether certain polynomial constraints are satisfied over some execution trace, to the problem of checking whether some polynomial (known to the prover) is of low degree.
+这就完成了承诺的约简，将检查某些多项式约束是否在某个执行轨迹上得到满足的问题，转化为检查某些多项式（证明器已知晓）是否为低度数的问题。
 
-Succinctness
+简洁性
 
-Having a very efficient verification technique is key to STARKs, and it can be seen as comprised of two parts -- using a small number of queries, and having the verifier perform a small computation on each query. The former is achieved by error correction codes, which allow querying in very few places, and the latter we have sort of sweeped under the rug throughout this post, until now. The verifier's work can be summed up as 1) querying the composition polynomial in random places, and 2) checking low-degreeness based on these queries. Low degreeness succinct checking will be handled in the next post, but what exactly do we mean by "`querying the composition polynomial`"? The avid reader may have been suspicious of this expression, and rightfully so. The prover, after all, may be malicious. When the verifier asks for the evaluation of the composition polynomial at some x, the prover may reply with the evaluation of some truly low-degree polynomial, that will pass any low-degree testing, but is not the composition polynomial.
+拥有一个非常高效的验证技术对于 STARK 来说至关重要，它可以被看作由两部分组成 -- 使用少量的查询和让验证者对每个查询执行一小段计算。前者是通过纠错代码实现的，它允许在很少的位置进行查询；而后者在本篇文章中我们一直没有详细讨论。验证者的工作可以概括为：1）在随机位置查询组合多项式；2）基于这些查询检查低度性。如何简单地检查低度性将在下一篇文章中介绍， 但是“查询组合多项式”到底意味着什么呢？认真的读者们可能对这个表达式感到怀疑，这是正常的。毕竟，证明器可能是恶意的。当验证者要求在某个 x 处对组合多项式进行求值时，证明者可以回复一些真正的低度多项式的求值，这些多项式会通过任何低度测试，但并不是组合多项式。
 
-To prevent this, the verifier explicitly queries the Fibonacci execution trace at some row w by asking for the values of $f$ in three places: $f(w)$, $f(gw)$, $f(g²w)$.
+为了防止这种情况，验证者通过在三个位置询问 $f$ 的值来显式查询某行 w 的斐波那契执行轨迹：$f(w)$、$f(gw)$、$f(g²w)$。
 
-The verifier can now compute the value of the composition polynomial at w by:
+验证者现在可以通过以下方式计算 w 处的组合多项式的值：
 
 image::succinctness.png[succintness]
 
-Where the numerator can be computed using the values obtained from the prover, and the denominator... well, there's the rub (that was sweeped under the rug).
+分子可以使用从证明器处获得的值进行计算，而分母……好吧，这就是关键所在（被掩盖了）。
 
-On the one hand the denominator is completely independent of the execution trace, so the verifier can compute it before ever communicating with the prover.
+一方面，分母完全独立于执行轨迹，因此验证者可以在与证明器交流之前计算它。
 
-On the other hand, in practicality -- the trace may be comprised of hundreds of thousands of rows, and computing the denominator would cost the verifier dearly in running time.
+另一方面，在实际操作中，轨迹可能由几十万行组成，算分母会花费验证者大量的运行时间。
 
-Here's where the arithmetization is crucial to succinctness -- since calculating this expression for the special case where the powers of g form a subgroup can be done very efficiently if one notices that:
+这是算术化对于简洁性至关重要的地方 -- 这是算术化对于简洁性至关重要的地方——因为如果注意到这一点，对于 g 的次方形成子群的特殊情况，计算这个表达式可以非常有效地完成：
 
 image::succinctness2.png[succinctness2]
 
 [cols=3*]
 |===
-| This equality is true because both sides are polynomials of degree $
+| 这个等式是真的，因为两边都是度数 $ 的多项式
 | G
-| $ whose roots are exactly the elements of $G$.
+| $ 其根恰好是 $G$ 的元素。
 |===
 
 [cols=5*]
 |===
-| Computing the right hand side of this equation seems to require a number of operations that is linear in $
+| 计算这个等式的右边似乎需要一些与 $ 成线性关系的运算
 | G
-| $. However, if we resort to https://en.wikipedia.org/wiki/Exponentiation_by_squaring[exponentiation by squaring], the left hand side of this equation can be computed in running time that is logarithmic in $
+| $。但是，如果我们寻求 https://en.wikipedia.org/wiki/Exponentiation_by_squaring[平方求次方]的方法，则可以在 $ 的运行时间中计算该等式的左边，其多对数为 $
 | G
 | $.
 |===
 
-And the actual denominator of the Fibonacci composition polynomial in question can be obtained by rewriting it as:
+而问题中的斐波那契组合多项式的实际分母可以通过重写得到：
 
 image::succinctness3.png[succinctness3]
 
-This seeming technicality stands at the core of the verifier being able to run in polylogarithmic time, and it is enabled only because we view the execution trace as evaluations of a polynomial over some subgroup of the field, and that the polynomial constraints in question hold over a subgroup.
+这个看似技术性的细节是验证者能够在对数多项式时间内运行的核心所在，而这是因为我们将执行轨迹视为在某个域的子群上的多项式求值，并且相关的多项式约束条件在子群上成立。
 
-Similar tricks can be applied for more sophisticated execution traces, but it is crucial that the repeating pattern of the constraint coincides with some subgroup of the field.
+类似的技巧可以应用于更复杂的执行轨迹，但关键是约束的重复模式与域的某个子群相吻合。
 
-More Constraints, More Columns!
+更多的约束，更多的列！
 
-The examples in this post were deliberately simple, to highlight key aspects of arithmetization. A natural question that arises will be: how is the case of multiple columns and multiple constraints handled. The answer is straightforward: multiple columns simply mean that there's more than one polynomial to work with, and multiple composition polynomials -- resulting from the multiple constraints -- are combined into a single polynomial, a random linear combination of all of them, for the sake of the last phase in STARK, which is a low degree test. With high probability, the linear combination is of low degree if and only if so are all of its components.
+本文特意选取了比较简单的示例，以突出算术化的关键特征。一个自然的问题是：多列和多个约束的情况如何处理。答案很简单：多列意味着有多个多项式需要处理，多个组合多项式（由多个约束产生）被合并为一个单一的多项式，即它们的随机线性组合，在 STARK 的最后阶段中进行低度测试。在极高概率的情况下，只有当且仅当它的所有组成部分是低度多项式，这个线性组合才是低度多项式
 
-We have shown how, given an execution trace and constraint polynomials, the prover can construct a polynomial which is of low degree if and only if the original CI statement holds. Furthermore, we have shown how the verifier can query the values of this polynomial efficiently, making sure that the prover did not replace the true polynomial with some false low-degree one.
+我们已经展示了在给定执行轨迹和约束多项式的情况下，证明器可以构造一个低度多项式，当且仅当原始的计算完整性（CI）语句成立时。此外，我们还展示了验证者如何高效地查询这个多项式的值，以确保证明器没有用错误的低度多项式替换真正的多项式。
 
-Next we will go into the details of low-degree testing, showing how this magic, of querying a small number of values and determining whether some polynomial is of low degree, is done.
+接下来，我们将详细介绍低度测试的细节，展示如何通过查询少量值来确定某个多项式是否为低度多项式的这种“魔法”是如何实现的。
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[回答三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[ Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing
