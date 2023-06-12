@@ -1,45 +1,45 @@
 [id="verifiers_solidity"]
 
-= Verifiers in Solidity
+= Solidity 中的验证器
 
-L1 smart contract that verifies STARK proofs from SHARP.
+L1 智能合约，验证 SHARP 的 STARK 证明。
 
-In the discussion below, we will encounter several contracts:
+在下面的讨论中，我们将遇到几种合约：
 
-- https://etherscan.io/address/0x47312450b3ac8b5b8e247a6bb6d523e7605bdb60[Starkware Sharp Verifier]: Proxy contract
-- https://etherscan.io/address/0x6cb3ee90c50a38a0e4662bb7e7e6e40b91361bf6[GpsStatementVerifier]: Contract that verifies a proof and registers the corresponding facts.
-- https://etherscan.io/address/0xe9664d230490d5a515ef7ef30033d8075a8d0e24[CpuFrilessVerifier]
-- https://etherscan.io/address/0xfd14567eaf9ba941cb8c8a94eec14831ca7fd1b4[MemoryPageFactRegistry]
+- https://etherscan.io/address/0x47312450b3ac8b5b8e247a6bb6d523e7605bdb60[Starkware Sharp 验证器（Starkware Sharp Verifier）]：代理合约
+- https://etherscan.io/address/0x6cb3ee90c50a38a0e4662bb7e7e6e40b91361bf6[Gps 语句验证器（GpsStatementVerifier）]：用于验证证明并注册相应事实的合约。
+- https://etherscan.io/address/0xe9664d230490d5a515ef7ef30033d8075a8d0e24[Cpu 无漏洞验证器（CpuFrilessVerifier）]
+- https://etherscan.io/address/0xfd14567eaf9ba941cb8c8a94eec14831ca7fd1b4[存储事实注册表（MemoryPageFactRegistry）]
 
-== Example of a Verifier transaction
+== 验证器交易的例子
 
-Let's take a look at a transaction that was sent to the Verifier contract on Ethereum mainnet. 
+让我们看一下发送到以太坊主网上验证器合约的一笔交易。
 https://etherscan.io/tx/0xde0bcb45698e8ef67fef8bff8615715dac0cf0882a131a21273e58607330d5f9[0xde0bcb45698e8ef67fef8bff8615715dac0cf0882a131a21273e58607330d5f9]
 
-=== Transaction trace
+=== 交易追踪
 
-* Verifier contract is a proxy contract so when it's called, implementation contract is called instead. Implementation contract is GpsStatementVerifier contract. The transaction that set the latest implementation can be find https://etherscan.io/tx/0xbaa8ffb1b7e5177dbf75de753b9b2ff2fc313b244ff910cfd6d7f1f6254b6e1a[here]
+* 验证器合约是一个代理合约，所以当它被调用时，实现合约被调用。设置最新实现的交易可以在这里查看。实现合约是Gps 事实验证器合约。 设置最新实现的交易可以在 https://etherscan.io/tx/0xbaa8ffb1b7e5177dbf75de753b9b2ff2fc313b244ff910cfd6d7f1f6254b6e1a[这里]查看。
 
-* On GpsStatementVerifier contract, function `verifyProofAndRegister` got executed with the following trace, you can check its code https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/gps/GpsStatementVerifier.sol#L71[here]:
+* 在Gps 事实验证器合约中，函数 `verifyProofAndRegister` 被执行，跟踪结果如下，你可以在 https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/gps/GpsStatementVerifier.sol#L71[这里]查看代码：
     
-    - `call` MemoryPageFactRegistry.registerRegularMemoryPage(), code https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/cpu/MemoryPageFactRegistry.sol#L31%5Bhere%5D[here]. This function 
-        . Computes and stores the factHash in the mapping verifiedFact; 
-        . Emits an event LogMemoryPageFactRegular with factHash = `0x72C8D723081B60693B32D77A369782FF189754A5897002314FB1569B7E2EE1E2`
+    - `调用` MemoryPageFactRegistry.registerRegularMemoryPage()，在 https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/cpu/MemoryPageFactRegistry.sol#L31%5Bhere%5D[这里]编码。这个函数
+        . 计算并将 factHash 存储在映射 verifiedFact 中；
+        . 发出一个事件 LogMemoryPageFactRegular，factHash = `0x72C8D723081B60693B32D77A369782FF189754A5897002314FB1569B7E2EE1E2`
 
-    - `call` CpuFrilessVerifier.verifyProofExternal(), code https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/cpu/CpuVerifier.sol#L54[here] that leads to the https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/StarkVerifier.sol#L500[StarkVerifier] contract. 
+    - `调用` CpuFrilessVerifier.verifyProofExternal(), 在 https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/cpu/CpuVerifier.sol#L54[这里]编码，会引发 https://github.com/starkware-libs/starkex-contracts/blob/aecf37f2278b2df233edd13b686d0aa9462ada02/evm-verifier/solidity/contracts/StarkVerifier.sol#L500[StarkVerifier]合约. 
     
-    - Then that makes a `staticcall` to MemoryPageFactRegistry.isValid() with argument is the factHash mentioned above, and get the respond true
+    - 然后向 MemoryPageFactRegistry.isValid() 发送一个 `staticcall` ，参数是上面提到的 factHash，并获得正确的响应。
 
-    - You can check by yourself by querying the `isValid` function on MemoryPageFactRegistry contract with input `0x72C8D723081B60693B32D77A369782FF189754A5897002314FB1569B7E2EE1E2` to have `true` as output.
+    - 你可以通过查询 MemoryPageFactRegistry 合约的 `isValid` 函数，输入 `0x72C8D723081B60693B32D77A369782FF189754A5897002314FB1569B7E2EE1E2` ，得到 `true` 作为输出。
 
 
 
-== Verifier contract in Starknet architecture
-The example above shows the example of verifying/registering proof on Ethereum and gives a glimpse of how the Verifier contract is used in the Starknet architecture.
+== Starknet 架构中的验证器合约
+上面的例子显示了在以太坊上验证/注册证明的例子，并让我们看到了验证器合约是如何在 Starknet 架构中使用的。
 
-In general, SHARP takes the Cairo program’s execution trace, proves that it’s valid, and sends this proof to the Verifier contract on Ethereum. After verifying the proof, the on-chain verifier takes an important extra step: it writes a fact attesting to the validity of the proof in the Fact Registry. This fact is like a trustless stamp of approval, certifying that the Cairo program was computed correctly. Now all that is left for the dApp’s smart contract is to check that this fact exists, in order to rely on the computation that was executed off-chain.
+通常情况下，SHARP 获取 Cairo 程序的执行跟踪，证明其有效性，并将此证明发送到以太坊上的 Verifier 合约。在验证证明后，链上验证器采取一个重要的额外步骤：它在事实注册表中写入一个事实，证明该证明的有效性。这个事实就像一个无需信任的许可印章，证明 Cairo 程序已经正确计算。现在，dApp 的智能合约要做的就是检查这个事实是否存在，以便依赖于在链外执行的计算。
 
-Here is the overall diagram of the how each component interacts with each other in the Starknet architecture.
+下图是 Starknet 架构中每个组件如何相互作用的示意图。
 
 image::starknet_architecture.png[starknet architecture]
 

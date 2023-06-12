@@ -1,18 +1,18 @@
-= Chapter 8: Starknet Architecture
+= 第 8 章：Starknet 架构
 
-As you embark on your journey to build scalable web3 applications, it's essential to understand the architecture of Starknet and its various components. Starknet has experienced significant growth since its inception as the first ZK-based rollup, thanks to the remarkable contributions from its community. This chapter aims to provide an in-depth understanding of the key building blocks of Starknet, which will enable you to develop and deploy decentralized applications (dApps) efficiently.
+当你开启构建可扩展的 web3 应用程序的旅程时，了解 Starknet 的架构及其它的各种组件是至关重要的。Starknet 作为第一个基于 ZK 的 rollup，自成立以来经历了巨大的发展，这要归功于其社区的卓越贡献。本章旨在深入了解 Starknet 的关键构建区块，这将使你们能够有效地开发和部署分散的应用程序（dApps）。
 
-In this chapter, we will cover the following topics:
+本章，我们将涵盖以下主题：
 
-* L2 Nodes: A high-level overview of the different Starknet nodes (Sequencer, Prover, Full Nodes, and Indexer) and their roles within the network.
-* Tx Lifecycle: A detailed explanation of the various states an L2 transaction goes through, discussing the benefits and risks of considering a particular state as "finality."
-* Starknet OS: An exploration of how the Sequencer validates and executes transactions, and its connection with Account Abstraction (AA).
-* SHARP: An examination of the Prover's workflow for generating proofs for Starknet and Starkex using recursion, focusing on the workflow rather than the math behind STARKs.
-* Data Availability: A discussion of Starknet's Data Availability in Rollup mode (excluding Volition for now).
-* L1 Components: A comprehensive analysis of the on-chain Verifier and Fact Registry, and a discussion on how an L1 escape hatch would work.
-* Bridges: An explanation of how L1-L2 communication works and how it can be used to create bridges between networks.
+* L2 节点：对不同 Starknet 节点（排序器、证明者、全节点 和索引器）及其在网络中的的作用进行高级概述。
+* Tx 生命周期：详细解释 L2 交易经历的各种状态，讨论将特定状态视为“最终性”的好处和风险。
+* Starknet OS：探索排序器如何验证和执行交易，以及它与账户抽象 (AA) 的联系。
+* SHARP：检查证明者使用递归为 Starknet 和 Starkex 生成证明的工作流程，重点关注工作流程而不是 STARK 背后的数学。
+* 数据可用性：讨论 Starknet 在 Rollup 模式下的数据可用性（目前不包括 Volition）。
+* L1 组件：对链上验证器和事实注册表的全面分析，以及关于 L1 逃生舱如何工作的讨论。
+* 桥：解释 L1-L2 通信是如何工作的，以及如何用它来创建网络之间的桥。
 
-By the end of this chapter, you will have a deep understanding of the architecture and components of the Starknet ecosystem, empowering you to make informed decisions when building and deploying dApps on the platform.
+到本章结束时，你将对 Starknet 生态系统的架构和组件有一个深刻的理解，使你们能够在平台上构建和部署 dApp 时做出明智的决策。
 
 
 == Contributing

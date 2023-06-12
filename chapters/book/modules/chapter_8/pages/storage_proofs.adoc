@@ -1,138 +1,138 @@
 [id="storage_proofs"]
 
-= Storage Proofs: Trustless Cross-Chain Information Access on Starknet
+= 内存证明：Starknet 中无需信任的跨链信息访问
 
-In the world of decentralized systems and blockchain technology, ensuring the accuracy and authenticity of data is of paramount importance. As the ecosystem evolves, it becomes increasingly necessary to share information across different chains, leading to the development of innovative solutions to verify the integrity of the data without sacrificing security or efficiency. One such solution is the use of storage proofs.
+在去中心化系统和区块链技术的世界里，确保数据的准确性和真实性是最重要的。随着生态系统的发展，跨不同链共享信息变得越来越必要，这推动了创新解决方案的发展，在不牺牲安全或效率的前提下，去验证数据的完整性。其中一种解决方案是使用存储证明。
 
-Storage proofs offer a cryptographic method for tracking and sharing blockchain information across chains, similar to oracles. However, the key difference lies in the trust model; storage proofs inherently provide proof of authenticity without relying on third-party trust. In some situations, they can even replace or complement oracles, paving the way for new use cases and applications in the blockchain ecosystem.
+存储证明提供了一种加密方法，用于跨链跟踪和共享区块链信息，类似于预言机。然而，关键的区别在于信任模型；存储证明本质上提供了身份验证的证明，而不依赖第三方信任。在某些情况下，它们甚至可以替代或补充预言机，为区块链生态系统中的新用例和应用铺平道路。
 
-In this chapter, we'll explore the world of storage proofs in depth, covering their fundamentals, how they work, their potential use cases, and how they can enhance or even replace traditional oracles in certain scenarios. By the end of this chapter, you'll have a thorough understanding of storage proofs and their significance in the ever-evolving landscape of decentralized systems.
+在本章中，我们将深入探讨存储证明的世界，包括它们的基本原理、工作原理、潜在用例以及它们如何在某些场景下增强甚至替代传统的预言机。到本章结束时，您将全面了解存储证明及其在不断发展的去中心化系统格局中的重要性。
 
-Storage proofs have been an essential part of the cryptographic landscape since the invention of Merkle trees in 1979. The innovation lies in combining storage proofs with provable computation to create succinct proofs that can be verified on-chain.
+自 1979 年发明默克尔树以来，存储证明一直是密码学领域的一个重要组成部分。其创新之处在于将存储证明与可证明的计算相结合，以创建可在链上验证的简洁证明。
 
-[NOTE]
+[附注]
 ====
-This chapter was inspired by and based on the https://medium.com/@starkware/what-are-storage-proofs-and-how-can-they-improve-oracles-e0379108720a[Starkware blog post] on the same topic. Any errors or inaccuracies found in this chapter are the responsibility of the Starknet Book editor and should not be attributed to the authors of the original blog post.
+本章灵感来源于并基于 https://medium.com/@starkware/what-are-storage-proofs-and-how-can-they-improve-oracles-e0379108720a[Starkware 博客上] 关于同一主题的文章。本章中发现的任何错误或不准确之处均由 Starknet 之书编辑负责，不应归因于原博客文章的作者。
 ====
 
 image::storage5.png[storage5]
 
-== What are storage proofs?
+== 什么是存储证明
 
-Storage proofs are a way to prove that certain information exists on a blockchain and is true, without having to trust a third party. To better understand storage proofs, let's break down the concept using a simple analogy:
+存储证明是一种证明特定信息存在于区块链上且是真实的方式，而不必信任第三方。为了更好地理解存储证明，让我们使用一个简单的类比来解释这个概念：
 
-Imagine you have a giant book filled with information, and you want to prove that a specific piece of information is in that book. Instead of requiring someone to go through the entire book to find the information, you use a clever system (in our case, cryptography) to create a small "proof" that can easily demonstrate the information's presence in the book. This "proof" is what we call a storage proof.
+想象一下，你有一本装满信息的巨著，而你想证明某条特定的信息就在这本书里。与其要求别人翻阅整本书来寻找信息，不如用一个聪明的系统（在我们的例子中，这个系统是密码学）来创造一个小「证明」，可以很容易地证明该信息在书中的存在。这个「证明」就是我们所说的存储证明。
 
-In the context of blockchains, these giant books are the databases that store all the transactions and data on the network. Storage proofs allow you to create a small and verifiable proof that certain data exists within the blockchain's state at a particular point in time. This is done using cryptographic techniques that are built into the storage itself.
+在区块链中，这本巨著是存储网络上所有交易和数据的数据库。存储证明允许你创建一个小的、可验证的证明，证明某些数据在某一特定时间点存在于区块链的状态中。这是通过内置于存储本身中的加密技术完成的。
 
-Blockchains use various data structures, like Merkle trees, Merkle Patricia trees, and Verkle trees, to cryptographically commit to their data. Using these data structures, storage proofs can be generated to demonstrate that specific information is part of a given state. However, when used alone, these proofs can become quite large, making them impractical for on-chain verification. To overcome this, storage proofs are often combined with advanced cryptographic techniques, such as STARKs or SNARKs, to create smaller and more efficient proofs that can be verified on any domain without trusting a third party. Instead, the security and trust come from the underlying blockchain itself.
+区块链使用各种数据结构，如默克尔树、压缩前缀树和沃克尔树，对其数据进行加密哈希。利用这些数据结构，可以生成存储证明，证明特定信息是给定状态的一部分。然而，仅使用这些证明可能会数据变得非常庞大，使它们在链上验证时不切实际。为了克服这一问题，存储证明通常与先进的加密技术（如 STARK 或 SNARK）相结合，以创建更小且更高效的证明，可以在任何领域验证而无需信任第三方。安全和信任来自底层的区块链本身。
 
-== How do storage proofs work?
+== 存储证明是如何工作的？
 
-Now that we have a basic understanding of what storage proofs are, let's dive into how they work.
+现在我们对什么是存储证明有了基本的了解，让我们深入了解它们是如何工作的。
 
-=== Cryptographic Commitments and Data Structures
+=== 加密承诺和数据结构
 
-Storage proofs rely on cryptographic commitments and specific data structures to verify the authenticity of data without revealing the entire dataset. These data structures, such as Merkle trees, Merkle Patricia trees, or Verkle trees, enable efficient storage and retrieval of data while maintaining the cryptographic security of the entire dataset.
+存储证明依赖于加密承诺和特定的数据结构，以验证数据的真实性，而不暴露整个数据集。这些数据结构，如 Merkle 树、Merkle Patricia 树或 Verkle 树，能够在保持整个数据集的加密安全性的同时实现数据的高效存储和检索。
 
-When a piece of data is added to the blockchain, it's hashed and stored in a specific location within the tree. This data, along with other data in the tree, is combined using a hashing algorithm to create parent nodes. This process continues until a single root hash, known as the Merkle root or Verkle root, is obtained. This root hash represents the entire dataset and serves as a commitment to the data.
+当一个数据被添加到区块链时，它会成为哈希并存储在树中的一个特定位置。该数据与树中的其他数据一起，使用哈希算法进行组合，创建父节点。这个过程一直持续到获得一个单一的根哈希值，即所谓的 Merkle 树根和 Verkle 树根。这个根哈希代表整个数据集，并作为数据的承诺。
 
-=== Generating and Verifying Storage Proofs
+=== 生成和验证存储证明
 
-To generate a storage proof, one must provide a specific piece of data and its associated Merkle or Verkle path within the tree. The path consists of the sibling hashes required to reconstruct the root hash using the same hashing algorithm. The storage proof is essentially the combination of the data and its Merkle or Verkle path.
+生成存储证明需要提供特定的数据及其在树中关联的默克尔和沃克尔路径。该路径包含了通过相同的哈希算法重构根哈希所需的兄弟哈希值。存储证明本质上是数据及其默克尔和沃克尔路径的组合。
 
-When verifying a storage proof, a recipient can use the provided data and Merkle or Verkle path to recompute the root hash. If the recomputed root hash matches the known root hash, the recipient can be confident that the data is authentic and part of the committed dataset.
+在验证存储证明时，接收方可以使用提供的数据和默克尔和沃克尔路径重新计算根哈希。如果重新计算的根哈希与已知的根哈希匹配，则接收方可以确信该数据是真实的，并且属于已承诺的数据集。
 
-=== Optimizing Storage Proofs with STARKs or SNARKs
+=== 用 STARK 或 SNARKs 优化存储证明
 
-While storage proofs provide a secure and efficient way to prove the existence of data in a blockchain, their size and computational requirements can be further optimized using zero-knowledge proofs, such as STARKs (Scalable Transparent ARguments of Knowledge) or SNARKs (Succinct Non-interactive ARguments of Knowledge).
+虽然存储证明提供了一种安全有效的方式来证明区块链中数据的存在，但其大小和计算要求可以使用零知识证明进一步优化，如 STARK（可扩展的透明零知识证明）或 SNARKs（简洁的非交互式零知识证明）。
 
-These advanced cryptographic techniques allow for the creation of smaller, more efficient proofs that can be verified quickly, even on-chain. By combining storage proofs with STARKs or SNARKs, we can achieve trustless and efficient cross-chain data sharing without relying on third parties.
+这些先进的加密技术可以创建更小、更高效的证明，甚至可以在链上快速验证。通过将存储证明与 STARK 或 SNARK 相结合，我们可以实现无需依赖第三方的可信且高效的跨链数据共享。
 
-== Storage Proofs Use Cases
+== Storage Proofs Use Cases 存储证明用例
 
-Storage proofs offer an efficient means of compressing blockchain data and transmitting it to other chains, opening up a wide array of applications. Their affordable verification costs allow destination chains to validate the proof, reducing the need for complex cross-chain messaging systems.
+存储证明提供了一种压缩区块链数据并将其传输到其他链的有效方法，从而开辟了广泛的应用领域。它们负担得起的验证成本允许目标链验证证明，从而减少对复杂的跨链消息传递系统的需求。
 
-Some potential use cases for storage proofs include:
+存储证明的一些潜在用例包括：
 
-* *General information access*: Storage proofs enable one chain to access information about the state and transactions of another chain, facilitating seamless cross-chain communication.
+* *通用信息访问*：存储证明使一条链能够访问有关另一条链的状态和交易的信息，从而促进无缝的跨链通信。
 
-* *Simplified cross-chain voting systems*: Storage proofs can streamline cross-chain voting processes where users hold assets on a secure but slower chain (Chain A) while voting takes place on a faster, more cost-effective chain (Chain B). Instead of incurring high transaction fees to transfer assets between chains, storage proofs allow users to prove their token balance on Chain A and seamlessly cast their vote on Chain B.
+* *简化的跨链投票系统*：存储证明可以简化跨链投票流程，用户在安全但较慢的链（链 A）上持有资产，而在更快、更具成本效益的链（链 B）上进行投票。存储证明允许用户证明他们在链 A 上的代币余额，并无缝地在链 B 上投票，而不是在链间转移资产时产生高额交易费用。
 
-* *Trustless cross-chain bridges*: Current cross-chain bridges often involve third-party intermediaries, such as custodians or decentralized autonomous organizations (DAOs), which require a certain level of trust. Storage proofs can facilitate trustless bridges, with smart contracts on the destination chain validating transactions and minting bridged assets based on the proof. In some cases, storage proofs may even eliminate the need for transferring assets between chains by simply proving ownership on the original chain.
+* *无信任跨链桥*：当前的跨链桥通常涉及第三方中介机构，如托管人或去中心化自治组织（DAO），需要一定程度的信任。存储证明可以促进无信任的桥，目标链上的智能合约验证交易，并基于证明铸造桥资产。在某些情况下，存储证明甚至可以通过在原始链上证明所有权来消除在链之间转移资产的需求。
 
 image::storage1.png[storage1]
 
-* *Improved user experience for Account Abstraction (AA) use cases*: AA, a key innovation in blockchain technology, has been implemented across various chains to enhance user onboarding. Storage proofs can further augment AA, allowing wallets to restore access based on specific conditions, such as inactivity, or enforce additional checks that require data from other chains.
+* *区块链技术的一个关键创新*：账户抽象（AA）的用户体验得到了改进。AA已经在各种链上实现，以增强用户入门体验。存储证明可以进一步增强 AA，允许钱包基于特定条件（例如不活动）恢复访问，或者强制执行需要其他链的数据的附加检查。
 
-* *Accessing historical data without running an archival node*: Storage proofs are not just used for cross-chain use cases, they can also be used to get data about the past in the same blockchain without the need of running an archival node. This allows users to access historical data more efficiently, reducing storage requirements and lowering the barrier to entry for participating in the network.
+* *在不运行存档节点的情况下访问历史数据*：存储证明不仅用于跨链用例，它们还可以用于在同一区块链中获取有关过去的历史数据，而无需运行存档节点。这使得用户可以更有效地访问历史数据，减少存储需求，并降低参与网络的准入门槛。
 
-By harnessing the power of storage proofs, these use cases demonstrate the potential for more efficient, secure, and seamless interactions within the blockchain ecosystem.
+通过利用存储证明的力量，这些用例展示了在区块链生态系统中实现更高效、安全和无缝交互的潜力。
 
-== An example of a storage proof
+== 存储证明示例
 
-Generating storage proofs on EVM-compatible chains is straightforward. For example, the Web3.js library has the `getProof` function that can generate proof of a contract's state on Ethereum (and other EVM-compatible chains such as Polygon or BSC). A contract address and the storage slot for the contract must be passed to the function.
+在 EVM 兼容链上生成存储证明非常简单。例如，Web3.js 库具有 getProof 函数，可以生成以太坊（以及其他 EVM 兼容链，如 Polygon 或 BSC）上合约状态的证明。必须将合约地址和合约的存储槽传递给该函数。
 
-In Ethereum, smart contracts use a key-value store to store data in their storage. Each piece of data is stored in a specific location known as a "storage slot." Storage slots are memory locations within the contract's storage and are identified by a unique index. Let's look at a sample smart contract with the following code deployed on Ethereum mainnet at `0xcc...da8b`.
+在以太坊中，智能合约使用键值存储来存储其存储中的数据。每个数据片段都存储在特定位置，称为“存储槽”。存储槽是合约存储中的内存位置，并由唯一索引标识。让我们看一个示例智能合约，其中包含以下代码，已在以太坊主网上部署到 `0xcc...da8b`.
 
 image::storage2.png[storage2]
 
-The `owner` variable would be stored at slot 0. Now, to generate the proof that the `owner` of this contract was an address A, we can use the `getProof` function as follows:
+`owner` 变量将存储在槽 0 中。现在，为了生成证明该合约的 `owner` 是地址 A 的证明，我们可以使用 `getProof` 函数，如下所示：
 
 image::storage3.png[storage3]
 
-The output of the code above looks something like this:
+上述代码的输出看起来是这样的：
 
 image::storage1.png[storage4]
 
-The "storageProof" returned contains the storage proof for the "owner" variable. Since Ethereum uses Merkle Patricia Trees to commit to its state, the state of accounts and their storage, the storage generated can be used to prove a storage slot (or account state). However, as previously stated, these proofs are not scalable enough to discuss cross-chain message transfers. Using complex ZK mathematics on top of this can decrease the computation required to verify the proof.
+返回的 “storageProof” 包含 “owner” 变量的存储证明。由于以太坊使用 Merkle Patricia 树来提交其状态、账户状态及其存储，因此生成的存储可用于证明存储槽（或账户状态）。然而，如前所述，这些证明没有足够的可扩展性来讨论跨链信息传输。在此基础上使用复杂的 ZK 数学可以减少验证证明所需的计算量。
 
-== Comparing and Contrasting Storage Proofs and Oracles
+== 比较和对比存储证明以及预言机
 
-Blockchains are designed to be trustless, which means they cannot inherently access off-chain data. This limitation affects smart contracts' ability to make decisions based on real-world events or historical blockchain information. As a solution, oracles were introduced to provide off-chain data or results from resource-intensive off-chain computations to smart contracts.
+区块链被设计为无需信任，这意味着它们本身无法访问链下数据。这种限制会影响智能合约根据现实世界事件或历史区块链信息做出决策的能力。作为一种解决方案，预言机被引入，以向智能合约提供链下数据或资源密集型链下计算的结果。
 
-Oracles typically require a third party, such as an institution or a decentralized network of node operators, to submit data on-chain. While this introduces a level of trust, various teams, like Pragma, are working to minimize this trust requirement.
+预言机通常需要第三方（例如机构或节点运营商的去中心化网络）在链上提交数据。虽然这引入了一定程度的信任，但像 Pragma 这样的团队正在努力将这种信任要求最小化。
 
-Chainlink is a well-known blockchain oracle, providing real-world data, off-chain computation services, and cross-chain services. As smart contracts currently rely on oracles for real-world data, oracles have become a crucial part of the blockchain ecosystem.
+Chainlink 是著名的区块链预言机，提供真实世界数据、链下计算服务和跨链服务。由于智能合约目前依赖预言机获取真实世界的数据，预言机已成为区块链生态系统的重要组成部分。
 
-== The State of Oracles on Starknet
+== Starknet 的预言机现状
 
-On the Starknet testnet, Chainlink provides price data feeds for seven cryptocurrency pairs and has partnered with Starkware to accelerate app development and growth within the Starknet ecosystem. Chainlink minimizes trust assumptions through a decentralized network of nodes, but data aggregation occurs off-chain.
+在 Starknet 测试网上，Chainlink 为七种加密货币对提供价格数据，并与 Starkware 合作，加速 Starknet 生态系统内的应用程序开发和发展。 Chainlink 通过去中心化的节点网络将信任假设降至最低，但数据聚合发生在链下。
 
-Pragma and Stork Network are two significant oracle providers on Starknet, operating on both mainnet and testnet. They offer price tickers for multiple cryptocurrency pairs, and Pragma is working on implementing a verifiable randomness feed on the mainnet for secure, on-chain randomness. Pragma's price feeds are based on submissions from large institutions and market makers, leveraging efficient ZK technology for on-chain price aggregation.
+Pragma 和 Stork Network 是 Starknet 上两个重要的预言机供应商，它们在主网和测试网上运作。它们提供多种加密货币对的价格行情，并且 Pragma 正致力于在主网上实现可验证的随机性反馈，以获得安全的链上随机性。Pragma 的价格行情是基于来自大型机构和市场制造商的提交的信息，利用高效的 ZK 技术进行链上价格聚合。
 
-In summary, both storage proofs and oracles are crucial for facilitating cross-chain communication and access to off-chain data. While oracles are indispensable for real-world data, storage proofs offer a trustless, efficient way to transfer and verify blockchain information across chains. Together, they help create a more robust, interconnected blockchain ecosystem.
+总之，存储证明和预言机对于促进跨链通信和访问链下数据都至关重要。虽然预言机对于现实世界的数据来说是不可或缺的，但存储证明为跨链传输和验证区块链信息提供了一种无信任的有效方式。它们共同助力创建一个更强大、相互连接的区块链生态系统。
 
-== Can Oracles Be Replaced or Improved by Storage Proofs?
+== 预言机可以被存储证明取代或改进吗？
 
-In certain cases, storage proofs can replace oracles. Some data provided by oracles is already available on-chain, and a storage proof can eliminate the need for trust in a third party, allowing smart contracts to rely entirely on the security of cryptographic commitments. However, in other cases where storage proofs cannot fully replace oracles, they can still enhance them with additional functionality:
+在某些情况下，存储证明可以替代预言机。预言机提供的某些数据已经在链上可用，存储证明可以消除对第三方信任的需求，使智能合约完全依赖于加密承诺的安全性。然而，在其他情况下，存储证明无法完全替代预言机，但它们仍然可以通过额外的功能增强预言机的功能：
 
-* Storage proofs enable computations on data from different sources and export the results to other chains, making it possible for oracles to transmit information across multiple chains.
-* Storage proofs can facilitate cost-effective validation on destination chains, as the preferred source chain typically has cheap computation.
-* Research leaders, such as Herodotus, enable cross-domain data access across Ethereum chains using storage proofs and ZK mathematics. Pragma plans to partner with Herodotus to support cross-chain oracles in the near future.
-* Storage proofs can unify the state of multiple rollups and even allow synchronous reads between Ethereum layers.
-* Trustless retrieval of historical on-chain data is another enhancement made possible by storage proofs. Stateful blockchains like Ethereum and Starknet cryptographically preserve their state through specialized data structures, enabling proof of data inclusion. This allows smart contracts to access information dating back to the genesis block.
+* 存储证明可以对来自不同来源的数据进行计算，并将结果输出到其他链，从而使预言机可以跨多个链传输信息。
+* 存储证明可以促进目标链上的成本效益验证，因为首选源链通常具有廉价的计算。
+* Herodotus 等研究领导者使用存储证明和 ZK 数学实现跨以太坊链的跨域数据访问。 Pragma 计划在不久的将来与 Herodotus 合作，支持跨链预言机。
+* 存储证明可以统一多个 Rollup 的状态，甚至允许以太坊层之间进行同步读取。
+* 历史链上数据的无信任检索是存储证明实现的另一项增强功能。像以太坊和 Starknet 这样的有状态区块链通过专门的数据结构以加密方式保存其状态，从而实现数据包含证明。这允许智能合约访问可追溯到创世块的信息。
 
-Pragma is exploring the development of an L3 oracle on Starknet, which could enable other chains to "pull" and verify data using storage proofs. Benefits of having an L3 oracle on a computationally cheap network like Starknet include:
+Pragma 正在探索在 Starknet 上开发 L3 预言机，它可以使其他链能够使用存储证明“拉取”和验证数据。在像 Starknet 这样的计算成本低廉的网络上使用 L3 预言机的好处包括：
 
-* Faster consensus on blocks due to the highly customizable L3 chain, significantly reducing data latency for the oracle.
-* Asynchronous transfer of low-latency data to other chains upon reaching consensus on the source chain, in combination with storage proofs.
-* Enhanced trust in data through an inbuilt system to penalize dishonest data providers. Data providers on the L3 could stake their assets as a guarantee of accurate data. As the entire L3 network must reach consensus before other chains can use the data, the oracle's data can be considered secured by the validators' stake on L3.
+* 归功于高度可定制的 L3 链，可以更快地达成区块共识，显着减少了预言机的数据延迟。
+* 在源链上达成共识后，结合存储证明，将低延迟数据异步传输到其他链。
+* 通过内置系统惩罚不诚实的数据提供者，增强对数据的信任。在 L3 上，数据提供者可以将他们的资产抵押作为准确数据的保证。由于整个 L3 网络必须达成共识，其他链才能使用数据，因此验证者在 L3 上的抵押可以被认为是预言机数据的安全保障。
 
-== Conclusion
+== 结论
 
-The growing adoption of Ethereum L2 solutions, such as Starknet, Optimism, and Arbitrum, has offered insights into the future of the industry. However, a key challenge hindering further growth is the implementation of a decentralized cross-chain messaging system. Though still in the early stages, storage proofs hold immense potential to address this issue.
+Starknet、Optimism 和 Arbitrum 等以太坊 L2 解决方案的日益普及，为行业的未来提供了启示。然而，阻碍进一步增长的一个关键挑战是去中心化跨链消息系统的实施。尽管仍处于早期阶段，但存储证明具备解决此问题的巨大潜力。
 
-In some instances, storage proofs can replace or enhance oracles, facilitating more efficient cross-chain communication and access to historical data. By reducing the reliance on trust in third parties, storage proofs can significantly bolster the security and efficiency of blockchain applications.
+在某些情况下，存储证明可以替代或增强预言机，促进更高效的跨链通信和对历史数据的访问。通过减少对第三方信任的依赖，存储证明可以显着增强区块链应用程序的安全性和效率。
 
-As the blockchain landscape continues to evolve, we can anticipate further developments and innovations in storage proofs, oracles, and cross-chain communication. By leveraging these technologies, the blockchain ecosystem can sustain its growth and deliver increased value to both users and developers.
+随着区块链领域的不断发展，我们可以预见存储证明、预言机和跨链通信方面的进一步发展和创新。通过利用这些技术，区块链生态系统可以维持其增长，并为用户和开发人员提供更多价值。
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing

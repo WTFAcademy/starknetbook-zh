@@ -1,53 +1,53 @@
-= Sequencers in Starknet
+= Starknet 中的排序器
 
-== Introduction to Sequencers
+== 排序器简介
 
-A sequencer is a crucial component in blockchain and Layer-2 solutions responsible for managing the ordering and execution of transactions. In Starknet, sequencers ensure that transactions are executed in a specific order to prevent double-spending and maintain the network's state consistency.
+排序器是区块链和 Layer-2 解决方案中的重要组件，负责管理交易的排序和执行。在 Starknet 中，排序器确保交易以特定顺序执行，以防止双花并保持网络状态的一致性。
 
-Sequencers receive transactions, process them according to predetermined rules, and produce a series of ordered actions or state changes. These actions are then bundled into blocks and are included in the blockchain.
+排序器接收交易，根据预先确定的规则对其进行处理，并产生一系列有序的行动或状态变化。然后，这些行动被打包成区块，并被纳入区块链中。
 
 image::sequencer.png[sequencer]
 
-== The Role of Sequencers in Starknet
+== 排序器在 Starknet 中的作用
 
-Sequencers play a vital role in Starknet's performance and security by executing transactions and applying state changes according to the protocol's rules and requirements.
+排序器在 Starknet 的性能和安全方面起着至关重要的作用，它根据协议的规则和要求执行交易和应用状态变化。
 
-Starknet's sequencer is particularly relevant due to the network's use of zero-knowledge proofs (ZKPs). The sequencer's proper functioning ensures that transactions are executed in a manner compatible with the generation of ZKPs, contributing to Starknet's overall scalability and security. Users interact with sequencers when submitting transactions to Starknet as the first step towards STARK scaling. Once a sequencer assembles a block, the consensus protocol approves it, and provers generate a proof for Layer 1 (L1).
+由于网络使用了零知识证明（ZKPs），Starknet 的排序器就显得尤为重要。排序器的正常运行确保交易以与 ZKP 的生成兼容的方式执行，有助于 Starknet 的整体可扩展性和安全性。作为 STARK 扩展的第一步，用户在向 Starknet 提交交易时与排序器进行交互。一旦排序器组装了一个区块，共识协议就会批准它，而证明者会为第 1 层（L1）生成一个证明。
 
-In Ethereum, miners order and execute transactions, while sequencers serve a similar purpose in Starknet. Sequencers process transactions, aggregate them, and produce blocks, making them a critical infrastructure piece in the Starknet ecosystem.
+在以太坊中，矿工订购和执行交易，而排序器在 Starknet 中起着类似的作用。排序器处理交易、聚合它们，并生成区块，使它们成为 Starknet 生态系统中的关键基础设施部分。
 
-As Starknet evolves, enhancing the sequencer's performance is crucial. This is where the transition to Rust-based sequencers becomes essential. By rewriting the core sequencer components in Rust, the network can achieve improved performance, throughput, and resilience.
+随着 Starknet 的发展，增强排序器的性能至关重要。这就是过渡到基于 Rust 的排序器变得至关重要的地方。通过用 Rust 重写核心排序器组件，网络可以提高性能、吞吐量和弹性。
 
-Examples of sequencer implementations include the link:https://github.com/lambdaclass/starknet_tendermint_sequencer[Starknet Tendermint Sequencer] by LambdaClass and link:https://github.com/keep-starknet-strange/madara[Madara], a Rust-powered Starknet sequencer using Substrate.
+排序器实现的示例包括 LambdaClass 和 link:https://github.com/keep-starknet-strange/madara[Madara] 的 link:https://github.com/lambdaclass/starknet_tendermint_sequencer[Starknet Tendermint 排序器], 这是一种使用 Substrate 的 Rust 驱动的 Starknet 排序器。
 
-== Evolution of Starknet and Sequencers
+== Starknet 和排序器的演变
 
-Originally, sequencers were written in Python, which proved inefficient for large-scale operations. As the network reached capacity, developers sought to improve sequencer performance. The first milestone was establishing a fully functioning blockchain, followed by a focus on performance optimization.
+最初，排序器是用 Python 编写的，但在面对大规模操作时效率不高。随着网络达到容量上限，开发人员开始寻求提高排序处理器性能的方法。第一个里程碑是建立一个功能齐全的区块链，然后是专注于性能优化。
 
-The initial performance enhancement involved implementing optimistic concurrency for parallel transaction execution. However, the most significant advancement came from rewriting sequencers in Rust, a more efficient and faster language.
+最初的性能增强涉及到位并行事务执行实施乐观并发。然而，最重要的进步来自用 Rust 重写排序器，Rust 是一种更高效、更快的语言。
 
-Rewriting sequencers in Rust has shown promising results in performance and scalability. The throughput and latency of the Starknet network are expected to improve dramatically, benefiting the network and those working with related infrastructure and development tools.
+用 Rust 重写排序器，在性能和可扩展性方面显示出可喜的结果。 Starknet 网络的吞吐量和延迟有望得到极大的改善，从而使网络以及使用相关基础设施和开发工具的人员受益。
 
-link:https://medium.com/starkware/papyrus-an-open-source-starknet-full-node-396f7cd90202[One of the new sequencers] is based on Papyrus, an open-source Starknet full node responsible for state management. Early benchmarks for projects like Madara reveal a remarkable 76 TPS (transactions per second) for ERC20 transfers, showcasing the potential improvements Rust-based sequencers bring to the Starknet ecosystem.
+link:https://medium.com/starkware/papyrus-an-open-source-starknet-full-node-396f7cd90202[其中一个新的排序器] 是基于 Papyrus，这是一个负责状态管理的开源 Starknet 全节点。Madara 等项目的早期基准测试显示 ERC20 传输达到了惊人的 76TPS（每秒交易数），展示了基于Rust的排序器为 Starknet 生态系统带来的潜在改进。
 
-Optimistic concurrency implementation also contributes to sequencer performance improvements by executing transactions in parallel, checking for conflicts in touched storage cells, and invalidating subsequent transactions when necessary.
+乐观并发实现还有助于通过并行执行事务、检查接触存储单元中的冲突以及在必要时使后续事务无效来提高排序器性能。
 
-== Future Developments
+== 未来发展
 
-As Starknet evolves, sequencer development will progress, focusing on enhancing capabilities and ensuring seamless integration with the network. Developers will work on new features, such as fee mechanisms, to be implemented in upcoming releases like Memphis.
+随着 Starknet 的发展，排序器的开发将取得进展，重点是增强功能并确保与网络的无缝整合。开发人员将致力于新功能，例如收费机制，这些功能将在即将发布的版本（如 Memphis）中实现。
 
-Continuous improvement and optimization of sequencers are vital for the sustained growth of Starknet. The transition to Rust-based sequencers and ongoing efforts to enhance their performance will undoubtedly contribute
+排序器的持续改进和优化对于 Starknet 的持续增长至关重要。向基于 Rust 的排序器的过渡以及为提高其性能所做的持续努力无疑将持续助力 Starknet 的发展。
 
-== Conclusion
+== 总结
 
-Sequencers play a pivotal role in the Starknet ecosystem by managing transaction ordering and execution. As the network continues to evolve, enhancing sequencer performance through optimizations and transitions to more efficient languages like Rust is essential to ensure scalability, security, and throughput. The ongoing development and improvement of sequencers will support the growth of the Starknet network and empower developers and users to harness the full potential of this innovative Layer-2 solution.
+排序器通过管理交易排序和执行，在 Starknet 生态系统中发挥关键作用。随着网络的不断发展，通过优化和过渡到更高效的语言（如 Rust）来增强排序器性能对于确保可扩展性、安全性和吞吐量至关重要。排序器的持续开发和改进将支持 Starknet 网络的发展，并使开发人员和用户能够充分利用这种创新的 Layer-2 解决方案的全部潜力。
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）].
 ====
 
 == Contributing
