@@ -1,27 +1,28 @@
 [id="oracles"]
-= Oracles
+= 预言机
 
-Blockchains inherently lack the ability to read data from the internet. Nevertheless, many blockchain applications, such as DeFi apps, require constant access to up-to-date information from various online sources. Oracles bridge the gap between blockchains and external systems, allowing smart contracts to execute based on real-world inputs and outputs.
+区块链本质上缺乏从互联网读取数据的能力。尽管如此，许多区块链应用程序（例如 DeFi 应用程序）需要不断访问来自各种在线资源的最新信息。预言机弥合了区块链和外部系统之间的差距，允许智能合约根据现实世界的输入和输出执行。
 
-The largest oracle on Starknet is https://www.pragmaoracle.com/[Pragma].
+Starknet 上最大的预言机是 https://www.pragmaoracle.com/[Pragma]。
 
-== Pragma Network
+== Pragma 网络
 
-https://www.pragmaoracle.com/[Pragma] is a fully open-source and audited oracle network. It provides over 20 price feeds for popular crypto assets and has a well-established community of data providers, ensuring frequent updates.
-Pragma is a fully on-chain oracle which leverages Starknet's cheap computation to provide fully transparent and composable data feeds (yield curve, realized volatility, etc.)
-Note that once 0.13.0 is released, Pragma will also leverage Volition mode to increase frequency of updates and reduce costs.
+https://www.pragmaoracle.com/[Pragma] 是一个完全开源且经过审计的预言机网络。它为流行的加密资产提供 20 多种价格信息，并拥有完善的数据提供商社区，确保频繁更新。
+
+Pragma 是一个完全链上的预言机，它利用 Starknet 的廉价计算来提供完全透明和可组合的数据馈送（收益率曲线、已实现的波动率等）。
+
+请注意，一旦 0.13.0 发布，Pragma 还将利用 Volition 模式来增加频率更新和降低成本。
 
 == Chainlink
 
-https://docs.chain.link/data-feeds/starknet[Chainlink Price Feeds] are available on the Starknet testnet, with plans for availability on the Starknet mainnet in the near future. Chainlink provides decentralized oracle services. 
+Starknet 测试网上提供 https://docs.chain.link/data-feeds/starknet[Chainlink喂价]，并计划在不久的将来在 Starknet 主网上提供。 Chainlink 提供去中心化的预言机服务。
 
-[NOTE]
-====
-The Book is a community-driven effort created for the community.
+💡 附注
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
-====
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
+
+- 无论你是否有所收获，烦请 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[填写此问卷]，简单回答三个问题，给予我们反馈。
+- 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单 (Issues)]。
 
 == Contributing
 
@@ -33,3 +34,15 @@ StarknetBook is a work in progress, and your passion, expertise, and unique insi
 
 Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
 ____
+
+== **贡献力量**
+
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的[指南](https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc)并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
+
+— Starknet 社区

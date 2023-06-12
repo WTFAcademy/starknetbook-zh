@@ -2,40 +2,40 @@
 
 = Starknet.js - Starknet JavaScript SDK
 
-Starknet.js is a JavaScript/TypeScript library designed to connect your website or decentralized application (D-App) to Starknet. It aims to mimic the architecture of https://docs.ethers.org/v5/[ethers.js], so if you are familiar with ethers, you should find Starknet.js easy to work with.
+Starknet.js 是一个 JavaScript/TypeScript 库，旨在将您的网站或去中心化应用程序 (D-App) 连接到 Starknet。它旨在模仿 https://docs.ethers.org/v5/[ethers.js] 的架构，因此如果您熟悉 ethers.js，您应该会发现 Starknet.js 易于使用。
 
 image::starknet-js.png[starknet-js]
 
-== Installation
+== 安装
 
-To install Starknet.js, follow these steps:
+要安装 Starknet.js，请按照下列步骤操作：
 
-* For the latest official release (main branch):
+* 对于最新的官方版本（主分支）：
 
 [source, bash]
 ----
 npm install starknet
 ----
 
-* To use the latest features (merges in develop branch):
+* 要使用最新功能（合并到 develop 分支中）：
 
 [source, bash]
 ----
 npm install starknet@next
 ----
 
-== Getting Started
+== 开始
 
-To build an app that users are able to connect to and interact with Starknet, we recommend adding the https://github.com/starknet-io/get-starknet[get-starknet] library, which allows you to manage wallet connections. 
+要构建用户能够连接到 Starknet 并与之交互的应用程序，我们建议添加 https://github.com/starknet-io/get-starknet[get-starknet] 库，它允许您管理钱包连接。
 
-With these tools ready, there are basically 3 main concepts to know on the frontend: Account, Provider, and Contracts.
+准备好这些工具后，前端基本上需要了解 3 个主要概念：帐户、提供商和合约。
 
-### Account
-We can generally think of the account as the "end user" of a dapp, and some user interaction will be involved to gain access to it. 
+### 账户
+我们通常可以将帐户视为 dapp 的 “最终用户”，并且会涉及一些用户交互以获取对它的访问权限。
 
-Think of a dapp where the user connects their browser extension wallet (such as ArgentX or Braavos) - if the user accepts the connection, that gives us access to the account and signer, which can sign transactions and messages.
+想一想用户连接他们的浏览器扩展钱包（例如 ArgentX 或 Braavos）的 dapp ——如果用户接受连接，我们就可以访问帐户和签名者，后者可以签署交易和消息。
 
-Unlike Ethereum, where user accounts are Externally Owned Accounts, Starknet **accounts are contracts**. This might not necessarily impact your dapp's frontend, but you should definitely be aware of this difference.
+与以太坊不同，用户账户是外部拥有的账户，Starknet 账户是合约。这不一定会影响你的 dapp 的前端，但你绝对应该意识到这种差异。
 
 ```ts
 async function connectWallet() {
@@ -46,12 +46,12 @@ async function connectWallet() {
     const message = await starknet.account.signMessage(...)
 }
 ```
-The snippet above uses the `connect` function provided by `get-starknet` to establish a connection to the user wallet. Once connected, we are able to access account methods, such as `signMessage` or `execute`.
+上面的代码片段使用了 `get-starknet` 提供的连接功能来建立与用户钱包的连接。连接后，我们就可以访问帐户方法，例如 `signMessage` 或 `execute` 。
 
-### Provider
-The provider allows you to interact with the Starknet network. You can think of it as a "read" connection to the blockchain, as it doesn't allow signing transactions or messages. Just like in Ethereum, you can use a default provider, or use services such as Infura or Alchemy, both of which support Starknet, to create an RPC provider.
+### 提供商
+该提供商允许您与 Starknet 网络进行交互。您可以将其视为与区块链的“读取”连接，因为它不允许签署交易或消息。就像在以太坊中一样，您可以使用默认提供程序，或使用 Infura 或 Alchemy 等服务（它们都支持 Starknet）来创建 RPC 提供程序。
 
-By default, the Provider is a sequencer provider.
+默认情况下，提供者是排序器提供者。
 
 ```ts
 export const provider = new Provider({
@@ -67,8 +67,8 @@ const block = await provider.getBlock("latest"); // <- Get latest block
 console.log(block.block_number);
 ```
 
-### Contracts
-Your frontend will likely be interacting with deployed contracts. For each contract, there should be a counterpart on the frontend. To create these instances, you will need the contract's address and ABI, and either a provider or signer. 
+### 合约
+您的前端可能会与已部署的合约进行交互。对于每个合约，前端都应该有一个对应的副本。要创建这些实例，您需要合约的地址和 ABI，以及提供者或签名者。
 
 ```ts
 const contract = new Contract(
@@ -84,7 +84,7 @@ const transfer = await contract.transfer(recipientAddress, amountFormatted);
 console.log(`Tx hash: ${transfer.transaction_hash}`);
 ```
 
-If you create a contract instance with a provider, you'll be limited to calling read functions on the contract - only with a signer can you change the state of the blockchain. However, you are able to connect a previously created `Contract` instance with a new account:
+如果您使用提供者创建合同实例，您将仅限于调用合同上的读取函数——只有使用签名者才能更改区块链的状态。但是，您可以将之前创建的  `Contract`  实例连接到新帐户：
 
 ```ts
 const contract = new Contract(
@@ -95,12 +95,12 @@ const contract = new Contract(
 
 contract.connect(starknet.account);
 ```
-In the snippet above, after calling the `connect` method, it would be possible to call read functions on the contract, but not before.
+在上面的代码片段中，在调用 `connect` 方法之后，可以调用合约上的读取函数，但调用 connect 之前则不能。
 
-## Units
-If you have previous experience with web3, you know dealing with units requires care, and Starknet is no exception. Once again, the docs are very useful here, in particular https://www.starknetjs.com/docs/guides/define_call_message/[this section on data transformation].
+## 单位
+如果你以前有过 web3 的经验，你就会知道处理单元需要小心，Starknet 也不例外。再申明，文档在这里非常有用，尤其是关于 https://www.starknetjs.com/docs/guides/define_call_message/[数据转换] 的这一部分。
 
-Very often you will need to convert Cairo structs (such as Uint256) that are returned from contracts into numbers:
+很多时候，您需要将从合约返回的 Cairo 结构（例如 Uint256）转换为数字：
 
 ```ts
 // Uint256 shape:
@@ -114,7 +114,7 @@ const balance = await contract.balanceOf(address); // <- uint256
 const asBN = uint256.uint256ToBN(uint256); // <- uint256 into BN
 const asString = asBN.toString() //<- BN into string
 ```
-And vice versa:
+反之亦然：
 
 ```ts
 const amount = 1;
@@ -125,26 +125,27 @@ const amountFormatted = {
 };
 ```
 
-There are other helpful utils, besides `bnToUint256` and `uint256ToBN`, provided by Starknet.js.
+除了  `bnToUint256`  和  `uint256ToBN`  之外，还有其他有用的实用程序也是由 Starknet.js 提供。
 
-We now have a solid foundation to build a Starknet dapp. However, there are framework specific tools that help us build Starknet dapps, which are covered in chaper 5.
+我们现在有了构建 Starknet dapp 的坚实基础。此外，还有一些专门的框架工具可以帮助我们构建 Starknet dapps，这在第 5 章中有所介绍。
 
 
 
-== Additional Resources
+== 其他资源
 
-- Starknet.js GitHub Repository: https://github.com/0xs34n/starknet.js
-- Official Starknet.js Website and documentation: https://www.starknetjs.com/
+- Starknet.js GitHub 存储库：https://github.com/0xs34n/starknet.js
+- Starknet.js 官方网站和文档：https://www.starknetjs.com/
 
-Stay tuned for more updates on Starknet.js, including detailed guides, examples, and comprehensive documentation.
+请继续关注 Starknet.js 的更多更新，包括详细的指南、示例和全面的文档。
 
-[NOTE]
-====
-The Book is a community-driven effort created for the community.
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
-====
+
+💡 附注
+
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
+
+- 无论你是否有所收获，烦请 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[填写此问卷]，简单回答三个问题，给予我们反馈。
+- 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单 (Issues)]。
 
 == Contributing
 
@@ -156,3 +157,15 @@ StarknetBook is a work in progress, and your passion, expertise, and unique insi
 
 Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
 ____
+
+== **贡献力量**
+
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的[指南](https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc)并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
+
+— Starknet 社区
