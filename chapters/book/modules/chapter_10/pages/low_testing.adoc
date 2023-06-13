@@ -89,34 +89,34 @@ image::low1.png[low1]
 | F
 | >2¹²⁸)，出错的概率可以忽略不计。
 
-The situation, however, is not this simple. The reason is that, as we explained, we cannot literally check that h is a polynomial of degree less than d. Instead we only can check that h is close to such a polynomial. This means that the analysis above is not accurate. Is it possible that f will be far from a low degree polynomial and the linear combination h will be close to one with a non-negligible probability over 𝛼? Under mild conditions the answer is no (which is what we want), but it is outside the scope for this post; we refer the interested reader to https://acmccs.github.io/papers/p2087-amesA.pdf[this paper] and https://eccc.weizmann.ac.il/report/2017/134/[this paper].
+然而，情况并没有这么简单。原因是，正如我们所解释的，我们无法从字面上检查 h 是度数小于 d 的多项式。相反，我们只能检查 h 是否接近这样的多项式。这意味着上面的分析是不准确的。是否有可能 f 远离低度多项式，而线性组合 h 以不可忽略的概率接近于𝛼？在温和的条件下，答案是否定的（这是我们想要的），但这超出了本文的范围；我们建议有兴趣的读者阅读 https://acmccs.github.io/papers/p2087-amesA.pdf[这篇文章] 和 https://eccc.weizmann.ac.il/report/2017/134/[这篇文章].
 
-Moreover, how does the verifier know that the polynomial h sent by the prover has the form f(x)+𝛼 g(x)? A malicious prover may cheat by sending a polynomial which is indeed of low degree, but is different from the linear combination that the verifier asked for. If we already know that h is close to a low degree polynomial, then testing that this low degree polynomial has the correct form is straightforward: the verifier samples a location z in L at random, queries f, g, h at z, and checks that the equation h(z)=f(z)+𝛼 g(z) holds. This test should be repeated multiple times to increase accuracy of the test, but the error shrinks exponentially with the number of samples we make. Hence this step increases the number of queries (which so far was d+1) only by a smaller-order term.
+此外，验证者如何知道证明器发送的多项式 h 具有 f(x)𝛼 g(x) 的形式？恶意证明器可能会发送一个确实是低度但与验证者要求的线性组合不同的多项式来作弊。如果我们已经知道 h 接近于一个低度多项式，那么测试这个低度多项式是否具有正确的形式就很简单了：验证者在 L 中随机抽取一个位置 z，查询 z 处的 f、g、h，并检查方程 h(z)=f(z)𝛼 g(z) 成立。该测试应重复多次，以提高测试的准确性，但误差会随着我们制作的样本数量的增加而呈指数级减少。因此，此步骤仅通过较小的阶项增加了查询的数量（到目前为止是 d+1）。
 
-== Splitting a polynomial into two smaller-degree polynomials
+== 将一个多项式拆分为两个小度数的多项式
 
-We saw that, with the prover's help, we can test that two polynomials are of degree less than d with less than 2*(d+1) queries. We now describe how we can turn one polynomial of degree less than d into two polynomials of degree less than d/2.
+我们看到，在证明器的帮助下，我们可以通过少于 2*(d+1) 次查询来测试两个多项式的度数是否小于 d。我们现在描述如何将一个度数小于 d 的多项式变成两个度数小于 d/2 的多项式。
 
-Let f(x) be a polynomial of degree less than d and assume that d is even (in our setting this comes without loss of generality). We can write f(x)=g(x²)+xh(x²) for two polynomials g(x) and h(x) of degree less than d/2. Indeed, we can let g(x) be the polynomial obtained from the even coefficients of f(x), and h(x) be the polynomial obtained from the odd coefficients of f(x). For example, if d=6 we can write
+设 f(x) 是度数小于 d 的多项式，并假设 d 是偶数（在我们的设置中，这是不失一般性）。对于度数小于 d/2 的两个多项式 g(x) 和 h(x)，我们可以写成 f(x)=g(x²)+xh(x²)。事实上，我们可以让 g(x) 成为从 f(x) 的偶数系数得到的多项式，而 h(x) 成为从 f(x) 的奇数系数得到的多项式。例如，如果 d=6 我们可以写成
 
 image::smallerPol1.png[smallerPol1]
 
-which means that
+这意味着
 
 image::smallerPol2.png[smallerPol2]
 
-and
+以及
 
 image::smallerPol3.png[smallerPol3]
 
-which is an n*log(n) algorithm for polynomial evaluation (improving over the naive n2 algorithm).
+这是用于多项式评估的 n*log(n) 算法（改进了朴素的 n2 算法）。
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing
