@@ -55,40 +55,39 @@ image::low1.png[low1]
 
 我们要争论的是，如果$f$与任何度数小于 $d$ 的函数相差 $δ$，会发生什么情况（例如，考虑 $δ=10%$。）我们现在要争论的是，在这种情况下，直接测试以至少 δ 的概率拒绝。事实上，设 𝞵 是随机选择 w，则 $h(w)≠f(w)$。我们观察到 $𝞵$ 必须至少为 δ。可选的：这是因为如果我们假设 𝞵 小于 δ，那么我们推断 f 是 δ 接近 h，这与我们假设 f 是 δ 远离任何小于 d 的函数的假设相矛盾。
 
-== The Direct Test Does Not Suffice For Us
+== 直接测试对我们来说并不够
 
-In our setting we are interested in testing functions f:L➝F that encode computation traces, and hence whose degree d (and domain L) are quite large. Merely running the direct test, which makes d+1 queries, would be too expensive. In order to gain the exponential savings of STARK (in verification time compared to the size of the computation trace), we need to solve this problem with only O(log d) queries, which is exponentially less than the degree bound d.
+在我们的设置中，我们对测试编码计算轨迹的函数 f:L➝F 感兴趣，因此其度数 d（和域 L）非常大。仅运行直接测试，即进行 d+1 次查询的成本太高。为了获得 STARK 的指数级节省（与计算轨迹的大小相比，验证时间），我们需要仅使用 O(log d) 个查询来解决这个问题，这比受限度数 d 要少的多。
 
-This, unfortunately, is impossible because if we query f at less than d+1 locations then we cannot conclude anything.
+不幸的是，这是不可能的，因为如果我们在少于 d+1 个位置查询 f，那么我们无法得出任何结论。
 
-Optional: One way to see this is to consider two different distributions of functions f:L➝F. In one distribution we uniformly pick a polynomial of degree exactly d and evaluate it on L. In the other distribution we uniformly pick a polynomial of degree less than d and evaluate it on L. In both cases, for any d locations z1,z2,...,zd, the values f(z1),f(z2),...,f(zd) are uniformly and independently distributed. (We leave this fact as an exercise for the reader.) This implies that information-theoretically we cannot tell these two cases apart, even though a test would be required to (since polynomials from the first distribution should be accepted by the test while those of degree exactly d are very far from all polynomials of degree less than d, and thus should be rejected).
+可选的：查看此问题的一种方法是考虑函数 f:L➝F 的两种不同分布。在一个分布中，我们统一选择一个度数恰好为 d 的多项式并在 L 上对其进行评估。在另一个分布中，我们统一选择一个度数小于 d 的多项式并在 L 上对其进行评估。在这两种情况下，对于任何 d 位置 z1，z2， ...,zd，值 f(z1),f(z2),...,f(zd) 都均匀且独立分布。 （我们将这个事实留给读者作为练习。）这意味着从信息理论上讲，我们无法区分这两种情况，即使测试需要这样做（因为来自第一个分布的多项式应该被测试接受，而那些度数正好为 d 的多项式与所有度数小于 d 的多项式相去甚远，因此应该被拒绝）。
 
-We seem to have a difficult challenge to overcome.
+我们似乎有一个艰难的挑战需要克服。
 
-== A Prover Comes to the Rescue
+== 让证明器来解救
 
-We have seen that we need d+1 queries to test that a function f:L➝F is close to a polynomial of degree less than d, but we cannot afford this many queries. We avoid this limitation by considering a slightly different setting, which suffices for us. Namely, we consider the problem of low degree testing when a prover is available to supply useful auxiliary information about the function f. We will see that in this "`prover-aided`" setting of low-degree testing we can achieve an exponential improvement in the number of queries, to O(log d).
+我们已经看到，我们需要 d+1 个查询来测试函数 f:L➝F 是否接近度数小于 d 的多项式，但我们负担不起这么多查询。我们通过考虑稍微不同的设置来避免这种限制，这对我们来说已经足够了。即，当证明器可提供有关函数 f 的有用辅助信息时，我们考虑低度测试问题。我们将看到，在这种低度测试的“证明器辅助”设置中，我们可以实现查询数量的指数级改进，达到 O(log d)。
 
-In more detail, we consider a protocol conducted between a prover and a verifier, wherein the (untrusted) prover tries to convince the verifier that the function is of low degree. On the one hand, the prover knows the entire function f being tested. On the other hand, the verifier can query the function f at a small number of locations, and is willing to receive help from the prover, but does NOT trust the prover to be honest. This means that the prover may cheat and not follow the protocol. However, if the prover does cheat, the verifier has the liberty to "`reject`", regardless of whether the function f is of low degree or not. The important point here is that the verifier will not be convinced that f is of low degree unless this is true.
+更详细地说，我们考虑在证明器和验证者之间执行的协议，其中（不受信任的）证明器试图说服验证者相信该函数是低度的。一方面，证明器知道被测试的整个函数 f。另一方面，验证者可以在少数位置查询函数 f，并愿意接受证明器的帮助，但不相信证明器是诚实的。这意味着证明器可能会作弊并且不遵守协议。但是，如果证明器确实作弊，则无论函数 f 是否为低度，验证者都有权“拒绝”。这里的重点是验证者不会相信 f 是低度的，除非这是真的。
 
-Note that the direct test described above is simply the special case of a protocol in which the prover does nothing, and the verifier tests the function unassisted. To do better than the direct test we will need to leverage the help of the prover in some meaningful way.
+请注意，上面描述的直接测试只是协议的一个特例，在这个特例中，证明器什么都不做，而验证者独立测试功能。为了比直接测试做得更好，我们需要以某种有意义的方式利用证明器的帮助。
 
-Throughout the protocol the prover will want to enable the verifier to query auxiliary functions on locations of the verifier's choice. This can be achieved via commitments, a mechanism that we will discuss in a future blog post. For now it suffices to say that the prover can commit to a function of its choice via a Merkle tree, and subsequently the verifier can request the prover to reveal any set of locations of the committed function. The main property of this commitment mechanism is that once the prover commits to a function, it must reveal the correct values and cannot cheat (for example, it cannot decide what the values of the function are after seeing the requests from the verifier).
+在整个协议中，证明器将希望使验证者能够在验证者选择的位置上查询辅助功能。这可以通过承诺来实现，我们将在以后的文章中讨论这个机制。现在我们只需要说明，证明器可以通过 Merkle 树提交其选择的函数就足够了，随后验证者可以请求证明器揭示提交函数的任何位置集。这种承诺机制的主要特性是，一旦证明器承诺了一个函数，它必须揭示正确的值，并且不能作弊（例如，它不能在看到验证者的请求后决定函数的值是什么）。
 
-== Halving the number of queries for the case of two polynomials
+== 在处理两个多项式的情况下，查询次数减半
 
-Let's start with a simple example that illustrates how a prover can help to reduce the number of queries by a factor of 2. We will later build on this example. Suppose that we have two polynomials f and g and we want to test that they are both of degree less than d. If we simply run the direct test individually on f and g then we would need to make 2 * (d + 1) queries. Below we describe how with the help of a prover we can reduce the number of queries to (d + 1) plus a smaller-order term.
+让我们从一个简单的例子开始，该例子说明证明器如何帮助将查询数量减少 2 倍。我们稍后将在此例子的基础上进行构建。假设我们有两个多项式 f 和 g，我们想测试它们的度数是否都小于 d。如果我们简单地对 f 和 g 单独运行直接测试，那么我们将需要进行 2 * (d + 1) 次查询。下面我们将介绍如何在证明器的帮助下，将查询的数量减少到 (d + 1) 加上一个更小阶的项。
 
-First, the verifier samples a random value 𝛼 from the field and sends it to the prover. Next, the prover replies by committing to the evaluation on the domain L (recall that L is the domain of the function f) of the polynomial h(x) = f(x) + 𝛼 g(x) (in other words, the prover will compute and send the root of a Merkle tree whose leaves are the values of h on L). The verifier now tests that h has degree less than d, via the direct test, which requires d+1 queries.
+首先，验证者从域中随机选择一个值 𝛼，并将其发送给证明器。接下来，证明器通过承诺在域 L 上评估对多项式 h(x) = f(x) + 𝛼 g(x)（换句话说，证明器将计算并发送 Merkle 树的根，其叶子是 L 上 h 的值）。验证者现在通过直接测试测试 h 的度数是否小于 d，这需要 d+1 次查询。
 
 [cols=5*]
 |===
-| Intuitively, if f or g has degree at least d, then with high probability so does h. For example, consider the case where the coefficient of xⁿ in f is not zero for some n≥d. Then, there is at most one choice of 𝛼 (sent by the verifier) for which the coefficient of xⁿ in h is zero, which means that the probability that h has degree less than d is roughly 1/
+| 直观地说，如果 f 或 g 的度数至少为 d，那么 h 的度数很可能也是如此。例如，考虑 f 中 xⁿ 的系数对于某些 n≥d 不为零的情况。那么，至多有一个𝛼（由验证者发送）的选择，其中 xⁿ 在 h 中的系数为零，这意味着 h 的度数小于 d 的概率大致为1/
 | F
-| . If the field is large enough (say,
+| 。如果域足够大（例如，
 | F
-| >2¹²⁸), the probability of error is negligible.
-|===
+| >2¹²⁸)，出错的概率可以忽略不计。
 
 The situation, however, is not this simple. The reason is that, as we explained, we cannot literally check that h is a polynomial of degree less than d. Instead we only can check that h is close to such a polynomial. This means that the analysis above is not accurate. Is it possible that f will be far from a low degree polynomial and the linear combination h will be close to one with a non-negligible probability over 𝛼? Under mild conditions the answer is no (which is what we want), but it is outside the scope for this post; we refer the interested reader to https://acmccs.github.io/papers/p2087-amesA.pdf[this paper] and https://eccc.weizmann.ac.il/report/2017/134/[this paper].
 
