@@ -1,77 +1,77 @@
-= Running a Starknet Node
+= 运行一个Starknet节点
 
-This chapter will guide you through setting up and running a Starknet node, illustrating the layered tech stack concept, and explaining how to operate these protocols locally. Starknet, as a Layer 2 Validity Rollup, operates on top of Ethereum Layer 1, creating a protocol stack that each addresses different functionalities, similar to the OSI model for internet connections. This chapter is an edit of https://medium.com/starknet-edu/the-starknet-stack-7b0d70a7e1d4[drspacemn]'s blog.
+本章将指导您设置和运行 Starknet 节点，阐述分层技术堆栈的概念，并解释如何在本地环境操作这些协议。Starknet 作为运行在以太坊 Layer 1 之上的 Layer 2 （有效汇总层），创建了一个协议堆栈，每个协议解决不同的功能，类似于互联网连接的 OSI 模型。本章是 https://medium.com/starknet-edu/the-starknet-stack-7b0d70a7e1d4[drspacemn] 的博客的编辑版本。
 
 ====
-CONTRIBUTE: This guide shows how to run a Starknet node locally with a particular setup. You can contribute to this guide by adding more options for hardware and software, as well as other ways to run a Starknet nod (for example using https://github.com/keep-starknet-strange/beerus[Beerus]). You can also contribute by adding more information about the Starknet stack and the different layers. Feel free to https://github.com/starknet-edu/starknetbook[open a PR].
+贡献：本指南展示了如何使用特定设置在本地运行 Starknet 节点。您可以添加更多硬件和软件的选项来贡献此指南，就像其他运行 Starknet 节点的方式（例如使用 https://github.com/keep-starknet-strange/beerus[Beerus]）。您还可以通过添加有关Starknet 堆栈和其他协议层的信息的方式做出贡献。欢迎 https://github.com/starknet-edu/starknetbook[提交 PR].
 ====
 
-== What is a Node in the Context of Ethereum and Blockchain?
+== 在以太坊或者区块链的生态中，节点是什么？
 
-In the context of Ethereum and blockchain, a node is an integral part of the network that validates and relays transactions. Nodes download a copy of the entire blockchain and are interconnected with other nodes to maintain and update the blockchain state. There are different types of nodes, such as full nodes, light nodes, and mining nodes, each having different roles and responsibilities within the network.
+在以太坊和区块链的生态中，节点是网络的重要组成部分，用于验证和中继交易。节点下载整个区块链的副本，并与其他节点相互连接以维护和更新区块链状态。有不同类型的节点，如全节点、轻节点和挖矿节点，每种类型的节点在网络中扮演不同的角色和职责。
 
-== Overview of Starknet Technology
+== Starknet 技术概述
 
-Starknet is a permissionless, zk-STARK-based Layer-2 network, aiming for full decentralization. It enables developers to build scalable decentralized applications (dApps) and utilizes Ethereum's Layer 1 for proof verification and data availability. Key aspects of Starknet include:
+Starknet 是一个基于 zk-STARK 的 Layer-2 网络，旨在实现完全去中心化的无权限控制。它使开发人员能够构建可扩展的去中心化应用程序 (dApp)，并利用以太坊的 Layer 1 进行验证证明和数据可用性。Starknet 的关键特征包括：
 
-* *Cairo execution environment*: Cairo, the execution environment of Starknet, facilitates writing and execution of complex smart contracts.
-* *Scalability*: Starknet achieves scalability through zk-STARK proofs, minimizing the data needed to be posted on-chain.
-* *Node network*: The Starknet network comprises nodes that synchronize and process transactions, contributing to the network's overall security and decentralization.
+* *Cairo 执行环境*：Cairo 是 Starknet 的执行环境，方便编写和执行复杂的智能合约。
+* *可扩展性*：Starknet 通过 zk-STARK 证明实现可扩展性，最大程度地减少需要在链上发布的数据。
+* *节点网络*：Starknet 网络由节点组成，这些节点同步和处理交易，有助于网络的整体安全性和去中心化。
 
-== Starknet Stack
+== Starknet 堆栈结构
 
-The Starknet stack can be divided into various layers, similar to OSI or TCP/IP models. The most appropriate model depends on your understanding and requirements. A simplified version of the modular blockchain stack might look like this:
+Starknet 堆栈可以分为各种层，类似于 OSI 或 TCP/IP 模型。最适合的模型取决于您掌握的知识和对模型的要求。模块化区块链堆栈的简化版本可能是这样的：
 
-- Layer 1: Data Layer
-- Layer 2: Execution Layer
-- Layer 3: Application Layer
-- Layer 4: Transport Layer
+- 第 1 层：数据层
+- 第 2 层：执行层
+- 第 3 层：应用层
+- 第 4 层：传输层
 
 image::node1.png[node1]
 
-== Setup
+== 安装
 
-There are various hardware specifications, including packaged options, that will enable you to run an Ethereum node from home. The goal here is to build the most cost-efficient Starknet stack possible (https://github.com/rocket-pool/docs.rocketpool.net/blob/main/src/guides/node/local/hardware.md[see here more options]).
+有各种硬件规格和套餐可供选择，可以让您在家里运行以太坊节点。这里的目标是构建最具成本效益的Starknet堆栈（ https://github.com/rocket-pool/docs.rocketpool.net/blob/main/src/guides/node/local/hardware.md[请参见此处获取更多选择] ）。
 
-*Minimum Requirements:*
+*最低硬件要求：*
 
-- CPU: 2+ cores
-- RAM: 4 GB
-- Disk: 600 GB
-- Connection Speed: 8 mbps/sec
+- CPU： 2+ 内核
+- 内存： 4 GB
+- 磁盘： 600 GB
+- 连接速度： 8 mbps/sec
 
-*Recommended Specifications:*
+*建议的硬件规格：*
 
-- CPU: 4+ cores
-- RAM: 16 GB+
-- Disk 2 TB
-- Connection Speed: 25+ mbps/sec
+- CPU： 4+ cores
+- 内存： 16 GB+
+- 磁盘： 2 TB
+- 连接速度： 25+ mbps/sec
 
-*You can refer to these links for the hardware:*
+*您可以参考以下链接获取硬件信息：*
 
 - https://a.co/d/iAWpTzQ[CPU] — $193
-- https://a.co/d/cTUk9Kd[Board] (can attempt w/ Raspberry Pi) — $110
-- https://a.co/d/0US61Y5[Disk] — $100
-- https://a.co/d/br867sk[RAM] — $60
-- https://a.co/d/2k3Gn40[PSU] — $40
-- https://a.co/d/apCBGwF[Case] — $50
+- https://a.co/d/cTUk9Kd[主板] (也可以尝试使用树莓派) — $110
+- https://a.co/d/0US61Y5[磁盘] — $100
+- https://a.co/d/br867sk[内存] — $60
+- https://a.co/d/2k3Gn40[电源] — $40
+- https://a.co/d/apCBGwF[机箱] — $50
 
-Total — $553
+总计 — $553
 
-Recommended operating system and software: Ubuntu LTS, https://docs.docker.com/engine/install/ubuntu[Docker], and https://docs.docker.com/compose/install/linux[Docker Compose]. Ensure you have the necessary tools installed with:
+推荐的操作系统和软件： Ubuntu LTS， https://docs.docker.com/engine/install/ubuntu[Docker] 和 https://docs.docker.com/compose/install/linux[Docker Compose]。请确保您已经安装了必要的工具：
 
 [source,bash]
 ----
 sudo apt install -y jq curl net-tools
 ----
 
-== Layer 1: Data Layer
+== 第一层：数据层
 
-The bottom-most layer of the stack is the data layer. Here, Starknet's L2 leverages Ethereum's L1 for proof verification and data availability. Starknet utilizes Ethereum as its L1, so the first step is setting up an Ethereum Full Node. As this is the data layer, the hardware bottleneck is usually the disk storage. It's crucial to have a high capacity I/O SSD over an HDD because Ethereum Nodes require both an Execution Client and a Consensus Client for communication.
+堆栈的最底层是数据层。在这里，Starknet 的 L2 利用以太坊的 L1 进行验证证明和数据可用性。Starknet 利用以太坊作为其 L1，因此第一步是设置以太坊全节点。由于这是数据层，硬件瓶颈通常是磁盘存储。使用支持高性能 I/O 的 SSD 而不是 HDD 是至关重要的，因为以太坊节点需要一个 Execution 客户端和一个 Consensus 客户端进行通信。
 
-Ethereum provides several options for Execution and Consensus clients. Execution clients include Geth, Erigon, Besu (used here), Nethermind, and Akula. Consensus clients include Prysm, Lighthouse (used here), Lodestar, Nimbus, and Teku.
+以太坊提供了几种 Execution 和 Consensus 客户端选项。Execution 客户端包括 Geth、Erigon、Besu（在本文档使用）、Nethermind 和 Akula。Consensus 客户端包括 Prysm、Lighthouse（在本文档使用）、Lodestar、Nimbus 和 Teku。
 
-Your Besu/Lighthouse node will take approximately 600 GB of disk space. Navigate to a partition on your machine with sufficient capacity and run the following commands:
+您的 Besu/Lighthouse 节点将占用约 600 GB 的磁盘空间。转到具有足够容量的计算机分区并运行以下命令：
 
 [source,bash]
 ----
@@ -80,7 +80,7 @@ cd starknet-stack
 docker compose -f dc-l1.yaml up -d 
 ----
 
-This will begin the fairly long process of spinning up our Consensus Client, Execution Client, and syncing them to the current state of the Goerli Testnet. If you would like to see the logs from either process you can run:
+这将开始启动我们的 Consensus 客户端、Execution 客户端，并将它们同步到当前 Goerli 测试网络的状态，这个过程可能会相当长。如果您想查看任一进程的日志，可以运行以下命令：
 
 [source,bash]
 ----
@@ -91,7 +91,7 @@ docker container logs -f $(docker ps | grep besu | awk '{print $1}')
 docker container logs -f $(docker ps | grep lighthouse | awk '{print $1}')
 ----
 
-Lets make sure that everything that should be listening is listening:
+让我们确保所有应该在监听的进程都在监听：
 
 [source,bash]
 ----
@@ -105,7 +105,7 @@ sudo netstat -lpnut | grep -E '5054|9000'
 [source,bash]
 ----
 
-We’ve used docker to abscract a lot of the nuance of running a Eth L1 node, but the important things to note are how the two processes EL/CL point to each other and communicate via JSON-RPC:
+我们使用 Docker 来抽象化运行 Eth L1 节点的许多细节，但需要注意的重要事项是  Consensus 客户端/Execution 客户端 两个进程如何相互指向，并通过 JSON-RPC 进行通信：
 
 [source,bash]
 ----
@@ -144,15 +144,15 @@ services:
       - --engine-jwt-secret=/var/lib/besu/secret/jwt.hex
 ----
 
-Once this is done, your Ethereum node should be up and running, and it will start syncing with the Ethereum network.
+完成这些步骤后，您的以太坊节点应该已经启动并运行，并开始与以太坊网络同步。
 
-== Layer 2: Execution Layer
+== 第二层：执行层
 
-The next layer in our Starknet stack is the Execution Layer. This layer is responsible for running the Cairo VM, which executes Starknet smart contracts. The Cairo VM is a deterministic virtual machine that allows developers to write complex smart contracts in the Cairo language. Starknet uses a similar https://github.com/starkware-libs/starknet-specs[JSON-RPC spec] as https://ethereum.org/en/developers/docs/apis/json-rpc[Ethereum] in order to interact with the execution layer. 
+Starknet 堆栈中的下一层是执行层。这一层负责运行 Cairo VM，该虚拟机执行 Starknet 智能合约。Cairo VM 是一种确定性的虚拟机，允许开发人员使用 Cairo 语言编写复杂的智能合约。Starknet 使用类似于 https://ethereum.org/en/developers/docs/apis/json-rpc[以太坊] 的 https://github.com/starkware-libs/starknet-specs[JSON-RPC 规范] 与执行层进行交互。 
 
-In order to stay current with the propagation of the Starknet blockchain we need a client similar to Besu that we are using for L1. The efforts to provide full nodes for the Starknet ecosystem are: https://github.com/eqlabs/pathfinder[Pathfinder] (used here), https://github.com/starkware-libs/papyrus[Papyrus], and https://github.com/NethermindEth/juno[Juno]. However, different implementations are still in development and not yet ready for production.
+为了跟上 Starknet 区块链的最新数据，我们需要一个类似于用于 L1 的 Besu 的客户端。为 Starknet 生态系统提供全节点的贡献方包括： https://github.com/eqlabs/pathfinder[Pathfinder] （本次文档使用的）， https://github.com/starkware-libs/papyrus[Papyrus] 和 https://github.com/NethermindEth/juno[Juno]。然而，其他不同的实现仍在开发中，尚未准备好用于生产环境。
 
-Check that your L1 has completed its sync:
+检查您的L1是否已完成同步：
 
 [source,bash]
 ----
@@ -168,7 +168,7 @@ curl --location --request POST 'http://localhost:8545' \
 }'
 ----
 
-Start your L2 Execution Client and note that we are syncing Starknet’s state from our LOCAL ETH L1 NODE!
+启动您的L2执行客户端，并注意我们正在从本地ETH L1节点同步Starknet的状态！
 
 [note]
 ====
@@ -181,14 +181,14 @@ PATHFINDER_ETHEREUM_API_URL=http://127.0.0.1:8545
 docker compose -f dc-l2.yaml up -d
 ----
 
-To follow the sync:
+获取 Pathfinder 节点的日志输出，用以跟踪同步状态：
 
 [source,bash]
 ----
 docker container logs -f $(docker ps | grep pathfinder | awk '{print $1}')
 ----
 
-Starknet Testnet_1 currently comprises ~600,000 blocks so this will take some time to sync fully. To check L2 sync:
+Starknet Testnet_1 目前包含约 600,000 个区块，因此完全同步需要一些时间。要检查L2同步状态，请执行以下操作：
 
 [source,bash]
 ----
@@ -204,35 +204,35 @@ curl --location --request POST 'http://localhost:9545' \
 }'
 ----
 
-To check data sizes:
+检查数据大小：
 
 [source,bash]
 ----
 sudo du -sh ./* | sort -rh
 ----
 
-== Layer 3: Application Layer
+== 第三层：应用层
 
-We see the same need for data refinement as we did in the OSI model. On L1 packets come over the wire in a raw stream of bytes and are then processed and filtered by higher-level protocols. When designing a decentralized application Bob will need to be cognizant of interactions with his contract on chain, but doesn’t need to be aware of all the information occurring on Starknet.
+我们在 OSI 模型中看到了数据精炼的同样需求。在 L1 上，数据包以原始字节流的形式通过线路传输，然后通过更高级别的协议进行处理和过滤。在设计分布式应用程序时，Bob 需要知道与其合约在链上的交互，但不需要了解在 Starknet 上发生的所有信息。
 
-This is the role of an indexer. To process and filter useful information for an application. Information that an application MUST be opinionated about and the underlying layer MUST NOT be opinionated about.
+这就是索引器的作用。它们为应用程序处理和过滤有用信息。这些信息是应用程序必须有特定作用的信息，而基础层必须保持通用性。
 
-Indexers provide applications flexibility as they can be written in any programming language and have any data layout that suites the application.
+索引器为应用程序提供了灵活性，因为它们可以使用任何编程语言编写，并具有适合应用程序的任何数据布局。
 
-To start our toy https://github.com/starknet-edu/starknet-stack/blob/main/indexer/indexer.sh[indexer] run:
+开始运行我们的模拟 https://github.com/starknet-edu/starknet-stack/blob/main/indexer/indexer.sh[索引器] ：
 
 [source,bash]
 ----
 ./indexer/indexer.sh
 ----
 
-Again notice that we don’t need to leave our local setup for these interactions (http://localhost:9545).    
+再次注意，我们不需要为了进行这些交互而离开本地设置（http://localhost:9545）。  
 
-== Layer 4: Transport Layer
+== 第四层：传输层
 
-The transport layer comes into play when the application has parsed and indexed critical information, often leading to some state change based on this information. This is where the application communicates the desired state change to the Layer 2 sequencer to get that change into a block. This is achieved using the same full-node/RPC spec implementation, in our case, Pathfinder.
+当应用程序解析和索引关键信息时，传输层开始发挥作用，通常会基于此信息导致某些状态更改。这是应用程序向 Layer 2 排序器通信，用以将状态更改写入到区块的地方。这是通过使用相同的全节点和 RPC 规范实现的，就像我们本次文档使用的 Pathfinder。
 
-When working with our local Starknet stack, invoking a transaction locally might look like this:
+在使用我们的本地Starknet堆栈时，本地调用交易可能如下所示：
 
 [source,bash]
 ----
@@ -268,18 +268,18 @@ curl --location --request POST 'http://localhost:9545' \
 }'
 ----
 
-However, this process involves setting up a local wallet and signing the transaction. For simplicity, we will use a browser wallet and StarkScan.
+然而，这个过程涉及设置本地钱包并签署交易。为了简单起见，我们将使用浏览器钱包和StarkScan。
 
-Steps:
+步骤如下：
 
-. Navigate to the contract on StarkScan and connect to your wallet.
-. Enter a new value and write the transaction:
+. 在 StarkScan 上导航到合约，并连接钱包。
+. 输入一个新值并发起交易：
 
 image::node2.png[node2]
 
-Once the transaction is accepted on the Layer 2 execution layer, the event data should come through our application layer indexer.
+一旦这笔交易被 Layer 2 的执行层所接受，对应的事件数据应该会来到我们的应用程序层索引器。
 
-Example Indexer Output:
+索引器输出的示例：
 
 [source,bash]
 ----
@@ -321,39 +321,40 @@ Events to Index:
 ]
 ----
 
-Once the transaction is accepted on Layer 1, we can query the Starknet Core Contracts from our Layer 1 node to see the storage keys that have been updated on our data layer!
+一旦在 Layer 1 上接受了交易，我们就可以从我们的 Layer 1 节点查询 Starknet 核心合约，以查看在我们的数据层上已更新的存储键！
 
-You have successfully navigated through the entire Starknet stack, from setting up your node, through executing and monitoring a transaction, to inspecting its effects on the data layer. This journey has equipped you with the understanding and the skills to interact with Starknet on a deeper level.
+您已经成功地浏览了整个 Starknet 堆栈，从设置节点，经过执行和监视交易，到检查其对数据层的影响。这个旅程为您提供了与 Starknet 更深层次交互的理解和技能。
 
-== Conclusion: Understanding the Modular Nature of Starknet
+== 总结：理解Starknet的模块化特性
 
-Conceptual models, such as the ones used in this guide, are incredibly useful in helping us understand complex systems. They can be refactored, reformed, and nested to provide a clear and comprehensive view of how a platform like Starknet operates. For instance, the OSI Model, a foundational model for understanding network interactions, underpins our modular stack.
+概念模型（如本文档中使用的模型）对于帮助我们理解复杂系统非常有用。它们可以被重构、改变形式和嵌套，以提供一个清晰和全面的视图，展示像 Starknet 这样的平台是如何运作的。例如，OSI 模型是理解网络交互的基础模型，支撑了我们的模块化堆栈。
 
-A key concept to grasp is 'Fractal Scaling.' This concept allows us to extend our model to include additional layers beyond Layer 2, such as Layer 3. In this extended model, the entire stack recurs above our existing stack, as shown in the following diagram:
+一个需要掌握的关键概念是“分形扩展”（Fractal Scaling）。这个概念允许我们将我们的模型扩展到包括超出第二层（Layer 2）的额外层，比如第三层（Layer 3）。在这个扩展模型中，整个堆栈重复在我们现有的堆栈之上，如下图所示：
 
 image::node3.png[node3]
 
-Just as Layer 2 compresses its transaction throughput into a proof and state change that is written to Layer 1, we can apply the same compression principle at Layer 3, proving and writing to Layer 2. This not only gives us more control over the protocol rules but also allows us to achieve higher compression ratios, enhancing the scalability of our applications.
+就像 Layer 2 把其交易吞吐量压缩成一个证明和状态更改，写入到 Layer 1 一样，我们可以在 Layer 3 应用相同的压缩原则，证明并写入到 Layer 2。这不仅使我们对协议规则有更多的控制权，还允许我们实现更高的压缩比率，增强我们应用程序的可扩展性。
 
-In essence, Starknet's modular and layered design, combined with the power of Fractal Scaling, offers a robust and scalable framework for building decentralized applications. Understanding this structure is fundamental to effectively leveraging Starknet's capabilities and contributing to its ecosystem.
+实质上，Starknet 的模块化和分层设计，以及分形扩展的强大力量，为构建分布式应用程序提供了一个强大和可扩展的框架。了解这个结构对于有效地利用 Starknet 的能力并为其生态系统做出贡献至关重要。
 
-This concludes our journey into running a Starknet node and traversing its layered architecture. We hope that you now feel equipped to explore, experiment with, and innovate within the Starknet ecosystem.
+我们的 Starknet 节点设置和遍历其分层架构的旅程到此结束。我们希望您现在感到有能力在 Starknet 生态系统中探索、实验和创新。
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
 
-== Contributing
+== **贡献力量**
 
-[quote, The Starknet Community]
-____
-*Unleash Your Passion to Perfect StarknetBook*
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的 https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南] 并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
-
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
-____
+— Starknet 社区
