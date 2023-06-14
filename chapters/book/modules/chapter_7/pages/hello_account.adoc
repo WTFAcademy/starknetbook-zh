@@ -1,10 +1,10 @@
-= Hello World Account Contract
+= 一个简单的 “Hello World” 账户合约
 
-In this chapter, we will explore the fundamentals of account contracts in Starknet using an example "Hello World" account contract written in Cairo language. You can find it in the contracts directory of this chapter in the Book's repository (TODO: add link).
+在本章中，我们将使用一个示例“Hello World”账户合约，使用Cairo语言探索Starknet中账户合约的基础知识。您可以在本章的书籍存储库的contracts目录中找到它（TODO：添加链接）。
 
 [,Rust]
 ----
-// Import necessary modules
+// 导入重要模块
 #[account_contract]
 mod HelloAccount {
     use starknet::ContractAddress;
@@ -12,8 +12,8 @@ mod HelloAccount {
     use array::ArrayTrait;
     use array::SpanTrait;
 
-    // Validate deployment of the contract.
-    // Returns starknet::VALIDATED to confirm successful validation.
+    // 验证合约是否部署
+    // 返回 starknet::VALIDATED 用来确认验证是否成功
     #[external]
     fn __validate_deploy__(
         class_hash: felt252, contract_address_salt: felt252, public_key_: felt252
@@ -21,17 +21,17 @@ mod HelloAccount {
         starknet::VALIDATED
     }
 
-    // Validate declaration of transactions using this Account.
-    // This function enforces that transactions now require accounts to pay fees.
-    // Returns starknet::VALIDATED to confirm successful validation.
+    // 使用这个账户验证交易的声明
+    // 这个函数强制要求现在需要账户支付交易费用
+    // 如果验证成功，将会返回 starknet::VALIDATED
     #[external]
     fn __validate_declare__(class_hash: felt252) -> felt252 {
         starknet::VALIDATED
     }
 
-    // Validate transaction before execution.
-    // This function is called by the account contract upon receiving a transaction.
-    // If the validation is successful, it returns starknet::VALIDATED.
+    // 在执行交易前进行验证交易
+    // 当账户合约接收到一笔交易时，该函数将被账户合约调用
+    // 如果验证成功，将会返回 starknet::VALIDATED
     #[external]
     fn __validate__(
         contract_address: ContractAddress, entry_point_selector: felt252, calldata: Array::<felt252>
@@ -39,9 +39,9 @@ mod HelloAccount {
         starknet::VALIDATED
     }
 
-    // Execute transaction.
-    // If the '__validate__' function is successful, this '__execute__' function will be called.
-    // It forwards the call to the target contract using starknet::call_contract_syscall.
+    // 执行交易
+    // 如果 __validate__ 函数验证成功，此函数将会被调用
+    // 此函数使用 starknet::call_contract_syscall 来调用目标合约
     #[external]
     #[raw_output]
     fn __execute__(
@@ -56,18 +56,18 @@ mod HelloAccount {
 }
 ----
 
-== External Functions
+== 外部函数
 
-The account contract includes several external functions to handle the validation and execution of transactions. These functions are:
+账户合约包含几个外部函数来处理交易的验证和执行。这些函数包括：
 
-1. `__validate_deploy__`: Validates the deployment of the contract.
-2. `__validate_declare__`: Validates the declaration of transactions using the account.
-3. `__validate__`: Validates a transaction before execution.
-4. `__execute__`: Executes a transaction after successful validation.
+1. `__validate_deploy__`：验证合约的部署。
+2. `__validate_declare__`：验证使用账户进行交易的声明。
+3. `__validate__`：在执行之前验证交易。
+4. `__execute__`：在成功验证后执行交易。
 
 === __validate_deploy__
 
-This function is responsible for validating the deployment of the account contract. It returns `starknet::VALIDATED` to confirm successful validation.
+这个函数负责验证账户合约的部署。它返回 `starknet::VALIDATED` 以确认成功验证。
 
 [source,cairo]
 ----
@@ -81,7 +81,7 @@ fn __validate_deploy__(
 
 === __validate_declare__
 
-This function enforces that transactions now require accounts to pay fees. It returns `starknet::VALIDATED` to confirm successful validation.
+这个函数强制要求现在需要账户支付交易费用。它返回 `starknet::VALIDATED` 以确认成功验证。
 
 [source,cairo]
 ----
@@ -93,7 +93,7 @@ fn __validate_declare__(class_hash: felt252) -> felt252 {
 
 === __validate__
 
-This function is called by the account contract upon receiving a transaction. If the validation is successful, it returns `starknet::VALIDATED`.
+这个函数在账户合约收到交易时被调用。如果验证成功，它将返回 `starknet::VALIDATED`.
 
 [source,cairo]
 ----
@@ -107,7 +107,7 @@ fn __validate__(
 
 === __execute__
 
-If the `__validate__` function is successful, this `__execute__` function will be called. It forwards the call to the target contract using `starknet::call_contract_syscall`.
+如果 `__validate__` 函数验证成功， `__execute__` 函数将会被调用。它使用`starknet::call_contract_syscall` 将调用转发到目标合约。
 
 [source,cairo]
 ----
@@ -124,13 +124,13 @@ fn __execute__(
 }
 ----
 
-== Declaring and Deploying the Hello World Account Contract
+== 声明和部署“Hello World”账户合约
 
-The declaring and deploying process is the same as with other contracts. Before declaring and deploying the Hello World account contract, you must first have an account contract set up to manage the deployment process. To learn more about deploying an account contract, refer to the subchapter on deploying in Chapter 2 of the Book.
+声明和部署过程与其他合约相同。在声明和部署“Hello World”账户合约之前，您必须先设置一个账户合约来管理部署过程。要了解有关部署账户合约的更多信息，请参阅本书第2章中有关部署的子章节。
 
-Remember to compile using `scarb build` (refer to the Scarb subchapter in Chapter 2 of the Book). Then follow the steps below to declare and deploy the Hello World account contract:
+记得使用 `scarb build` 进行编译（请参阅本书第2章中的Scarb子章节）。然后按照以下步骤声明和部署“Hello World”账户合约：
 
-* Export the required environment variables:
+* 导出所需的环境变量：
 
 [source,bash]
 ----
@@ -138,47 +138,48 @@ export STARKNET_NETWORK=alpha-goerli
 export STARKNET_WALLET=starkware.starknet.wallets.open_zeppelin.OpenZeppelinAccount
 ----
 
-* Declare the contract (since the contract is already declared, you can skip this step. If you want to declare it anyway, run the following command but you will receive an error):
+* 声明合约（由于合约已经声明，您可以跳过此步骤。如果您仍想声明它，请运行以下命令，但您将收到错误提示）：
 
 [source,bash]
 ----
 starknet declare --contract target/release/starknetbook_chapter_7_HelloAccount.json --account my_account --max_fee 100000000000000000
 ----
 
-The class hash is: 0x07e813097812d58afbb4fb015e683f2b84e4f008cbecc60fa6dece7734a2cdfe
+对应类哈希是： 0x07e813097812d58afbb4fb015e683f2b84e4f008cbecc60fa6dece7734a2cdfe
 
-* Deploy the contract:
+* 部署合约
 
 [source,bash]
 ----
 starknet deploy --class_hash 0x07e813097812d58afbb4fb015e683f2b84e4f008cbecc60fa6dece7734a2cdfe --account my_account --max_fee 100000000000000000
 ----
 
-After completing these steps, you will have successfully declared and deployed the Hello World account contract on Starknet. https://testnet.starkscan.co/contract/0x01e6d7698ca76788c8f9c1091ec3d6d3f7167a9effe520402d832ca9894eba4a#overview[Here is a deployed version].
+完成这些步骤后，您将成功在Starknet上声明和部署了“Hello World”账户合约。https://testnet.starkscan.co/contract/0x01e6d7698ca76788c8f9c1091ec3d6d3f7167a9effe520402d832ca9894eba4a#overview[这里是已部署的版本]。
 
-== Summary
+== 总结
 
-In this subchapter, we delved into the details of a basic account contract in Starknet using a "Hello World" example.
+在本小节中，我们使用“Hello World”示例深入探讨了Starknet中基本账户合约的细节。
 
-We also outlined the steps to declare and deploy the Hello World account contract on the Starknet network. The deployment process involves exporting the required environment variables, declaring the contract, and deploying it using the class hash.
+我们还概述了在Starknet网络上声明和部署“Hello World”账户合约的步骤。部署过程涉及导出所需的环境变量、声明合约以及使用类哈希部署合约。
 
-As we progress in our exploration of Starknet account contracts, the next subchapter will introduce a standard account contract, drawing parallels with the standard account contract defined by Open Zeppelin and Starkware. This will further strengthen our understanding of how account contracts operate within the Starknet ecosystem.
+随着我们在探索Starknet账户合约方面的进展，下一个小节将介绍一个标准账户合约，将其与Open Zeppelin和Starkware定义的标准账户合约进行对比。这将进一步加强我们对账户合约在Starknet生态系统内部操作的理解。
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
 
-== Contributing
+== **贡献力量**
 
-[quote, The Starknet Community]
-____
-*Unleash Your Passion to Perfect StarknetBook*
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的 https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南] 并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
-
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
-____
+— Starknet 社区
