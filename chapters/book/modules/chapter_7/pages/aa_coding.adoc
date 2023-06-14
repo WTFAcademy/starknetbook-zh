@@ -1,28 +1,29 @@
 [id="aa_coding"]
 
-= More Examples of Account Contracts
+= 合约账户的更多示例
 
-Here, we will explore numerous examples, elucidating the principles and techniques to effectively design and implement Account contracts.
+在这里，我们将探讨多个示例，阐明设计和实现账户合约的原则和技术。
 
-Before delving into the examples, we would like to issue a disclaimer: the contracts discussed in this chapter are for illustrative and educational purposes, and they have not undergone formal auditing. This signifies that, while we strive to provide accurate and informative content, the implementation of these contracts in a live environment should be approached with due diligence. We encourage users to thoroughly test and validate these contracts before their deployment on the mainnet.
+在深入探讨这些示例之前，我们需要发出免责声明：本章讨论的合约仅用于说明和教育目的，且未经过正式的审计。这意味着，尽管我们努力提供准确和有用的内容，但在实际生产环境中使用这些合约时，应该进行详尽的检查。我们鼓励用户在部署在主网之前对这些合约进行全面的测试和验证。
 
-The goal of this chapter is not only to furnish a library of contract examples but also to foster collaboration and knowledge sharing among the Starknet community. We believe that the exchange of ideas and constructive feedback are instrumental in advancing our collective understanding and expertise.
+本章的目标不仅是提供一系列合约示例，还要促进Starknet社区之间的合作和知识共享。我们相信，思想交流和建设性反馈对于推进我们对专业知识的集体理解至关重要。
 
-If you've developed or come across an innovative contract that could serve as a valuable learning resource for others, we invite you to contribute. Here are a few guidelines for your contribution:
+如果您已经开发或者发现了一种创新的合约，可以作为他人宝贵的学习资源，我们邀请您进行贡献。以下是贡献的几点指南：
 
-. *Open a PR:* To submit a contract example or suggest changes to existing ones, simply open a Pull Request. Ensure that your PR contains a thorough explanation of the contract, its use cases, and its functionality.
-. *Code Standards:* Please ensure that the submitted code is well-documented and adheres to the standard code conventions of Starknet. This will facilitate the review process and enhance the readability and comprehensibility of the contract.
-. *Detailed Explanation:* Accompany your code with a detailed explanation of the contract logic. Wherever possible, use diagrams, flowcharts, or pseudocode to illustrate complex mechanisms or workflows.
+. *提交 PR：* 要提交合约示例或对现有合约进行修改的建议，只需开启Pull Request。确保您的PR包含对合约、用例和功能的详细说明。
+. *代码规范：* 请确保提交的代码有良好的文档，并遵循Starknet的标准代码约定。这将有助于审核过程，并增强合约的可读性和可理解性。
+. *详细说明：* 使用详细的说明来解释合约逻辑。在可能的情况下，使用图表、流程图或伪代码来说明复杂的机制或工作流程。
 
-As we expand this repertoire of contract examples, we hope to equip the Starknet community with a robust toolset and inspire further exploration and innovation in the realm of custom account contracts.
+随着我们不断扩展合约示例的范围，我们希望为Starknet社区配备一个强大的工具集，在自定义账户合约领域进行进一步探索，并且激发更多创新的灵感。
 
-== Contributing
+== **贡献力量**
 
-[quote, The Starknet Community]
-____
-*Unleash Your Passion to Perfect StarknetBook*
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的 https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南] 并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
-
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
-____
+— Starknet 社区

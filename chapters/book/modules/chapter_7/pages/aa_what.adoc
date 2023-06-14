@@ -1,40 +1,40 @@
 [id="aa_what"]
 
-= What is Account Abstraction?
+= 什么是账户抽象？
 
-== Account Abstraction - Definition(s)
+== 账户抽象 - 定义
 
-Let's explore some popular definitions of account abstraction:
-
-____
-Definition 1: Account Abstraction (AA) is when a *smart contract can pay for its own transactions* (Martin Triay, Devcon 6)[1]. In other words, abstract contracts (or account smart contracts) can pay for transactions. Note that this is not the same as Externally Owned Accounts or Smart Wallets.
-____
+让我们探索一些常见的账户抽象定义：
 
 ____
-Definition 2: AA is *validation abstraction*. In L1, there is only one way to validate transactions (retrieve an address from a signature, look at that address in the state, determine if the nonce is OK for the transaction that was sent, and if the account has enough balance to perform the transaction). With AA, you *abstract the validation process*: use different types of signatures, cryptographic primitives, execution processes, etc. (lightclient, Devcon 6)[3].
+定义1：账户抽象（AA）是指 *智能合约可以为自己的交易付费* (Martin Triay, Devcon 6)[1]。换句话说，抽象合约（或账户合约）可以支付交易费用。请注意，这与外部拥有账户或智能钱包不同。
 ____
 
-_*Note: In computing, the term abstraction is used to generalize something. In this case, we are generalizing smart contracts: from the existence of Externally Owned Contracts (EOA) and Contract Accounts (CA) to simply smart contracts._
+____
+定义2：账户抽象（AA）是 *验证抽象*。在L1中，验证交易的方法只有一种（从签名中检索地址，在状态中查看该地址，确定发送的交易是否符合nonce，以及账户是否有足够的余额来执行交易）。通过 AA，您可以 *抽象验证过程*：使用不同类型的签名，加密原语，执行过程等（lightclient，Devcon 6）。
+____
 
-== Application of Account Abstraction
+_*注：在计算中，抽象的术语用于对某些事物进行概括。在这种情况下，我们正在这样智能合约进行概括：从现有的外部账户（EOA）和合约账户（CA）来简单概括智能合约。_
 
-AA aims to make self-custody more accessible and more secure by allowing for (among others):
+== 账户抽象的应用
 
-1. Hardware Signer: Sign transactions and messages using your biometric identity, with a key generated and protected by your smartphone's secure enclave (Starkware)[4], (Braavos)[7].
-2. Social recovery: Securely replace the key controlling an account in case it's lost or compromised, eliminating the need for seed phrases (Julien Niset, 2022)[5].
-3. Key rotation: Change the keys controlling your account if they're compromised, instead of moving all your assets.
-4. Session keys: Sign in once, and allow websites to act on your behalf without requiring constant approval for transactions. This brings a more familiar web2 experience to web3 applications.
-5. Custom transaction validation schemes: Choose from various signature schemes, multisignatures, and other security rules (Martin Triay, Devcon 6)[1], (Julien Niset, 2022)[5], (Motty Lavie)[7].
+AA 目标在于使自我保管账户可以更加易于实现并且通过以下措施（一个或者多个）来提高安全性：
 
-AA also enhances security by offering:
+1. 硬件签名者： 使用您的生物特征身份，在您的智能手机安全隔离区的支持下生成和保护密钥，签署交易和消息。（Starkware）[4]，（Braavos）[7]。
+2. 社交恢复：在账户丢失或被盗的情况下，安全地替换控制账户的密钥，消除了种子短语的需要（Julien Niset，2022）[5]。
+3. 密钥轮换：如果密钥被泄露，可以更改控制账户的密钥，而不是转移所有资产。
+4. 会话密钥：登录一次，允许网站代表您执行操作，而无需不断批准交易。这为 web3 应用程序带来了更熟悉的 web2 体验。
+5. 自定义交易验证方案：选择不同的签名方案、多重签名和其他安全规则（Martin Triay，Devcon 6）[1]，（Julien Niset，2022）[5]，（Motty Lavie）[7]。
 
-1. Better key management: Add devices to your wallet, allowing for access even if you lose one device. This improvement in key management enhances security (Yoav, Devcon 6)[6], (Motty Lavie)[7].
-2. Different signature and validation schemes: Implement additional security measures, like 2-factor authentication, for large transactions. This enables better security by adapting to each user's specific needs (Yoav, Devcon 6)[6], (Motty Lavie)[8].
-3. Custom security policies: Tailor security schemes to suit different types of users or devices, and adapt good practices from the banking and web2 sectors (Yoav, Devcon 6)[6].
+AA还通过提供以下内容增强了安全性：
 
-In summary, AA unlocks new possibilities for developers and users in the Ethereum ecosystem, promising a more secure and user-friendly experience. By enabling various validation schemes and improved key management, AA brings the potential for wider adoption and a better user experience.
+1. 更好的密钥管理：将设备添加到您的钱包中，即使您丢失一个设备，也可以访问。这种密钥管理的改进增强了安全性（Yoav，Devcon 6）[6]，（Motty Lavie）[7]。
+2. 不同的签名和验证方案：为大额交易实施额外的安全措施，如双因素身份验证。这通过适应每个用户的特定需求实现更好的安全性（Yoav，Devcon 6）[6]，（Motty Lavie）[8]。
+3. 定制安全策略：为不同类型的用户或设备量身定制安全方案，并从银行和 web2 行业中采用良好的实践（Yoav，Devcon 6）[6]。
 
-== References:
+总之，AA为以太坊生态系统中的开发人员和用户解锁了新的可能性，承诺提供更安全和用户友好的体验。通过实现各种验证方案和改进的密钥管理，AA带来了更广泛的采用的可能性和更好的用户体验。
+
+== 参考资料：
 
 * [1] Martin Triay, Devcon 6: https://www.youtube.com/watch?v=Osc_gwNW3Fw
 * [2] Julien Niset: https://www.youtube.com/watch?v=OwppworJGzs
@@ -46,8 +46,8 @@ In summary, AA unlocks new possibilities for developers and users in the Ethereu
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
