@@ -1,38 +1,36 @@
 [id="IntroToAA"]
 
-= Introduction to Account Abstraction
+= 账户抽象简介
 
-_*Disclaimers: This section cites various stakeholders, any errors or misunderstandings in this tutorial are the fault of interpretation._
+_*免责声明：本部分引用了各方利益相关者的观点，本教程中任何错误或误解均由解释者承担责任。_
 
-The crypto ecosystem is at a critical crossroads. Ethereum, as one of the leading platforms, faces a monumental challenge: embracing Account Abstraction (AA) or risking the very essence of what crypto stands for - decentralization.
+加密生态系统正处于一个关键的十字路口。作为领先平台之一，以太坊面临一个巨大的挑战：采用账户抽象（AA）或冒着“破坏加密货币所代表的本质——去中心化”的风险。
 
-AA is a vital and game-changing innovation for Ethereum. It holds the key to improving onboarding, user experience, and security (Martin Triay, Devcon 6)[1]. More importantly, AA is the cornerstone for scaling self-custody, which is crucial for onboarding the next billion users (Julien Niset)[2], (Motty Lavie)[7]. The future of Ethereum, and by extension the entire crypto landscape, depends on the success of AA.
+账户抽象对于以太坊来说是一项至关重要且具有改变游戏规则的创新。它是提高入门门槛、用户体验和安全性的关键（Martin Triay, Devcon 6）[1]。更重要的是，账户抽象是扩展自我保管的基石，这对于吸引下一个十亿用户（Julien Niset）[2]，（Motty Lavie）[7]非常重要。以太坊的未来，甚至整个加密货币领域的未来，取决于 账户抽象的成功。
 
-Additionally, quantum computers pose a serious menace to the cryptographic ecosystem, with the potential to break traditional security measures and signatures. Account Abstraction can help us confront this threat head-on by enabling the use of different signature schemes, including quantum-resistant ones, to secure our assets.
+此外，量子计算机对加密生态系统构成了严重的威胁，有可能破解传统的安全措施和签名。账户抽象可以帮助我们直面这一威胁，通过启用不同的签名方案，包括抗量子攻击的方案，来保护我们的资产。
 
-Without AA, Ethereum will struggle to offer users the seamless, secure, and empowering experience they deserve. This could lead to a mass exodus of users flocking to centralized exchanges and wallets, which directly contradicts the ethos of decentralization that underpins the crypto revolution.
+如果没有账户抽象，以太坊将难以为用户提供无缝、安全和有力的体验，这可能导致用户大规模流失，涌向集中式交易所和钱包，这直接违背了支撑加密货币革命的去中心化原则。
 
-The dangers of centralized control are all too familiar: censorship, discrimination, and the potential for abuse of power. By ensuring that AA is a central feature of Ethereum's evolution, we protect the core values that drive the crypto community and strengthen the foundation of the decentralized economy.
+中心化控制的危险已经司空见惯：审查、歧视和权力滥用的可能性。通过确保账户抽象成为以太坊发展的核心特征，我们保护了推动加密社区的核心价值观，并加强了去中心化经济的基础。
 
-Starknet is currently leading the charge in implementing AA at the protocol level, acting as a "proving ground" for what AA will look like in the future. With many brilliant minds from several different organizations working together, Starknet aims to revolutionize the way we approach security, user experience, and self-custody in the crypto space.
-
-
-== Why has it not been implemented in Ethereum's L1 yet?
-
-Account Abstraction: A Simple Explanation
-
-So, what's holding it back from being implemented in Ethereum's Layer 1 (L1)?
-
-The main issue lies in the removal of Externally Owned Accounts (EOAs). Implementing AA would require significant changes to Ethereum's core protocol. As the value secured by Ethereum grows, the coordination needed to implement AA becomes increasingly difficult.
-
-Although AA is vital, Ethereum hasn't supported it yet because of the limitations of its Ethereum Virtual Machine (EVM). There have been proposals for AA since the early days of Ethereum, but they have been repeatedly postponed in favor of more urgent changes.
-
-The development of new Layer 2 (L2) Virtual Machines focused on scalability has allowed for progress in implementing AA. Starknet and ZKSync, for example, have native AA inspired by EIP4337 – a proposal considered the best by experts like Argent's Julien Niset.
-
-Many AA proponents, like Niset, seem to have lost hope that EOAs will be eliminated and AA will be implemented at Ethereum's core. Instead, they're now pushing for the widespread adoption of AA through L2 solutions like Starknet.
+Starknet目前在协议层面在账户抽象的实施程度上处于领先地位，充当了账户抽象未来发展的“试验场”。在来自多个组织的许多杰出思想家的共同努力下，Starknet旨在彻底改变我们在加密领域中处理安全性、用户体验和自我保管的方式。
 
 
-== References:
+== 为什么账户抽象还没有被实现在以太坊（L1）层面呢？
+
+那么，是什么阻碍了账户抽象在以太坊的L1层面实现呢？
+
+主要问题在于删除外部拥有账户（EOA）。实现账户抽象需要对以太坊的核心协议进行重大改变。随着以太坊所保护的价值不断增长，实现账户抽象所需的协调变得越来越困难。
+
+尽管账户抽象至关重要，但以太坊尚未支持它，因为其Ethereum虚拟机（EVM）存在限制。自以太坊早期以来就有账户抽象的提案，但它们一直被推迟，以便更紧急的提案得到优先考虑。
+
+新的第二层（L2）虚拟机的开发专注于可扩展性，这使得账户抽象的实施取得了进展。例如，Starknet 和 ZKSync 都有原生的账户抽象，灵感来自EIP4337，这是一个被 Argent 的 Julien Niset 等专家认为是最好的提案。
+
+许多账户抽象的支持者，如 Niset，似乎已经失去了 EOAs 将被消除，并且账户抽象将被实现在以太坊核心的希望。相反，他们现在正在推动通过类似 Starknet 的 L2 解决方案来广泛采用账户抽象。
+
+
+== 参考资料：
 
 * [1] Martin Triay, Devcon 6: https://www.youtube.com/watch?v=Osc_gwNW3Fw
 * [2] Julien Niset: https://www.youtube.com/watch?v=OwppworJGzs
@@ -42,7 +40,7 @@ Many AA proponents, like Niset, seem to have lost hope that EOAs will be elimina
 * [6] Yoav, Devcon 6: https://app.devcon.org/schedule/9mvqce
 * [7] Motty Lavie, 2023: https://www.youtube.com/watch?v=FrxAdJYhSY8
 
-Other texts:
+其他文本：
 
 * https://hackernoon.com/what-is-account-abstraction-and-why-is-everyone-talking-about-it
 * https://ethereum.org/en/roadmap/account-abstraction/
@@ -50,8 +48,8 @@ Other texts:
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
