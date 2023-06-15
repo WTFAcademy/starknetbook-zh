@@ -8,8 +8,6 @@ Cairo 自带一个核心库，称为 `corelib`，其中包含了诸如 `starknet
 
 要在 Cairo 中导入模块、函数或类型，你可以使用 `use` 关键字，后跟你要导入的项目的路径。在提供的示例中，我们有一个 `Ex01` 模块，我们从 `corelib` 和自定义模块导入了几个项目（例如，我们使用 https://github.com/starknet-edu/starknet-cairo-101/tree/main/src[starknet-cairo-101 仓库]）：
 
-To import modules, functions, or types in Cairo, you can use the `use` keyword, followed by the path to the item you want to import. In the example provided, we have an `Ex01` module, and we are importing several items from the `corelib` and custom modules (as example, we are using the https://github.com/starknet-edu/starknet-cairo-101/tree/main/src[starknet-cairo-101 repository]):
-
 [source,rust]
 ----
 mod Ex01 {

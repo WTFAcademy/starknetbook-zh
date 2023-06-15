@@ -1,6 +1,6 @@
 [id="getter"]
 
-= 在 Cairo 中的 Getter 函数（ view 函数）
+= 在 Cairo 中的 Getter 函数（view 函数）
 
 Getter 函数，又称为 view 函数，是只读函数，允许您访问合约存储中的数据而不修改它。它们可以被其他合约或外部调用，并且不需要支付 gas 费用，因为它们不会改变合约的状态。
 

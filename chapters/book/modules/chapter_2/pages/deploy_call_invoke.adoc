@@ -1,17 +1,17 @@
 [id="calling_invoking"]
 
-= 部署, Calling and Invoking 合约
+= 部署、非状态改变调用和状态改变调用合约
 
 在本章中，我们将探讨如何使用 _calling_ 和 _invoking_ 与已部署的 Starknet 合约进行交互。我们将使用投票合约作为示例。
 
-* Calling contracts: 与标记为 `#[view]` 入口点的合约函数进行交互。这些函数不会改变网络状态，因此不需要费用或签名。这类似于以太坊 API 中的 call 调用。
-* Invoking contracts: 与标记为 #[external] 入口点的合约函数进行交互。这些函数会改变网络状态并需要费用和签名。这类似于以太坊 API 中的 deploy 。
+* 非状态改变调用合约（Calling） : 与标记为 `#[view]` 入口点的合约函数进行交互。这些函数不会改变网络状态，因此不需要费用或签名。这类似于以太坊 API 中的 call 调用。
+* 状态改变调用合约（Invoking） : 与标记为 #[external] 入口点的合约函数进行交互。这些函数会改变网络状态并需要费用和签名。这类似于以太坊 API 中的 deploy 。
 
 == 为选民部署账户合约
 
 在与投票合约交互之前，我们需要确保选民账户作为账户合约部署在 Starknet 上。每个选民账户必须注册并获得资金以参与投票过程。这个过程是必要的，因为我们使用了账户抽象（稍后在本书中会介绍更多内容）。
 
-要为选民部署账户合约，请按照以下步骤操作：
+要为选民部署（Deploying）账户合约，请按照以下步骤操作：
 
 1) 创建一个带有名称的新账户，例如 "voter_1"：
 [source,bash]
@@ -43,7 +43,7 @@ starknet deploy --class_hash <class-hash-of-voting-contract> --inputs <voter_1> 
 我们将与之交互的合约已部署在地址：*0x06ce0bdf1985308cbb800364385ac66cbae203688e3e28f3b1c234da62a754bf*。您可以在 Starkscan 上找到 https://testnet.starkscan.co/contract/0x06ce0bdf1985308cbb800364385ac66cbae203688e3e28f3b1c234da62a754bf[它]。
 
 
-== Verifying Voter Eligibility
+== 验证投票者是否符合资格
 
 让我们确认注册选民有资格投票。我们可以使用 `voter_can_vote` 和 `is_voter_registered` 函数来实现这一点。由于这两个函数都是视图函数，我们可以使用 starknet call 语法与它们进行交互。
 
@@ -104,7 +104,7 @@ starknet call --function get_vote_results --address 0x06ce0bdf1985308cbb80036438
 2 1 66 33
 ----
 
-输出将显示 "赞成" 的票数、"反对" 的票数以及各自的百分比。
+输出将显示 「赞成」 的票数、「反对」的票数以及各自的百分比。
 
 恭喜！您已成功在 Starknet 上部署并与投票智能合约互动！
 

@@ -1,57 +1,50 @@
 [id="kakarot"]
 
-= Cairo and the Ethereum Virtual Machine: The Kakarot ZKEVM
+= 开罗和以太坊虚拟机：Kakarot ZKEVM
 
-== What is Kakarot?
+== 什么是 Kakarot？
 
-Kakarot is a groundbreaking zkEVM (Zero-Knowledge Ethereum Virtual Machine) built on the CairoVM. 
-Overall, it aims to present to developers an abstraction layer they're familiar with: the EVM.
+ Kakarot 是一个建立在 CairoVM 上的突破性 zkEVM（零知识以太坊虚拟机）。总体而言，它旨在为开发者提供一个他们熟悉的抽象层：EVM。
 
-=== Introduction
+=== 简介
 
-Kakarot is meant for developers to build and deploy as if they were working on Ethereum: its purpose is to allow Solidity contracts to be forward compatible with Starknet and the CairoVM.
+Kakarot 旨在让开发者像在以太坊上工作一样构建和部署：它的目的是让 Solidity 合约能够与 Starknet 和 CairoVM 保持向前兼容。
 
-The project plans to bring **EVM compatibility** to Starknet and build a *zkRollup-as-a-service tool*. 
-It began in October 2022 and aims to create an open-source, provable zkEVM in Cairo, with a concise codebase. It is designed with the belief that the CairoVM will provide the best zero-knowledge toolbox in the coming years and that the Ethereum network effect will remain dominant in the meantime. 
+该项目计划为 Starknet 带来 EVM 兼容性，并构建一个 zkRollup-as-a-service 工具。它始于 2022 年 10 月，旨在用 Cairo 创建一个开源、可证明的 zkEVM，并且代码简洁。它的设计理念是 CairoVM 将在未来几年提供最好的零知识工具箱，并且以太坊网络效应将在此期间保持主导地位。
 
-In a remarkable display of skill and dedication, the Kakarot team achieved an impressive milestone 
-(with the support of the Starknet Foundation and the collaborative efforts of over 40 unique contributors) 
-by implementing 100% of EVM opcodes and 8 out of 9 EVM precompiles in just six months and with less than 5,000 lines of code!
+在展示了惊人的技巧和投入的同时， Kakarot 团队在短短六个月内，使用不到 5000 行代码实现了 100% 的 EVM 操作码和 9 个 EVM 预编译中的 8 个！（在 Starknet 基金会的支持和超过 40 个独特贡献者的共同努力下取得了令人瞩目的成果）
 
-Kakarot is on track to become a type 2.5 zkEVM (as per https://vitalik.ca/general/2022/08/04/zkevm.html[Vitalik Buterin's typology]), offering compatibility with existing EVM code. 
-Its innovative solution combines the benefits of zero-knowledge cryptography and the efficiency of the EVM, paving the way for scalable and secure decentralized applications.
-In simple words, Kakarot allows developers to easily and seamlessly run Ethereum smart-contracts written in Solidity on Starknet, **without requiring any modifications to their code**!
+根据 https://vitalik.ca/general/2022/08/04/zkevm.html[Vitalik Buterin 的分类]， Kakarot 正朝着成为一种 2.5 类型的 zkEVM 发展，提供与现有 EVM 代码的兼容性。它的创新解决方案结合了零知识密码学的优势和 EVM 的高效性，为可扩展和安全的去中心化应用程序铺平了道路。简单来说， Kakarot 允许开发者在 Starknet 上轻松无缝地运行用 Solidity 编写的以太坊智能合约，而无需对其代码进行任何修改！
 
-==== Note that Kakarot is currently a work in progress - not yet ready for production.
+==== 请注意，Kakarot 目前仍在开发中 - 尚未准备好投入生产。
 
-The testnet version is expected to be released at the end of summer 2023… Stay tuned!
+预计测试网版本将在 2023 年夏季结束时发布... 敬请期待！
 
-=== Project Architecture
+=== 项目架构
 
 image::Kakarot-architecture.png[]
 
-*  Kakarot is a smart contract, currently deployed on Starknet (goerli testnet). It is written in Cairo.
-* Kakarot is an EVM bytecode interpreter. 
-* Kakarot can: 
-.. execute arbitrary EVM bytecode, 
-.. deploy an EVM smart contract as is, 
-.. call a Kakarot-deployed EVM smart contract's functions (views and write methods).
-* Kakarot is not a blockchain.
-* Kakarot is not a compiler: it will not convert your Solidity code into Cairo code (check out https://book.starknet.io/chapter_2/warp.html[Warp] for a Solidity -> Cairo transpiler). 
+* Kakarot 是一个智能合约，目前部署在 Starknet（goerli 测试网）上。它是用 Cairo 编写的。
+* Kakarot 是一个 EVM 字节码解释器。
+* Kakarot 可以：
+.. 执行任意 EVM 字节码，
+.. 将 EVM 智能合约原封不动地部署，
+.. 调用 Kakarot 部署的 EVM 智能合约的功能（视图和写入方法）。
+* Kakarot 不是区块链。
+* Kakarot 不是编译器：它不会将你的 Solidity 代码转换为 Cairo 代码（请查看 https://book.starknet.io/chapter_2/warp.html[Warp] 了解 Solidity -> Cairo 转换器）。
 
-== Exploring some Use cases of Kakarot
+== 探讨 Kakarot 的一些用例
 
-=== Allowing already-existing Ethereum smart-contracts to be ran on Starknet
 
-Despite Starknet running on the CairoVM instead of the EVM, thanks to Kakarot zkRollup-as-a-service tool, any Solidity smart-contract deployed on Ethereum will be able to be ran on Starknet without any change of its code.
-This means that the decentralized applications that are already running on Ethereum will be able to be ran on Starknet very easily, allowing their users to take advantage of both the efficiency of the EVM and the benefits of zero-knowledge cryptography.
+=== 允许已存在的以太坊智能合约在 Starknet 上运行
 
-Thus, Kakarot will massively reduce the time to migrate any existing Solidity smart-contract to Starknet: instead of re-writing your whole protocol from Solidity to Cairo, you will just have to use Kakarot to run your Solidity contract in the CairoVM. It's that simple! 
+尽管 Starknet 是运行在 CairoVM 而非 EVM 上，但是感谢 Kakarot 的 zkRollup 作为服务工具，任何在以太坊上部署的 Solidity 智能合约都将能够在 Starknet 上运行，而无需更改其代码。这意味着已经在以太坊上运行的去中心化应用将能够非常容易地在 Starknet 上运行，让它们的用户能够同时享受 EVM 的效率和零知识密码学的优点。
+
+因此，Kakarot 将大大减少将任何现有的 Solidity 智能合约迁移到 Starknet 的时间：你无需将整个协议从 Solidity 重写到 Cairo，只需使用 Kakarot 在 CairoVM 中运行你的 Solidity 合约。就这么简单！
  
-=== Allowing Solidity blockchain developers to deploy provable contracts on Starknet without learning Cairo
+=== 允许 Solidity 区块链开发者在不学习 Cairo 的情况下在 Starknet 上部署可证明的合约
 
-Perhaps one does not necessarily wishes to learn a whole new language just for a tiny side project, for example. In that case, even though Cairo is, for many different reasons, https://cairo-book.github.io/ch00-00-introduction.html[a wonderful language] thanks to Kakarot, developers will not be totally obligated to learn Cairo in order to create and deploy smart-contracts on Starknet:
-they will have the possibility to make their Solidity smart-contracts become provable and will also be able to be ran them on Starknet with no effort!
+也许有些人并不一定想为了一个小小的副项目而学习一门全新的语言。在这种情况下，尽管 Cairo 出于许多不同的原因是一门https://cairo-book.github.io/ch00-00-introduction.html[非常好的语言]，但感谢 Kakarot ，开发者并不完全必须学习 Cairo 来在 Starknet 上创建和部署智能合约：他们将有可能让他们的 Solidity 智能合约变得可证明，并且也能在 Starknet 上运行，而无需付出任何努力！
 
 [附注]
 ====

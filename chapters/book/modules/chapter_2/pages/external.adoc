@@ -1,12 +1,12 @@
 [id="external"]
 
-= Cairo 中的 External Functions
+= Cairo 中的外部函数
 
 External Functions是可以通过其他合约或用户通过区块链上的交易外部调用的函数。它们可以改变合约的状态，因此，需要执行 gas 费用。这意味着我们可以使用 `write` 函数将数据写入合约的存储。
 
-在 Cairo 中，使用 `#[external]` 属性定义 External Functions 。在 Solidity 中，你可以使用 `public` 或 `external` 关键字来定义类似类型的函数。
+在 Cairo 中，使用 `#[external]` 属性定义外部函数（External Function）。在 Solidity 中，你可以使用 `public` 或 `external` 关键字来定义类似类型的函数。
 
-在 Vote 合约中，只有一个 External Functions ：`vote`。让我们详细了解一下：
+在 Vote 合约中，只有一个外部函数：`vote`。让我们详细了解一下：
 
 
 [source,rust]
@@ -36,7 +36,7 @@ fn vote(vote: u8) {
 }
 ----
 
-`vote` 函数是一个 External Functions ，允许用户向合约提交投票（0 表示 No，1 表示 Yes）。它接受一个 `u8` 值作为输入，检查该值是否有效（0 或 1），并相应地更新存储。
+`vote` 函数是一个外部函数，允许用户向合约提交投票（0 表示 No，1 表示 Yes）。它接受一个 `u8` 值作为输入，检查该值是否有效（0 或 1），并相应地更新存储。
 
 [附注]
 ====
