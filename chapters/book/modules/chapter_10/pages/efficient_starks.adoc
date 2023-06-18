@@ -1,12 +1,12 @@
 [id="efficient_starks"]
 
-= Efficient STARKs
+= 高效的 STARK
 
-== Micali Construction
+== Micali Construction（米卡利构造）
 
-== Interactive Oracle Proofs (IOPs)
+== Interactive Oracle Proofs (IOPs)（交互式预言机证明）
 
-== BCS Construction
+== BCS Construction（BCS 构造）
 
 == Contributing
 
