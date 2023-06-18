@@ -42,7 +42,7 @@ link:https://medium.com/starkware/papyrus-an-open-source-starknet-full-node-396f
 
 排序器通过管理交易排序和执行，在 Starknet 生态系统中发挥关键作用。随着网络的不断发展，通过优化和过渡到更高效的语言（如 Rust）来增强排序器性能对于确保可扩展性、安全性和吞吐量至关重要。排序器的持续开发和改进将支持 Starknet 网络的发展，并使开发人员和用户能够充分利用这种创新的 Layer-2 解决方案的全部潜力。
 
-[ 附注 ]
+[NOTE]
 ====
 《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
