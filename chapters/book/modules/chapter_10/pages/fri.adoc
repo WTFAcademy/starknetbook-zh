@@ -34,8 +34,8 @@ image::query1.png[query1]
 ====
 《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* 无论你是否有所收获，烦请填写此问卷，简单回答三个问题，给予我们反馈。https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU= [3 个问题]，给予我们反馈。
-* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）]。
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[ Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing
