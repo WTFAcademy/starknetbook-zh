@@ -1,41 +1,41 @@
 [id="fri"]
 
-= The FRI Protocol
+= FRI 协议
 
-We now combine the two above ideas (testing two polynomials with half the queries, and splitting a polynomial into two smaller ones) into a protocol that only uses O(log d) queries to test that a function f has (more precisely, is close to a function of) degree less than d. This protocol is known as FRI (which stands for Fast Reed -- Solomon Interactive Oracle Proof of Proximity), and the interested reader can read more about it https://eccc.weizmann.ac.il/report/2017/134/[here]. For simplicity, below we assume that d is a power of 2. The protocol consists of two phases: a commit phase and a query phase.
+我们将上述两个想法（使用一半的查询测试两个多项式，并将一个多项式分成两个较小的多项式）结合起来，形成了一种协议，该协议仅使用 O（log d）次查询来测试一个函数 f 的次数是否小于 d（更准确地说，是否接近一个次数小于 d 的函数）。该协议称为 FRI（ Fast Reed — Solomon Interactive Oracle Proof of Proximity）， 感兴趣的读者可以点击 https://eccc.weizmann.ac.il/report/2017/134/[此处] 了解更多. 为简单起见，我们假设 d 是 2 的次方。该协议包括两个阶段：承诺阶段和查询阶段。
 
-== Commit phase
-The prover splits the original polynomial f₀(x)=f(x) into two polynomials of degree less than d/2, g₀(x) and h₀(x), satisfying f₀(x)=g₀(x²)+xh₀(x²). The verifier samples a random value 𝛼₀, sends it to the prover, and asks the prover to commit to the polynomial f₁(x)=g₀(x) + 𝛼₀h₀(x). Note that f₁(x) is of degree less than d/2.
+== 承诺阶段
+证明器将原始多项式 f₀（x）= f（x）分成两个次数小于d / 2的多项式 g₀（x）和 h₀（x），满足 f₀（x）= g₀（x²）+ xh₀（x²）。验证者随机抽取一个值 𝛼₀，将其发送给证明器，并要求证明者承诺于多项式f₁（x）= g₀（x）+ 𝛼₀h₀（x）。请注意，f₁（x）的次数小于d / 2。
 
-We can continue recursively by splitting f₁(x) into g₁(x) and h₁(x), then choosing a value 𝛼₁, constructing f₂(x) and so on. Each time, the degree of the polynomial is halved. Hence, after log(d) steps we are left with a constant polynomial, and the prover can simply send the constant value to the verifier.
+我们可以通过递归的方式将 f₁(x) 分割成 g₁(x) 和 h₁(x)，然后选择一个值 𝛼₁，构建 f₂(x) ，如此反复。每次操作后，多项式的次数都会减半。因此，在 log(d) 步之后，我们只剩下一个常数多项式，证明器可以简单地将常数值发送给验证者。
 
-A note about the domains: for the above protocol to work, we need the property that for every z in the domain L, it holds that -z is also in L. Moreover, the commitment on f₁(x) will not be over L but over L²={x²: x ∊ L}. Since we iteratively apply the FRI step, L² will also have to satisfy the {z, -z} property, and so on. These natural algebraic requirements are easily satisfied via natural choices of domains L (say, a multiplicative subgroup whose size is a power of 2), and in fact coincide with those that we anyways need in order to benefit from efficient FFT algorithms (which are used elsewhere in STARK, e.g., to encode execution traces).
+关于域的说明：为了使上述协议生效，我们需要使每个 z 偶在域 L 中，包括 -z 也在域 L 中。此外，对于 f₁(x) 的承诺不是在 L 中，而是在 L²={x²: x ∊ L} 中进行的。由于我们要迭代应用 FRI 步骤，因此 L² 也必须满足 {z, -z} 属性，以此类推。这些自然的代数要求可以通过域 L 的自然选择得到轻松满足（例如，大小为 2 的次方的乘法子群），并且实际上，这些要求与我们为了从高效的 FFT 算法中获益而需要的要求相吻合（这些算法在 STARK 的其他地方使用，比如，用于编码执行轨迹）。
 
-== Query phase
-We now have to check that the prover did not cheat. The verifier samples a random z in L and queries f₀(z) and f₀(-z). These two values suffice to determine the values of g₀(z²) and h₀(z²), as can be seen by the following two linear equations in the two "`variables`" g₀(z²) and h₀(z²):
+== 查询阶段
+现在我们需要检查证明器是否作弊。验证者从 L 中随机抽取一个 z，并查询 f₀(z) 和 f₀(-z)。这两个值足以确定 g₀(z²) 和 h₀(z²) 的值，正如如下的两个线性方程式所示，其中有两个“变量” g₀(z²) 和 h₀(z²)：
 
 image::query1.png[query1]
 
-The verifier can solve this system of equations and deduce the values of g₀(z²) and h₀(z²). It follows that it can compute the value of f₁(z²) which is a linear combination of the two. Now the verifier queries f₁(z²) and makes sure that it is equal to the value computed above. This serves as an indication that the commitment to f₁(x), which was sent by the prover in the commit phase, is indeed the correct one. The verifier may continue, by querying f₁(-z²) (recall that (-z²)∊ L² and that the commitment on f₁(x) was given on L²) and deduce from it f₂(z⁴).
+验证者可以解决这个方程组并推导出 g₀(z²) 和 h₀(z²) 的值。由此可以计算出 f₁(z²) 的值，这是这两个值的线性组合。现在，验证者查询 f₁(z²)，并确保它等于上面计算出的值。这表明证明者在提交阶段发送的对 f₁(x) 承诺确实是正确的。验证者可以继续查询 f₁(-z²)（请注意，(-z²)∊ L²，而 f₁(x) 的承诺是在 L² 上给出的），并从中推导出 f₂(z⁴)。
 
-The verifier continues in this way until it uses all these queries to finally deduce the value of f_{log d}(z) (denoting f with a subscript log d, that we can't write due to Medium's lack of support for fully fledged mathematical notation). But, recall that f_{log d}(z) is a constant polynomial whose constant value was sent by the prover in the commit phase, prior to choosing z. The verifier should check that the value sent by the prover is indeed equal to the value that the verifier computed from the queries to the previous functions.
+验证者继续这样做，直到使用所有这些查询，最终推导出 f_{log d}(z) 的值（用下标 log d 表示 f，由于 Medium 不支持完整的数学符号而无法书写）。但是，请记住，f_{log d}(z) 是一个常数多项式，其常数值在选择 z 之前由证明器在提交阶段发送。验证者应检查证明器发送的值是否确实等于验证者从查询先前函数查询中计算出的值。
 
-Overall, the number of queries is only logarithmic in the degree bound d.
+总的来说，查询次数只与度数受限的 d 成对数。
 
-Optional: To get a feeling why the prover cannot cheat, consider the toy problem where f₀ is zero on 90% of the pairs of the form {z,-z}, i.e., f₀(z) = f₀(-z) = 0 (call these the "`good`" pairs), and non-zero on the remaining 10% (the "`bad`" pairs). With probability 10% the randomly selected z falls in a bad pair. Note that only one 𝛼 will lead to f₁(z²)=0, and the rest will lead to f₁(z²)≠0. If the prover cheats on the value of f₁(z²), it will be caught, so we assume otherwise. Thus, with a high probability (f₁(z²), f₁(-z²)) will also be a bad pair in the next layer (the value of f₁(-z²) is not important as f₁(z²)≠0). This continues until the last layer where the value will be non-zero with high probability.
+可选的：为了更好地理解证明器为什么无法作弊，考虑一个玩具问题：f₀ 在 90％ 的 {z,-z} 对中为零，即 f₀(z) = f₀(-z) = 0（将其称为“好”对），在其余 10％ 的 {z,-z} 对中不为零（称为“坏”对）。有 10％ 的概率随机选择的 z 会落在坏对中。请注意，只有一个 𝛼 值会导致 f₁(z²)=0，其他值会导致 f₁(z²)≠0。如果证明器欺在 f₁(z²) 的值上作弊，它将被发现，因此我们假设证明器没有作弊。因此，很有可能（f₁(z²)，f₁(-z²)）在下一层中也是坏对，（f₁(-z²) 的值并不重要，因为 f₁(z²)≠0）。这种情况会一直持续到最后一层，该层的值将大概率为非零。
 
-On the other hand, since we started with a function with 90% zeros, it is unlikely that the prover will be able to get close to a low degree polynomial other than the zero polynomial (we will not prove this fact here). In particular, this implies that the prover must send 0 as the value of the last layer. But then, the verifier has a probability of roughly 10% to catch the prover. This was only an informal argument, the interested reader may find a rigorous proof https://eccc.weizmann.ac.il/report/2017/134/[here].
+另一方面，由于我们从一个有 90％ 零的函数开始，证明器不太可能接近零多项式以外的低度多项式（我们不会在此处证明这个事实）。特别是，这意味着证明器必须发送 0 作为最后一层的值。但这样一来，验证者就有大约 10％ 的概率抓包证明器。这只是一个非正式的论点，有兴趣的读者可以在 https://eccc.weizmann.ac.il/report/2017/134/[这里] 找到严格的证明。
 
-In the test described so far (and the above analysis) the probability that the verifier catches a malicious prover is only 10%. In other words the error probability is 90%. This can be exponentially improved by repeating the above query phase for a few independently sampled z's. For example, by choosing 850 z's, we get an error probability of 2{caret}{-128} which is practically zero.
+在迄今为止描述的测试（和上述分析）中，验证者抓包恶意证明器的概率仅为 10％。换句话说，误差概率为 90％。通过为几个独立抽样的 z 重复上述查询阶段，这一点可以得到指数级的改善。例如，通过选择 850 个 z，我们可以获得 2{caret}{-128} 的误差概率，这几乎为零。
 
-In summary, the direct solution (test) requires too many queries to achieve the succinctness required by STARK. To attain logarithmic query complexity, we use an interactive protocol called FRI, in which the prover adds more information in order to convince the verifier that the function is indeed of low degree. Crucially, FRI enables the verifier to solve the low-degree testing problem with a number of queries (and rounds of interaction) that is logarithmic in the prescribed degree.
+总之，直接解决方案（测试）需要太多查询才能实现 STARK 所需的简洁性。为了获得对数查询复杂度，我们使用一种名为 FRI 的交互式协议，在这个协议中，证明器添加更多信息，以使验证者相信函数确实是低次的。最重要的是，FRI 使得验证者能够使用在指定次数中对数次查询（和交互轮数）来解决低次测试问题。
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答三个问题，给予我们反馈。https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing
