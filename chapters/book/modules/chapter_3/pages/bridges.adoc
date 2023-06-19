@@ -6,7 +6,7 @@
 
 == StarkGate
 
-StarkGate (https://starkgate.starknet.io/) 是以太坊和 Starknet 之间的代币桥梁。 它允许用户使用 L1 和 L2 跨链桥合约在两者之间存入和取出 ETH 和 ERC-20 代币。
+StarkGate https://starkgate.starknet.io/ 是以太坊和 Starknet 之间的代币桥梁。 它允许用户使用 L1 和 L2 跨链桥合约在两者之间存入和取出 ETH 和 ERC-20 代币。
 
 === L1 → L2 转账（存款）
 
@@ -18,7 +18,7 @@ StarkGate (https://starkgate.starknet.io/) 是以太坊和 Starknet 之间的代
 
 == Orbiter
 
-Orbiter Finance (https://www.orbiter.finance/) 是一个去中心化的交叉汇总桥，设计用于在各种网络（包括以太坊、第 2 层解决方案和侧链）之间传输以太坊原生资产。
+Orbiter Finance https://www.orbiter.finance/ 是一个去中心化的交叉汇总桥，设计用于在各种网络（包括以太坊、第 2 层解决方案和侧链）之间传输以太坊原生资产。
 
 该系统由两个主要角色组成：Sender 和 Maker。 “Maker”将超额保证金存入 Orbiter 的合约，作为“Sender”的交叉汇总服务提供商。 “发送方”将资产发送给“源网络”上的“制造商”，“制造商”将资产发送回“目标网络”上的“发送方”。 Orbiter 的安全模型依赖于三种类型的智能合约：Maker 存款合约 (MDC)、事件绑定合约 (EBC) 和简单支付验证 (SPV)。
 
@@ -33,7 +33,7 @@ Orbiter Finance (https://www.orbiter.finance/) 是一个去中心化的交叉汇
 > 
 > *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
 > 
-> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的[指南](https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc) 并加入活力满满的社区。一起无畏共建 Starknet！*
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的[指南]https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc 并加入活力满满的社区。一起无畏共建 Starknet！*
 > 
 
 — Starknet 社区
