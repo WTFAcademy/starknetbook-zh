@@ -1,23 +1,23 @@
 [id="starknet_aa"]
 
-= Account Abstraction model in Starknet
+= 探索Starknet的账户抽象模型
 
-Now that we know better the concept of AA, let's actually code it in Starknet.
+现在我们更好地了解了“账户抽象”（AA）的概念，让我们在 Starknet中 实际编写它。
 
-== Account Contract Interface
+== 账户合约接口
 
-Although account contracts are nothing more than smart contracts, they have methods that set them apart from other smart contracts. The following interface to an account contract implements the AA protocol. It has a public key associated with it and can validate and execute transactions. Here's what it does:
+虽然账户合约本质上只是智能合约，但它们具有使它们与其他智能合约区别开来的方法。下面是一个实现账户抽象协议的账户合约接口。它与一个公钥相关联，可以验证和执行交易。它的作用如下：
 
-* `constructor`: This optional method initializes the account contract. While an account contract can exist without a constructor, it is common practice to establish the associated public key within the constructor.
-* `validate_transaction`: An optional helper method, `validate_transaction`, checks the validity of a transaction. This could involve comparing a signature against an associated public key, or any other validation process as defined by the contract creator.
-* `__validate_deploy__`: This method is invoked during the deployment process and serves to validate the deployment of a new contract.
-* `__validate_declare__`: This method validates the declaration of a new contract. It confirms the syntax and semantics of the contract declaration are correct.
-* `__validate__`: This method validates transactions before they are executed. It ensures that the transaction adheres to the rules defined in the contract.
-* `__execute__`: After the transactions have been validated, `__execute__` is the method that executes a series of contract calls.
+* `constructor`： 这个可选的方法初始化账户合约。尽管账户合约可以在没有构造函数的情况下存在，但在构造函数中建立相关的公钥是一种常见的做法。
+* `validate_transaction`： 一个可选的辅助方法， `validate_transaction`检查交易的有效性。这可能涉及将签名与相关的公钥进行比较，或者是合约创建者定义的任何其他验证方法。
+* `__validate_deploy__`： 这个方法在部署过程中被调用，用于验证新合约的部署。
+* `__validate_declare__`： 这个方法验证新合约的声明。它确认合约声明的语法和语义是正确的。
+* `__validate__`： 这个方法在交易执行之前验证交易。它确保交易遵守合约中定义的规则。
+* `__execute__`： 在交易被验证之后， `__execute__` 是执行一系列合约调用的方法。
 
-Account contracts play a vital role in ensuring the security of the Starknet network by allowing only transactions with valid signatures to be executed.
+账户合约通过只允许执行具有有效签名的交易，在确保 Starknet 网络安全方面发挥着至关重要的作用。
 
-Here is a generic implementation of an account contract:
+以下是一个通用的账户合约实现：
 
 [,Rust]
 ----
@@ -49,21 +49,20 @@ mod Account {
 }
 ----
 
-The entry points of an account contract are its callable functions. Let's explore these in detail:
+账户合约的入口点是其可调用函数。让我们详细探讨一下这些函数：
 
-* `constructor`: This function is not mandatory, but it's useful for setting up an account contract. It accepts a `public_key` parameter that represents the public key associated with the account. In the future, there may be a `setPublicKey()` method to facilitate account transfers.
-* `isValidSignature`: Inspired by EIP-1271, this function returns true if a given signature is valid; otherwise, it reverts.
-* `__validate__`: Allows you to define an arbitrary logic to determine if a transaction is valid or not.
-They can not read This function allows you to define custom logic for determining the validity of a transaction. It cannot read other contracts' storage, which helps prevent spam. The account contract calls `__validate__` when it receives a transaction. The function takes the following arguments (calldata):
- ** `contract_address: ContractAddress`: The target contract address.
- ** `entry_point_selector: felt252`: The function to be called on the target contract.
- ** `calldata: Array<felt252>`: An array representing the function parameters.. Remember calldata are the parameters used to call a function.
-* `__validate_declare__`: This function validates the signature before declaring a new contract. It takes a single argument, `class_hash`, which represents the class hash of the contract to be declared.
-* `__execute__`: This function serves as the state-changing entry point for all user interactions with any contract, including managing the account contract itself. It is called after successful validation by `__validate__`. The function takes an argument `mut calls`, which is an array of `Call` structs.
+* `constructor`： 这个函数不是必须的，但对于设置账户合约非常有用。它接受一个 `public_key` 参数，表示与账户相关联的公钥。在未来，可能会有一个 `setPublicKey()` 函数来方便账户转移。
+* `isValidSignature`： 受 EIP-1271 启发，该函数如果给定的签名有效，则返回 true；否则，它会回滚。
+* `__validate__`： 允许您定义任意逻辑来确定交易是否有效。它允许您为确定交易的有效性定义自定义逻辑。它不能读取其他合约的存储，这有助于防止垃圾邮件。当账户合约接收到交易时，它会调用 `__validate__` 函数。该函数接受以下参数（calldata）：
+ ** `contract_address: ContractAddress`： 目标合约地址。
+ ** `entry_point_selector: felt252`： 要在目标合约上调用的函数。
+ ** `calldata: Array<felt252>`： 表示函数参数的数组。请记住，calldata 是用于调用函数的参数。
+* `__validate_declare__`： 该函数在声明新合约之前验证签名。它接受一个单一的参数 `class_hash`，表示要声明的合约的类哈希。
+* `__execute__`： 该函数作为所有用户与任何合约交互的状态更改入口点，包括管理账户合约本身。在 `__validate__`成功验证后调用它。该函数接受一个参数 `mut calls`，它是一个 `Call` 结构体的数组。
 
-== The Call Struct
+== Call 结构体
 
-The `Call` struct represents a single call to a contract:
+`Call` 结构体表示对合约的单个调用：
 
 [,Rust]
 ----
@@ -74,29 +73,29 @@ struct Call {
 }
 ----
 
-It contains the following fields:
+它包含以下字段：
 
-* `to`: The target contract address.
-* `selector`: The selector of the function to be called on the target contract.
-* `calldata`: An array representing the function parameters.
+* `to`： 目标合约地址。
+* `selector`： 要在目标合约上调用的函数的选择器。
+* `calldata`： 表示函数参数的数组。
 
-== Summary
+== 总结
 
-In this chapter, we explored the Account Abstraction model in Starknet, focusing on account contracts and their methods.
+在本章中，我们探讨了 Starknet 中的账户抽象模型，重点关注了账户合约及其方法。
 
-To summarize:
+进一步总结：
 
-* Account contracts are smart contracts implementing the Account Abstraction protocol.
-* They provide methods for validating and executing transactions and contract deployments.
-* They offer flexibility to users by allowing them to define custom validation logic.
+* 账户合约是实现账户抽象协议的智能合约。
+* 它们提供了验证和执行交易和合约部署的方法。
+* 它们通过允许用户定义自定义验证逻辑来提供灵活性。
 
-In the next subchapter, we will implement a simple account contract and learn how to deploy it on Starknet. This will provide a practical understanding of how account contracts work and how to interact with them.
+在下一小节中，我们将实现一个简单的账户合约，并学习如何在Starknet上部署它。这将提供一个实际的理解，了解账户合约的工作原理以及如何与它们交互。
 
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====

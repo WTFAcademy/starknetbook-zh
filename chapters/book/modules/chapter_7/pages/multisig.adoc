@@ -1,31 +1,31 @@
 [id="multisig"]
 
-= Multisig Accounts
+= 多签账户
 
 ====
-CONTRIBUTE: This subchapter is missing an example of declaration, deployment and interaction with the contract. We would love to see your contribution! Please submit a PR.
+贡献：这个子章节缺少一个声明、部署和与合约交互的示例。我们很期待您的贡献！请提交一个 PR。
 ====
 
-Multisignature (multisig) technology is an integral part of the modern blockchain landscape. It enhances security by requiring multiple signatures to confirm a transaction, hence reducing the risk of fraudulent transactions and increasing control over asset management.
+多重签名（multisig）技术是现代区块链领域的重要组成部分。它通过要求多个签名来确认交易，从而增强了安全性，减少了欺诈交易的风险，并增加了对资产管理的控制。
 
-In Starknet, the concept of multisig accounts is abstracted at the protocol level, allowing developers to implement custom account contracts that embody this concept. In this chapter, we'll delve into the workings of a multisig account and see how it's created in Starknet using an account contract.
+在 Starknet 中，多重签名账户的概念被抽象到协议层面，使开发人员能够实现体现该概念的自定义账户合约。在本章中，我们将深入探讨多重签名账户的工作原理，并看看如何使用合约账户在 Starknet 中创建它。
 
-== What is a Multisig Account?
+== 什么是多签账户？
 
-A multisig account is an account that requires more than one signature to authorize transactions. This significantly enhances security, requiring multiple entities' consent to transact funds or perform critical actions.
+多重签名账户是需要多个签名才能授权交易的账户。这显著增强了安全性，需要多个实体同意资金交易或执行关键操作。
 
-Key specifications of a multisig account include:
+多重签名账户的关键组成部分包括：
 
-* Public keys that form the account
-* Threshold number of signatures required
+* 组成账户的公钥
+* 所需的签名门槛数
 
-A transaction signed by a multisig account must be individually signed by the different keys specified for the account. If fewer than the threshold number of signatures needed are present, the resultant multisignature is considered invalid.
+由多重签名账户签名的交易必须由指定为该账户的不同密钥分别签名。如果签名数少于所需的门槛数，则产生的交易将不会执行成功。
 
-In Starknet, accounts are abstractions provided at the protocol level. Therefore, to create a multisig account, one needs to code the logic into an account contract and deploy it.
+在 Starknet 中，账户是在协议层面提供的抽象。因此，要创建多重签名账户，需要将逻辑编写到一个账户合约中并进行部署。
 
-The contract below serves as an example of a multisig account contract. When deployed, it can create a native multisig account using the concept of account abstraction. Please note that this is a simplified example and lacks comprehensive checks and validations found in a production-grade multisig contract.
+下面的合约是一个多重签名账户合约的示例。当部署时，它可以使用账户抽象的概念创建本地多重签名账户。请注意，这是一个简化示例，缺少在生产级多重签名合约中发现的全面检查和验证。
 
-== Multisig Account Contract
+== 多签账户合约
 
 [,Rust]
 ----
@@ -225,22 +225,22 @@ mod MultisigAccount {
 }
 ----
 
-== Multisig Transaction Flow
+== 多签交易的流程
 
-The flow of a multisig transaction includes the following steps:
+多重签名交易的流程包括以下步骤：
 
-1. Submitting a transaction: Any of the owners can submit a transaction from the account.
-2. Confirming the transaction: The owner who hasn't submitted a transaction can confirm the transaction.
+1. 提交交易：任何一个账户所有者都可以从该账户提交交易。
+2. 确认交易：没有提交交易的账户所有者可以确认该交易。
 
-The transaction will be successfully executed if the number of confirmations (including the submitter's signature) is greater than or equal to the threshold number of signatures, else it fails. This mechanism of confirmation ensures that no single party can unilaterally perform critical actions, thereby enhancing the security of the account.
+如果确认的数量（包括提交者的签名）大于或等于所需签名门槛数，则交易将成功执行，否则交易将失败。这种确认机制确保没有任何单个方可以单方面执行关键交易，从而增强了账户的安全性。
 
-== Exploring Multisig Functions
+== 探索多重签名函数
 
-Let's take a closer look at the various functions associated with multisig functionality in the provided contract.
+让我们更仔细地看一下提供的合约中与多重签名功能相关的各种函数。
 
-=== _set_owners Function
+=== _set_owners 函数
 
-This is an internal function designed to add the public keys of the account owners to a permanent storage. Ideally, a multisig account structure should permit adding and deleting owners as per the agreement of the account owners. However, each change should be a transaction requiring the threshold number of signatures.
+这是一个内部函数，旨在将账户所有者的公钥添加到永久存储中。理想情况下，多重签名账户结构应允许根据账户所有者的协议添加和删除所有者。然而，每次更改都应该是一个需要达到签名门槛数的交易。
 
 [,Rust]
 ----
@@ -256,9 +256,9 @@ fn _set_owners(owners_len: usize, public_keys: Array::<felt252>) {
 }
 ----
 
-=== submit_tx Function
+=== submit_tx 函数
 
-This external function allows the owners of the account to submit transactions. Upon submission, the function checks the validity of the transaction, ensures the caller is one of the account owners, and adds the transaction to the transactions map. It also increments the current transaction index. 
+这是一个外部函数，允许账户所有者提交交易。提交后，该函数会检查交易的有效性，确保调用者是账户所有者之一，并将交易添加到交易映射中。它还会增加当前交易索引。 
 
 [,Rust]
 ----
@@ -291,9 +291,9 @@ fn submit_tx(public_key: felt252) {
 }
 ----
 
-=== confirm_tx Function
+=== confirm_tx 函数
 
-Similarly, the *_confirm_tx_* function provides a way to record confirmations for each transaction. An account owner, who did not submit the transaction, can confirm it, increasing its confirmation count.
+类似地， *_confirm_tx_* 函数提供了一种记录每个交易确认的方法。未提交交易的账户所有者可以确认该交易，从而增加其确认计数。
 
 [Source, Rust]
 ----
@@ -330,9 +330,9 @@ Similarly, the *_confirm_tx_* function provides a way to record confirmations fo
     }
 ----
 
-=== __execute__ Function
+=== __execute__ 函数
 
-The __execute__ function serves as the final step in the transaction process. It checks the validity of the transaction, whether it has been previously executed, and if the threshold number of signatures has been reached. The transaction is executed if all the checks pass.
+__execute__ 函数作为交易过程的最后一步。它检查交易的有效性、是否已经执行过以及是否已经达到了签名门槛数。如果所有检查都通过，则执行交易。
 
 [,Rust]
 ----
@@ -364,25 +364,26 @@ The __execute__ function serves as the final step in the transaction process. It
     }
 ----
 
-== Closing Thoughts
+== 最后的总结
 
-This chapter has introduced you to the concept of multisig accounts in Starknet and illustrated how they can be implemented using an account contract. However, it's important to note that this is a simplified example, and a production-grade multisig contract should contain additional checks and validations for robustness and security.
+本章介绍了在 Starknet 中使用多重签名账户的概念，并演示了如何使用账户合约实现。但是，需要注意的是，这只是一个简化的示例，一个生产级别的多重签名合约应该包含额外的检查和验证以确保其鲁棒性和安全性。
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
 
-== Contributing
+== **贡献力量**
 
-[quote, The Starknet Community]
-____
-*Unleash Your Passion to Perfect StarknetBook*
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的 https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南] 并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
-
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
-____
+— Starknet 社区

@@ -1,29 +1,29 @@
 [id="multicall"]
 
-= Multicalls
+= 多重调用
 
 ====
-CONTRIBUTE: This subchapter is missing an example of declaration, deployment and interaction with the contract. We would love to see your contribution! Please submit a PR.
+贡献：这个子章节缺少一个声明、部署和与合约交互的示例。我们很希望看到您的贡献！请提交PR。
 ====
 
-https://github.com/joshstevens19/ethereum-multicall#readme[Multicall] is a powerful technique that allows multiple constant smart contract function calls to be aggregated into a single call, resulting in a consolidated output. With Starknet's account abstraction feature, multicalls can be seamlessly integrated into account contracts.
+https://github.com/joshstevens19/ethereum-multicall#readme[多重调用] 是一种强大的技术，允许将多个常量智能合约函数调用聚合到单个调用中，从而产生一个合并的输出。使用 Starknet 的账户抽象功能，可以将多个调用无缝地集成到账户合约中。
 
-== Why Multicalls?
+== 为什么使用多重调用？
 
-Multicalls come handy in several scenarios. Here are some examples:
+多个调用在几种情况下非常方便。以下是一些示例：
 
-1. *Token Swapping on Decentralized Exchanges*: In a typical token swap operation on a decentralized exchange (DEX), you first need to approve the spending of the tokens and then initiate the swap. Executing these operations separately could be cumbersome from a user experience perspective. With multicall, these calls can be combined into a single transaction, simplifying the user's task.
-2. *Fetching Blockchain Data*: When you want to query the prices of two different tokens from the blockchain, it's beneficial to have them both come from the same block for consistency. Multicall returns the latest block number along with the aggregated results, providing this consistency.
+1. *去中心化交易所的代币交换*：在去中心化交易所（DEX）上进行典型的代币交换操作时，您首先需要批准代币的支出，然后再启动交换。从用户体验的角度来看，执行这些操作可能很麻烦。使用多个调用，这些调用可以合并为单个事务，简化用户的任务。
+2. *获取区块链数据*：当您想从区块链查询两个不同代币的价格时，为了保持一致性，最好从同一个块中获取这些价格。多重调用可以返回最新的块高和已经聚合的结果，实现这种一致性。
 
-The benefits of multicall transactions can be realized more in the context of account abstraction.
+在账户抽象的背景下，多重调用交易的好处将可以被最大化。
 
-== Multicall Functionality in Account Contracts
+== 合约账户中的多重调用功能
 
-To facilitate multicalls, we can introduce specific functions in the account contract. Here are two core functions:
+为了实现多重调用，我们可以在账户合约中引入特定的函数。以下是两个核心函数：
 
-=== `_execute_calls` Function
+=== `_execute_calls` 函数
 
-The `_execute_calls` function is responsible for executing the multicalls. It iterates over an array of calls, executes them, and aggregates the results.
+`_execute_calls` 函数负责执行多重调用。它遍历调用数组，执行它们并汇总结果。
 
 [Source,Rust]
 ----
@@ -41,13 +41,13 @@ fn _execute_calls(mut calls: Array<AccountCall>, mut res:Array::<Array::<felt>>)
 }
 ----
 
-Apart from the traditional *"_ _execute_ _"* function, adding the *"_execute_calls"* function to your account contract can ensure that you can make a multicall using your smart contract account.
+除了传统的 *"_ _execute_ _"* 函数之外，将 *"_execute_calls"* 函数添加到您的账户合约中可以确保您可以使用合约账户进行多个调用。
 
-The above code is a simple example snippet where the *"return _execute_calls(calls, res);"* statement makes recursive calls to the *"_execute_calls_"* function thereby bundling the calls together. The final result will be aggregated and returned in the *_res_* variable.
+上面的代码是一个简单的示例片段，其中 *"return _execute_calls(calls, res);"* 语句会对 *"_execute_calls_"* 函数进行递归调用，从而将调用绑定在一起。最终的结果将汇总并返回在 *_res_* 变量中。
 
-=== `_call_contract` Function
+=== `_call_contract` 函数
 
-The `_call_contract` function is a helper function used to make individual contract calls.
+`_call_contract` 函数是一个辅助函数，用于进行单个合约调用。
 
 [,Rust]
 ----
@@ -58,25 +58,26 @@ fn _call_contract(call: AccountCall) -> Array::<felt> {
 }
 ----
 
-== Considerations
+== 注意事项
 
-While multicall provides significant benefits in terms of UX and data consistency, it's important to note that it may not significantly reduce gas fees compared to individual calls. However, the primary advantage of using multicall is that it ensures results are derived from the same block, providing a much-improved user experience.
+虽然多重调用在用户体验和数据一致性方面提供了显著的优点，但需要注意的是，与单个调用相比，它可能并不会显著降低 gas 费用。然而，使用多重调用的主要优势在于它确保结果来自同一区块，从而提供了更好的用户体验。
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
 
-== Contributing
+== **贡献力量**
 
-[quote, The Starknet Community]
-____
-*Unleash Your Passion to Perfect StarknetBook*
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的 https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南] 并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
-
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
-____
+— Starknet 社区

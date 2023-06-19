@@ -1,65 +1,66 @@
 [id="why_aa"]
 
-= Why Account Abstraction?
+= 为什么需要账户抽象？
 
-== Wallets and Users
-Crypto wallets are an integral part of onboarding a user to web3. However, wallets can be overwhelming and difficult to use as someone can lose a lot with one small mistake.
+== 钱包和用户
+加密钱包是引导用户进入 web3 的重要组成部分。然而，钱包可能会让人感到不知所措，难以使用，因为一个小错误可能会导致大量资产损失。
 
-Let us look at a few issues with wallets as of today:
-* Most Ethereum users use centralized exchanges because managing a self-custody wallet is difficult; this is not self-custody. +
-* In 5 years it would be bizarre that we used to secure our assets by writing 12 words on paper. Seed phrases should be a thing of the past. +
-* There is no safety net for users using wallets with self-custody. +
+让我们来看看今天钱包存在的一些问题：
+* 大多数以太坊用户使用集中式交易所，因为管理自我保管钱包很难；这并不是真正的自我保管。 +
+* 五年后，通过将 12 个单词写在纸上来保护我们的资产将会变得很奇怪。种子短语应该是过去的事情。 +
+* 对于使用自我保管钱包的用户来说，没有安全保障。 +
 
-Let's take a quick look at how accounts work on Ethereum currently.
+让我们快速了解一下当前以太坊上的账户如何工作。
 
-== Accounts on Ethereum
+== 以太坊上的账户
 
-There are two types of accounts on Ethereum:
+在以太坊上有两种类型的账户：
 
-* *Externally Owned Accounts* (EOA) +
-* *Contract Accounts* (CA).
+* *外部拥有账户* （EOA） +
+* *合约账户* （CA）.
 
-For the rest of this article, we will refer to EOAs as accounts, as they are most relevant to this chapter. 
+在接下来的文章中，我们将把 EOAs 称为账户，因为它们与本章最相关。
 
-As the name indicates, EOAs are accounts owned by something external to the blockchain - namely, users. The state of the account on Ethereum can be modified only through transactions, which have to be initiated by an EOA(There can be contract accounts in the chain of triggering).
+正如名称所示，EOAs 是由区块链外部的某个实体（即用户）拥有的账户。在以太坊上，账户的状态只能通过交易进行修改，这些交易必须由 EOA 发起（在触发链中可能还有合约账户）。
 
-*Does that mean that anyone can trigger a transaction from any EOA?* No, and this is where the concept of a signer comes into the picture.
+*这是否意味着任何人都可以从任何EOA触发交易？* 不是的，这就是签名者的概念介入的地方。
 
-Every account on Ethereum is associated with a cryptographic object called a signer. A signer, also called a keypair, is made of two keys: a private key and a public key.
+在以太坊上，每个账户都与一个称为签名者的加密对象相关联。签名者，也称为密钥对，由两个密钥组成：私钥和公钥。
 
-The private key, a.k.a. the secret, can be used to sign digital messages, and the public key can enable anyone to verify that a given signature was signed by its corresponding private key.
+私钥，也称为秘密密钥，可用于签署数字消息，而公钥可以使任何人验证特定签名是由其对应的私钥签署的。
 
-*How is an account associated with a signer?* Through the account address.
+*账户如何与签名者相关联？* 通过账户地址。
 
-The address of an EOA is derived from the public key of a signer. More specifically, the address is the last 20 bytes of the Keccak-256 hash of the public key.
+EOA 的地址是从签名者的公钥派生的。更具体地说，地址是公钥的 Keccak-256 哈希的最后 20 个字节。
 
-The owner of the account can thus authorize a transaction from its account by signing the parameters of the transaction with the corresponding private key.
+因此，账户的所有者可以通过使用相应的私钥签署交易的参数来授权从其账户发起交易。
 
-*But what if you lose your private key?*
+*但如果您丢失了私钥怎么办？*
 
-Because your private key is your account, losing your key means losing your account.
+因为您的私钥就是您的账户，所以丢失了私钥就意味着丢失了账户。
 
-Even worse, if someone else has your private key they also have your account... and all the tokens it contains. And there is nothing you can do about it! Hundreds of millions of dollars, if not billions, have already been lost or stolen because of a loss or theft of private keys.
+更糟糕的是，如果别人拥有了您的私钥，他们也就拥有了您的账户……以及其中包含的所有代币。而且您无能为力！由于私钥的丢失或盗窃，已经有数亿美元的资产已经丢失或被盗。
 
-This is where *account abstraction* can help users - with possibilities like social recovery and several other cool features, account asbtraction can be the key to unlocking crypto mass adoption.
+这就是 *账户抽象* 可以帮助用户的地方——通过社交恢复和其他一些很酷的功能，账户抽象可能是解锁加密货币大规模采用的关键。
 
-Let's learn more about it in the next chapter.
+让我们在下一章节中深入了解它。
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+这本书是社区贡献出的成果，为社区而创建。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 如果您学到了一些东西，或者没有收获，也请花点时间通过这个 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题的调查]提供反馈。
+* 如果您发现任何错误或有其他建议，请毫不犹豫地在我们的 https://github.com/starknet-edu/starknetbook/issues[GitHub 存储库上开一个 issue]。
 ====
 
-== Contributing
+== **贡献力量**
 
-[quote, The Starknet Community]
-____
-*Unleash Your Passion to Perfect StarknetBook*
+> 释放你的热情，让《Starknet 之书》更加完美
+> 
+> 
+> *《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。*
+> 
+> *为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的 https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南] 并加入活力满满的社区。一起无畏共建 Starknet！*
+> 
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
-
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
-____
+— Starknet 社区
