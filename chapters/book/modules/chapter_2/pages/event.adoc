@@ -6,7 +6,7 @@
 带有事件的投票合约
 
 
-== Voting Contract with Events
+== 设定事件的投票合约
 
 在这个示例中，我们将使用以下扩展版本的投票合约。合约的新增内容包括特征、实现和事件。该合约允许三个已注册的投票者就某个提案提交投票（1 表示赞成/0 表示反对）。它记录赞成票和反对票的数量，并提供视图（getter）函数来检查投票状态和投票者资格。
 
@@ -212,7 +212,7 @@ mod Vote2 {
 }
 ----
 
-== 定义 `event`
+== 定义事件
 
 要在 Starknet 合约中定义事件，您可以使用 `#[event]` 属性，然后是事件定义。在我们的扩展投票合约中，我们有一个名为 `VoteCast` 的事件，当投票时会发出。该事件接受两个参数：选民的地址和投票值（0 代表 No，1 代表 Yes）
 
@@ -223,7 +223,7 @@ mod Vote2 {
 fn VoteCast(voter: ContractAddress, vote: u8) {}
 ----
 
-== 发出 `event`
+== 发出事件
 
 要发出事件，只需用适当的参数调用事件函数。在我们的投票合约中，投票处理完毕后，VoteCast 事件会被发出。
 
@@ -237,7 +237,7 @@ Starknet 合约中的事件不能直接从合约本身读取。相反，事件�
 
 要从事件中获取值，您需要设置一个链下服务或客户端来监听合约发出的事件。这可以使用 SDK 实现。例如，Starknet 的 Python SDK 提供了一个 listen_for_event 函数，可用于监听合约发出的事件。在接下来的章节中，我们将看到如何使用 Starknet 的 SDK 监听我们的 voting 合约发出的 events。
 
-[NOTE]
+[附注]
 ====
 《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
 
@@ -245,13 +245,18 @@ Starknet 合约中的事件不能直接从合约本身读取。相反，事件�
 * 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
 ====
 
-== Contributing
 
-[quote, The Starknet Community]
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
 ____
-*Unleash Your Passion to Perfect StarknetBook*
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
+释放你的热情，让《Starknet 之书》更加完美
 
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
 ____

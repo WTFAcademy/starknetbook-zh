@@ -1,23 +1,23 @@
 [id="security_considerations"]
 
-= Security Considerations in Cairo
+= 在 Cairo 中的安全性考虑因素
 
-When working with any blockchain programming language, it's crucial to be aware of potential vulnerabilities in smart contracts in order to protect your projects from threats that could compromise the trust users place in your systems. Cairo is no exception.
+当使用任何区块链编程语言时，了解智能合约中可能存在的潜在漏洞至关重要，以便保护你的项目免受可能破坏用户对你系统信任的威胁。Cairo 也不例外。
 
-This chapter will explain some common security issues and vulnerabilities specific to Starknet and Cairo, and provide recommendations on how to prevent them from affecting your contracts. 
+这一章将解释 Starknet 和 Cairo 特定的一些常见安全问题和漏洞，并提供如何防止它们影响你的合约的建议。
 
-Contributions to this chapter are welcome. If you have any suggestions, please submit a pull request to the https://github.com/starknet-edu/starknetbook[Book repo].
+欢迎对本章做出贡献。如果你有任何建议，请向 https://github.com/starknet-edu/starknetbook[Book repo] 提交 pull 请求。
 
 [NOTE]
 ====
-Please note that some of the code examples provided in this chapter are written in pseudo-code for the sake of simplicity and clarity when explaining the concepts. They are not meant to be used in production.
+请注意，本章提供的部分代码示例为了在解释概念时简单明了，是以伪代码写的。它们并非用于生产环境的。
 ====
 
-== 1. Access Control
+== 1. 访问控制
 
-Access control vulnerabilities arise when a smart contract's functions are inadequately secured, allowing unauthorized users to perform actions that should be restricted. This can lead to unintended smart contract behavior and manipulation of sensitive data.
+当一个智能合约的函数保护不足时，就会出现访问控制漏洞，这使得未经授权的用户可以执行应受限制的操作。这可能导致智能合约的行为出现异常，以及敏感数据的操纵。
 
-For example, consider a smart contract that handles token minting without proper access control:
+例如，考虑一个没有适当访问控制就处理代币铸造的智能合约：
 
 [source,rust]
 ----
@@ -27,39 +27,11 @@ fn mint_tokens(amount: u256) {
 }
 ----
 
-In this example, any user can call the `mint_tokens` function and mint new tokens, potentially leading to an exploit or manipulation of the token supply.
+在这个例子中，任何用户都可以调用 mint_tokens 函数，并铸造新的代币，可能导致代币供应的利用或操纵。
 
-To mitigate access control vulnerabilities, implement proper authorization mechanisms such as role-based access control (RBAC) or ownership checks. You can create your own custom solution or use existing templates like those provided by https://docs.openzeppelin.com/contracts-cairo/0.6.1/access[OpenZeppelin,window=_blank].
+为了减轻访问控制漏洞，应实施适当的授权机制，如基于角色的访问控制 (RBAC) 或所有权检查。你可以创建你自己的定制解决方案，或使用像 https://docs.openzeppelin.com/contracts-cairo/0.6.1/access[OpenZeppelin,window=_blank] 提供的现有模板。
 
-In the example above, we can add an owner variable, set the owner value in the constructor, and add an assert condition in the `mint_tokens` function to ensure that only the owner can mint new tokens.
-
-[source,rust]
-----
-struct Storage {
-    owner: ContractAddress,
-}
-
-#[constructor]
-fn constructor() {
-    let sender = get_caller_address();
-    owner::write(sender);
-}
-
-#[external]
-fn mint_tokens(amount: u256) {
-    let sender = get_caller_address();
-    assert(sender == owner::read());
-    total_supply::write(total_supply::read() + amount);
-}
-----
-
-By implementing proper access control, you can ensure that your smart contract functions are only executed by authorized parties, reducing the risk of unauthorized manipulation.
-
-**Recommendation**
-
-To mitigate access control vulnerabilities, implement proper authorization mechanisms such as role-based access control (RBAC) or ownership checks. You can create your own custom solution or use existing templates like those provided by https://docs.openzeppelin.com/contracts-cairo/0.6.1/access[OpenZeppelin,window=_blank].
-
-In the example above, we can add an owner variable, set the owner value in the constructor, and add an assert condition in the `mint_tokens` function to ensure that only the owner can mint new tokens.
+在上面的例子中，我们可以添加一个 owner 变量，设置构造函数中的 owner 值，并在 mint_tokens 函数中添加一个断言条件，以确保只有 owner 才能铸造新的代币。
 
 [source,rust]
 ----
@@ -81,13 +53,41 @@ fn mint_tokens(amount: u256) {
 }
 ----
 
-By implementing proper access control, you can ensure that your smart contract functions are only executed by authorized parties, reducing the risk of unauthorized manipulation.
+通过实施适当的访问控制，你可以确保你的智能合约功能只能由授权方执行，从而减少未授权操控的风险。
 
-== 2. Reentrancy
+**建议：**
 
-Reentrancy vulnerabilities occur when a smart contract's function calls an external contract before updating its internal state, allowing the external contract to recursively call the initial function before it has completed execution.
+为了减轻访问控制漏洞，实施适当的授权机制，如基于角色的访问控制（RBAC）或所有权检查。你可以创建自己的自定义解决方案，或使用像 https://docs.openzeppelin.com/contracts-cairo/0.6.1/access[OpenZeppelin,window=_blank] 提供的现有模板。
 
-For example, consider a game contract where whitelisted addresses can mint an NFT sword and execute an `on_receive_sword()` function to use it before returning it to the contract. However, the NFT contract is vulnerable to reentrancy attacks, allowing an attacker to mint multiple NFT swords.
+在上面的例子中，我们可以添加一个所有者变量，在构造函数中设置所有者值，并在 mint_tokens 函数中添加一个 assert 条件，以确保只有所有者才能铸造新的代币。
+
+[source,rust]
+----
+struct Storage {
+    owner: ContractAddress,
+}
+
+#[constructor]
+fn constructor() {
+    let sender = get_caller_address();
+    owner::write(sender);
+}
+
+#[external]
+fn mint_tokens(amount: u256) {
+    let sender = get_caller_address();
+    assert(sender == owner::read());
+    total_supply::write(total_supply::read() + amount);
+}
+----
+
+通过实施适当的访问控制，你可以确保你的智能合约功能只被授权的方执行，降低未经授权操作的风险。
+
+== 2. 重入性
+
+重入性漏洞发生在智能合约的功能在更新其内部状态之前调用外部合约，允许外部合约在初始功能完成执行之前递归地调用它。
+
+例如，考虑一个游戏合约，白名单地址可以铸造一个 NFT 剑，并在将其返回到合约之前执行一个 on_receive_sword() 功能来使用它。然而，NFT 合约易受到重入攻击，允许攻击者铸造多个 NFT 剑。
 
 [source,rust]
 ----
@@ -113,7 +113,7 @@ fn mint_one_sword() {
 }
 ----
 
-An attacker's contract can implement the `on_receive_sword` function to exploit the reentrancy vulnerability and mint multiple swords:
+一个攻击者的合约可以实现 on_receive_sword 功能，以利用重入性漏洞和铸造多个剑：
 
 [source,rust]
 ----
@@ -128,11 +128,11 @@ fn on_receive_sword() {
 }
 ----
 
-Reentrancy may need to be implemented in callback functions in many ERC standards with `safeTransfer` functions (ERC721, ERC777, ERC1155, ERC223, etc.) or in flash loans where lender contracts callback the borrower contract to use and return funds.
+在许多有 safeTransfer 功能的 ERC 标准（ERC721，ERC777，ERC1155，ERC223 等）或在闪电贷款中，放贷人合约调用借款人合约使用并返还资金中可能需要实现重入。
 
-**Recommendation:**
+**建议：**
 
-To mitigate reentrancy vulnerabilities, follow the check-effects-interactions pattern, ensuring that you update the relevant internal state before calling external contracts. In the example above, remove the sender from the whitelist before calling the external function.
+要缓解重入性漏洞，请遵循查效应-交互模式，确保在调用外部合约之前更新相关内部状态。在上面的例子中，调用外部功能之前从白名单中删除发件人。
 
 [source,rust]
 ----
@@ -149,15 +149,15 @@ if whitelisted::read(sender) == true {
 }
 ----
 
-By following the check-effects-interactions pattern, you can reduce the risk of reentrancy attacks, ensuring the integrity of your smart contract's internal state.
+通过实施适当的访问控制，你可以确保你的智能合约功能只能由授权方执行，从而减少未授权操控的风险。
 
-== 3. Tx.Origin Authentication
+== 3. Tx.Origin 验证
 
-In Solidity, `tx.origin` is a global variable that stores the address of the transaction initiator, while `msg.sender` stores the address of the transaction caller. In Cairo, we have the `account_contract_address` global variable and `get_caller_address` function, which serve the same purpose.
+在 Solidity 中，tx.origin 是一个全局变量，它存储交易发起人的地址，而 msg.sender 存储交易调用者的地址。在 Cairo 中，我们有 account_contract_address 全局变量和 get_caller_address 函数，它们具有相同的功能。
 
-Using `account_contract_address` (the equivalent of `tx.origin`) for authentication in your smart contract functions can lead to phishing attacks. Attackers can create custom smart contracts and trick users into placing them as intermediaries in a transaction call, effectively impersonating the contract owner.
+在你的智能合约函数中使用 account_contract_address（相当于 tx.origin）进行身份验证可能导致钓鱼攻击。攻击者可以创建自定义的智能合约，并欺骗用户将它们作为交易调用的中介，从而有效地冒充合约所有者。
 
-For example, consider a Cairo smart contract that allows transferring funds to the owner and uses `account_contract_address` for authentication:
+例如，考虑一个 Cairo 智能合约，它允许将资金转移到所有者，并使用 account_contract_address 进行身份验证：
 
 [source,rust]
 ----
@@ -184,7 +184,7 @@ fn transferTo(to: ContractAddress, amount: u256) {
 }
 ----
 
-An attacker can trick the owner into using a malicious contract, allowing the attacker to call the `transferTo` function and impersonate the contract owner:
+攻击者可以诱骗所有者使用恶意合约，允许攻击者调用 transferTo 函数并冒充合约所有者：
 
 [source,rust]
 ----
@@ -198,9 +198,9 @@ mod malicious_contract {
 }
 ----
 
-**Recommendation:**
+**建议：**
 
-Replace `account_contract_address` (origin) authentication with `get_caller_address` (sender) in the `transferTo` function to prevent phishing attacks:
+在 transferTo 函数中用 get_caller_address（发送者）替换 account_contract_address（源）身份验证，以防止网络钓鱼攻击：
 
 [source,rust]
 ----
@@ -225,15 +225,14 @@ fn transferTo(to: ContractAddress, amount: u256) {
 }
 ----
 
-By using the correct authentication method, you can prevent phishing attacks and ensure that only authorized users can execute specific smart contract functions.
+通过使用正确的身份验证方法，你可以防止网络钓鱼攻击，确保只有授权用户可以执行特定的智能合约功能。
 
 
+== 4. 智能合约中的溢出和下溢处理
 
-== 4. Handling Overflow and Underflow in Smart Contracts
+当给定的数据类型分配的值过大（溢出）或过小（下溢）时，就会发生溢出和下溢的漏洞。在本节中，我们将探讨如何在 Starknet 智能合约中减轻这些问题。
 
-Overflow and underflow vulnerabilities occur when assigning a value that is too large (overflow) or too small (underflow) for a given data type. In this section, we'll explore how to mitigate these issues in Starknet smart contracts.
-
-When using the `felt252` data type, adding or subtracting a value outside the valid range can lead to incorrect results:
+当使用 felt252 数据类型时，加上或减去超出有效范围的值可能导致结果不正确：
 
 [source,rust]
 ----
@@ -253,15 +252,15 @@ When using the `felt252` data type, adding or subtracting a value outside the va
     }  
 ----
 
-We will get wrong values:
+我们将得到错误的值：
 
 image::sec_over_felt.png[felt252]
 
-**Recommendation.**
+**建议：**
 
-To avoid incorrect results, *use protected data types*: Utilize data types like `u128` or `u256` that are designed to handle overflows and underflows.
+为了避免结果不正确，使用受保护的数据类型：利用像 u128 或 u256 这样的数据类型来处理溢出和下溢。
 
-Here's an example of how to use the `u256` data type to handle overflow and underflow:
+下面是如何使用 u256 数据类型来处理溢出和下溢的例子：
 
 [source,rust]
 ----
@@ -281,12 +280,12 @@ Here's an example of how to use the `u256` data type to handle overflow and unde
     }
 ----
 
-Executing these functions will revert the transaction if an overflow is detected:
+执行这些函数将会在检测到溢出时撤销交易：
 
 image::sec_over_u256.png[u256]
 image::sec_over_u256.png[u256]
 
-* *Failure reasons for u256*:
+* *u256 失败原因*:
   - `0x753235365f616464204f766572666c6f77=u256_add Overflow`
   - `0x753235365f737562204f766572666c6f77=u256_sub Overflow`
 
@@ -316,37 +315,42 @@ image::sec_over_u128.png[u128]
   - `0x753132385f616464204f766572666c6f77=u128_add Overflow`
   - `0x753132385f737562204f766572666c6f77=u128_sub Overflow`
 
-== Call for Contributions: Additional Vulnerabilities
+== C征集贡献：额外的漏洞
 
-We've covered a few common vulnerabilities in Cairo smart contracts, but there are several more security considerations that developers should be aware of. We are currently seeking contributions from the community to expand this chapter and cover more vulnerabilities, as listed in our To-Do section:
+我们已经介绍了一些 Cairo 智能合约中常见的漏洞，但开发者应该注意的安全问题还有很多。我们目前正在寻求社区的贡献，扩展本章并涵盖更多的漏洞，如我们的待办事项部分所列出的：
 
-- Storage Collision
-- Flash Loan Attacks
-- Oracle Manipulation
-- Bad Randomness
-- Denial of Service
-- Untrusted Delegate Calls
-- Public Burn
+- 存储碰撞（Storage Collision）
+- 闪电贷攻击（Flash Loan Attacks）
+- 预言机操纵（Oracle Manipulation）
+- 不良随机性（Bad Randomness）
+- 服务拒绝（Denial of Service）
+- 不可信的委托调用（Untrusted Delegate Calls）
+- 公开烧毁（Public Burn）
 
-If you have expertise in any of these areas, we encourage you to contribute to this chapter by adding explanations and examples of the respective vulnerabilities. Your contributions will help educate and inform the Starknet and Cairo developer community, promoting the creation of more secure and robust smart contracts. Please submit your contributions through the https://github.com/starknet-edu/starknetbook/issues[Issues of the Book] on GitHub or reach out to us directly via our communication channels (default espejelomar on Telegram).
+如果你在这些领域有专业知识，我们鼓励你通过添加相应漏洞的解释和示例来为这一章做出贡献。你的贡献将帮助教育和告知 Starknet 和 Cairo 开发者社区，推动更安全、更健壮的智能合约的创建。请通过 GitHub 上的 https://github.com/starknet-edu/starknetbook/issues[书籍问题] 提交你的贡献，或直接通过我们的通信渠道（默认在 Telegram 上的 espejelomar）与我们联系。
 
-Thank you for your support in making the Starknet ecosystem safer and more secure for all developers and users.
+感谢你的支持，让 Starknet 生态系统对所有开发者和用户更安全、更有保障。
 
-[NOTE]
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷， https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[简单回答三个问题] ，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
 ====
 
-== Contributing
 
-[quote, The Starknet Community]
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
 ____
-*Unleash Your Passion to Perfect StarknetBook*
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
+释放你的热情，让《Starknet 之书》更加完美
 
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
 ____

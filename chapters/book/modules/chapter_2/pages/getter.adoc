@@ -1,6 +1,6 @@
 [id="getter"]
 
-= 在 Cairo 中的 Getter 函数（ view 函数）
+= 在 Cairo 中的 Getter 函数（view 函数）
 
 Getter 函数，又称为 view 函数，是只读函数，允许您访问合约存储中的数据而不修改它。它们可以被其他合约或外部调用，并且不需要支付 gas 费用，因为它们不会改变合约的状态。
 
@@ -46,7 +46,7 @@ fn voter_can_vote(user_address: ContractAddress) -> bool {
 `voter_can_vote` 函数接受一个 `ContractAddress` 作为输入，并从存储中的 `can_vote` 映射中读取用户的投票状态。它返回一个 `bool` 值，表示选民是否有权投票。在 Solidity 中，你将使用一个以 `address` 为键类型的 mapping 来存储类似的数据结构。`is_voter_registered` 函数与 voter_can_vote 函数类似，但它返回一个 `bool` 值，表示地址是否为注册选民。
 
 
-[NOTE]
+[附注]
 ====
 《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
 
@@ -54,13 +54,18 @@ fn voter_can_vote(user_address: ContractAddress) -> bool {
 * 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
 ====
 
-== Contributing
 
-[quote, The Starknet Community]
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
 ____
-*Unleash Your Passion to Perfect StarknetBook*
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
+释放你的热情，让《Starknet 之书》更加完美
 
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
 ____
