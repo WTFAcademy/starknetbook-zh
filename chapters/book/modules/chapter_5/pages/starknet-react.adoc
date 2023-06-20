@@ -1,15 +1,16 @@
 [id="starknet-react"]
 
-= Starknet React: A Pathway to Robust Decentralized Applications
+= Starknet React：通往健壮的去中心化应用的途径
 
-Authored by the https://github.com/apibara/[Apibara] team, https://github.com/apibara/starknet-react/[Starknet React] is an open-source collection of React providers and hooks meticulously designed for Starknet. Drawing inspiration from https://github.com/tmm/wagmi/[wagmi], this ingenious toolkit mimics a strikingly similar API, facilitating a smooth transition for those familiar with wagmi.
+由 https://github.com/apibara/[Apibara] 团队编写， https://github.com/apibara/starknet-react[Starknet React] 是一个为Starknet精心设计的开源 React 提供器和钩子集合。从 https://github.com/tmm/wagmi/[wagmi] 中汲取灵感，这个巧妙的工具包模仿了一个非常相似的 API，为那些熟悉 wagmi 的人提供了顺畅的过渡。
 
-To immerse in the real-world application of Starknet React, we recommend exploring the comprehensive example dApp project at https://github.com/finiam/starknet-demo-dapp/[starknet-demo-dapp].
+为了更好地了解Starknet React在实际应用中的应用，我们建议探索 https://github.com/finiam/starknet-demo-dapp/[starknet-demo-dapp] 中的全面示例 dApp 项目。
 
 
-== Integrating Starknet React
 
-Embarking on your Starknet React journey necessitates the incorporation of vital dependencies. Let's start by adding them to your project.
+== 集成 Starknet React
+
+开始使用 Starknet React，首先需要添加一些关键依赖项。让我们将它们添加到您的项目中。
 
 [source,shell]
 ----
@@ -18,10 +19,11 @@ yarn add @starknet-react/core starknet get-starknet
 
 [NOTE]
 ====
-https://www.starknetjs.com/[Starknet.js] is an essential SDK facilitating interactions with Starknet. In contrast, https://github.com/starknet-io/get-starknet/[get-starknet] is a package adept at managing wallet connections.
+https://www.starknetjs.com/[Starknet.js] 是一个与 Starknet 互动的关键 SDK。相反， https://github.com/starknet-io/get-starknet/[get-starknet] 是一个擅长管理钱包连接的软件包。
+
 ====
 
-Proceed by swaddling your app within the `StarknetConfig` component. This enveloping action offers a degree of configuration, while simultaneously providing a React Context for the application beneath to utilize shared data and hooks. The `StarknetConfig` component accepts a connectors prop, allowing the definition of wallet connection options available to the user.
+接下来，用 `StarknetConfig` 组件包裹您的应用。这种包裹行为提供了一定程度的配置，同时为下面的应用提供了一个 React Context 以使用共享数据和钩子。`StarknetConfig` 组件接受一个 connectors 属性，允许定义用户可用的钱包连接选项。
 
 [source,typescript]
 ----
@@ -40,9 +42,9 @@ return (
 )
 ----
 
-== Establishing Connection and Managing Account
+== 建立连接和管理账户
 
-Once the connectors are defined in the config, the stage is set to use a hook to access these connectors, enabling users to connect their wallets:
+一旦在配置中定义了连接器，就可以使用钩子访问这些连接器，从而使用户能够连接他们的钱包：
 
 [source,typescript]
 ----
@@ -65,7 +67,7 @@ export default function Connect() {
 }
 ----
 
-Observe the `disconnect` function that terminates the connection when invoked. Post connection, access to the connected account is provided through the `useAccount` hook, offering insight into the current state of connection:
+注意 `disconnect` 函数在调用时终止连接。连接后，通过 `useAccount` 钩子访问已连接的帐户，了解连接的当前状态：
 
 [source,typescript]
 ----
@@ -82,9 +84,10 @@ return (
 );
 ----
 
-The state values, such as `isConnected` and `isReconnecting`, receive automatic updates, simplifying UI conditional updates. This convenient pattern shines when dealing with asynchronous processes, as it eliminates the need to manually manage the state within your components.
+诸如 `isConnected` 和 `isReconnecting` 之类的状态值会自动更新，简化了 UI 条件更新。在处理异步过程时，这种便捷模式尤为出色，因为它消除了在组件内手动管理状态的需求。
 
-Having established a connection, signing messages becomes a breeze using the account value returned from the `useAccount` hook. For a more streamlined experience, the `useSignTypedData` hook is at your disposal.
+建立连接后，使用 `useAccount` 钩子返回的帐户值对消息进行签名变得轻而易举。为了获得更流畅的体验，您可以使用 `useSignTypedData` 钩子。
+
 
 [source,typescript]
 ----
@@ -100,41 +103,11 @@ return (
 )
 ----
 
-Starknet React supports signing an array of `BigNumberish` values or an object. While signing an object, it is crucial to ensure that the data conforms to the EIP712 type. For a more comprehensive guide on signing, refer to the Starknet.js documentation: https://www.starknetjs.com/docs/guides/signature/[here].
+Starknet React 支持对 `BigNumberish` 数组值或对象进行签名。在对对象进行签名时，确保数据符合 EIP712 类型至关重要。有关签名的更全面指南，请参考 Starknet.js 文档： https://www.starknetjs.com/docs/guides/signature/[这里]。
 
-== Displaying StarkName
+== 浏览网络
 
-After an account has been connected, the `useStarkName` hook can be used to retrieve the StarkName of this connected account. Related to https://www.starknet.id/[Starknet.id] it permits to display the user address in a more user friendly way.
-
-[source,typescript]
-----
-const { data, isError, isLoading, status } = useStarkName({ address });
-// You can track the status of the request with the status variable ('idle' | 'error' | 'loading' | 'success')
-
-if (isLoading) return <p>Loading...</p>
-return <p>Account: {isError ? address : data}</p>
-----
-You also have additional information you can get from this hook -> **error**, **isIdle**, **isFetching**, **isSuccess**, **isFetched**, **isFetchedAfterMount**, **isRefetching**, **refetch** which can give you more precise information on what is happening.
-
-
-== Fetching address from StarkName
-
-You could also want to retrieve an address corresponding to a StarkName. For this purpose, you can use the `useAddressFromStarkName` hook.
-
-[source,typescript]
-----
-const { data, isLoading, isError } = useAddressFromStarkName({ name: 'vitalik.stark' })
-
-if (isLoading) return <p>Loading...</p>
-if (isError) return <p>Something went wrong</p>
-return <p>Address: {data}</p>
-----
-
-If the provided name does not have an associated address, it will return **"0x0"**
-
-== Navigating the Network
-
-In addition to wallet and account management, Starknet React equips developers with hooks for network interactions. For instance, useBlock enables the retrieval of the latest block:
+除了钱包和帐户管理外，Starknet React 还为开发者提供了用于网络交互的钩子。例如，useBlock 可以检索最新的区块：
 
 [source,typescript]
 ----
@@ -154,9 +127,9 @@ return (
 )
 ----
 
-In the aforementioned code, refetchInterval controls the frequency of data refetching. Behind the scenes, Starknet React harnesses https://github.com/TanStack/query/[react-query] for managing state and queries. In addition to useBlock, Starknet React offers other hooks like useContractRead and useWaitForTransaction, which can be configured to update at regular intervals.
+在上述代码中，refetchInterval 控制数据重新获取的频率。在后台，Starknet React 利用 https://github.com/TanStack/query/[react-query] 管理状态和查询。除了 useBlock，Starknet React 还提供了其他钩子，如 useContractRead 和 useWaitForTransaction，可以配置为定期更新。
 
-The useStarknet hook provides direct access to the ProviderInterface:
+useStarknet 钩子直接访问 ProviderInterface：
 
 [source,typescript]
 ----
@@ -166,57 +139,11 @@ const { library } = useStarknet();
 // library.getTransaction(...)
 ----
 
-== Tracking Wallet changes
+== 合约互动
 
-To improve your dApp User Experience, you can track the user wallet changes, especially when the user changes the wallet account (or connects/disconnects). But also when the user changes the network.
-You could want to reload correct balances when the user changes the account, or to reset the state of your dApp when the user changes the network.
-To do so, you can use a previous hook we already looked at: `useAccount` and a new one `useNetwork`.
+=== 读取函数
 
-The `useNetwork` hook will give you the current Chain currently used.
-
-[source,typescript]
-----
-const { chain: {id, name} } = useNetwork();
-
-return (
-    <>
-        <p>Connected chain: {name}</p>
-        <p>Connected chain id: {id}</p>
-    </>
-)
-----
-
-You also have additional information you can get from this hook -> **blockExplorer**, **testnet** which can give you more precise information about the current using network.
-
-After knowing this you have all you need to track user interaction on the using account and network. You can use the `useEffect` hook to do some work on changes.
-
-[source,typescript]
-----
-const { chain } = useNetwork();
-const { address } = useAccount();
-
-useEffect(() => {
-    if(address) {
-        // Do some work when the user changes the account on the wallet
-        // Like reloading the balances
-    }else{
-        // Do some work when the user disconnects the wallet
-        // Like reseting the state of your dApp
-    }
-}, [address]);
-
-useEffect(() => {
-    // Do some work when the user changes the network on the wallet
-    // Like reseting the state of your dApp
-}, [chain]);
-
-----
-
-== Contract Interactions
-
-=== Read Functions
-
-Starknet React presents useContractRead, a specialized hook for invoking read functions on contracts, akin to wagmi. This hook functions independently of the user's connection status, as read operations do not necessitate a signer.
+Starknet React 提供了 useContractRead，这是一个专门用于在合约上调用读取函数的钩子，类似于 wagmi。由于读取操作不需要签名者，因此此钩子与用户的连接状态无关。
 
 [source,typescript]
 ----
@@ -230,7 +157,8 @@ const { data: balance, isLoading, isError, isSuccess } = useContractRead({
 ----
 
 
-For ERC20 operations, Starknet React offers a convenient useBalance hook. This hook exempts you from passing an ABI and returns a suitably formatted balance value.
+对于 ERC20 操作，Starknet React 提供了一个方便的 useBalance 钩子。这个钩子免除了传递 ABI 的需求，并返回一个适当格式化的余额值。
+
 
 [source,typescript]
 ----
@@ -245,9 +173,9 @@ For ERC20 operations, Starknet React offers a convenient useBalance hook. This h
   )
 ----
 
-=== Write Functions
+=== 写入函数
 
-The useContractWrite hook, designed for write operations, deviates slightly from wagmi. The unique architecture of Starknet facilitates multicall transactions natively at the account level. This feature enhances the user experience when executing multiple transactions, eliminating the need to approve each transaction individually. Starknet React capitalizes on this functionality through the useContractWrite hook. Below is a demonstration of its usage:
+useContractWrite 钩子用于写入操作，与 wagmi 稍有不同。Starknet 的独特架构在帐户级别本地支持多调用事务。当执行多个事务时，这个功能提高了用户体验，无需单独批准每个事务。Starknet React 通过 useContractWrite 钩子充分利用了这个功能。以下是它的用法示例：
 
 [source,typescript]
 ----
@@ -285,11 +213,12 @@ return (
 )
 ----
 
-The code snippet begins by compiling the calldata using the compileCalldata utility provided by Starknet.js. This calldata, along with the contract address and entry point, are passed to the useContractWrite hook. The hook returns a write function that is subsequently used to execute the transaction. The hook also provides the transaction's hash and state.
+代码片段首先使用 Starknet.js 提供的 compileCalldata 实用程序编译 calldata。然后将 calldata 与合约地址和入口点一起传递给 useContractWrite 钩子。钩子返回一个 write 函数，用于执行事务。钩子还提供了事务的哈希和状态。
 
-=== A Single Contract Instance
+=== 单个合约实例
 
-In certain use cases, working with a single contract instance may be preferable to specifying the contract address and ABI in each hook. Starknet React accommodates this requirement with the useContract hook:
+在某些用例中，使用单个合约实例可能比在每个钩子中指定合约地址和 ABI 更可取。Starknet React 通过 useContract 钩子满足了这个需求：
+
 
 [source,typescript]
 ----
@@ -303,9 +232,9 @@ const { contract } = useContract({
 // contract.balanceOf(...);
 ----
 
-== Tracking Transactions
+== 跟踪交易
 
-The useTransaction hook allows for the tracking of transaction states given a transaction hash. This hook maintains a cache of all transactions, thereby minimizing redundant network requests.
+useTransaction 钩子允许根据交易哈希跟踪交易状态。此钩子维护所有交易的缓存，从而最大程度地减少冗余网络请求。
 
 [source,typescript]
 ----
@@ -318,41 +247,49 @@ return (
 )
 ----
 
-The full array of available hooks can be discovered in the Starknet React documentation, accessible here: https://apibara.github.io/starknet-react/.
+可以在 Starknet React 文档中找到完整的可用钩子数组，访问地址为：https://apibara.github.io/starknet-react/。
 
-== Conclusion
+== 结论
 
-The Starknet React library offers a comprehensive suite of React hooks and providers, purpose-built for Starknet and the Starknet.js SDK. By taking advantage of these well-crafted tools, developers can build robust decentralized applications that harness the power of the Starknet network.
+Starknet React 库提供了一整套专为 Starknet 和 Starknet.js SDK 设计的 React 钩子和提供者。通过利用这些精心制作的工具，开发人员可以构建健壮的去中心化应用程序，发挥 Starknet 网络的力量。
 
-Through the diligent work of dedicated developers and contributors, Starknet React continues to evolve. New features and optimizations are regularly added, fostering a dynamic and growing ecosystem of decentralized applications.
+通过专注开发者和贡献者的勤奋工作，Starknet React 持续发展。新功能和优化定期添加，培育了一个充满活力且不断发展的去中心化应用生态系统。
 
-It's a fascinating journey, filled with innovative technology, endless opportunities, and a growing community of passionate individuals. As a developer, you're not only building applications, but contributing to the advancement of a global, decentralized network.
+这是一个充满创新技术、无尽机会和充满热情的人群的迷人旅程。作为开发者，你不仅在构建应用程序，还在为全球去中心化网络的发展做出贡献。
 
-Have questions or need help? The Starknet community is always ready to assist. Join the https://discord.gg/starknet[Starknet Discord] or explore the https://github.com/starknet-edu/starknetbook[StarknetBook's GitHub repository] for resources and support.
+有问题或需要帮助？Starknet 社区始终准备提供协助。加入 https://discord.gg/starknet[Starknet Discord] 或浏览 https://github.com/starknet-edu/starknetbook[StarknetBook 的 GitHub 仓库] 以获取资源和支持。
 
 
-== Further Reading
+
+== 推荐阅读
 
 * https://starknet.js.org[Starknet.js]
 * https://www.apibara.com/starknet-react-docs[Starknet React Docs]
 * https://github.com/ethereumbook/ethereumbook[Mastering Ethereum]
 * https://github.com/bitcoinbook/bitcoinbook[Mastering Bitcoin]
 
-[NOTE]
+
+
+[附注]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷， https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[简单回答三个问题] ，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
 ====
 
-== Contributing
 
-[quote, The Starknet Community]
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
 ____
-*Unleash Your Passion to Perfect StarknetBook*
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
+释放你的热情，让《Starknet 之书》更加完美
 
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
 ____
