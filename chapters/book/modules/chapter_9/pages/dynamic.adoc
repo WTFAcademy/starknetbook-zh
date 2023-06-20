@@ -1,73 +1,99 @@
 [id="dynamic"]
+= 内置函数和动态布局
 
-= Builtins and Dynamic Layouts
+== 更高效的证明任务之路
 
-== A Pathway to More Efficient Proving Jobs
+内置函数优化了证明过程。然而，每个证明都是相对于布局计算的，而对于特定的证明任务来说，不高效的布局会减少内置函数的效益。目前，有一个小的静态布局列表，每个证明都是相对于该列表中最合适的布局进行计算的。静态方法有两个主要缺点。首先，布局的有限变化对大多数证明任务来说是低效的，通过复杂的费用机制对用户造成了不必要的开销。其次，为了适应新的内置函数，手动维护列表变得更加困难，几乎阻碍了证明过程支持许多内置函数的效率。为了解决这些问题，我们正在开发一个动态布局系统，其中布局根据每个证明任务进行定制。
 
-Builtins optimize the proving process. However, each proof is computed with respect to a layout, and layouts which are inefficient for a particular proving job diminish the benefit of builtins. Currently, there is a small static list of layouts, and each proof is computed with respect to the most suitable layout from that list. The static approach has two main drawbacks. First, the limited variety of layouts is inefficient for most proving jobs, incurring unnecessary costs on users through a convoluted fee mechanism. Second, manual maintenance of the list to accommodate new builtins becomes wildly more difficult for a large set of builtins, practically impeding the proving process from supporting many builtins with any semblance of efficiency. To resolve these issues, we are working on a Dynamic Layout system in which a layout is tailored to each proving job.
+Cairo 堆栈通过将 Cairo 代码编译成适合 STARK-friendly 的 CPU 架构的指令，实现了可证明的通用计算：Cairo 虚拟机（以下简称 CVM）。通用 CPU 的许多优点带来了内在的成本：CVM 并未针对许多常用操作进行优化。这些操作的显著例子包括哈希函数，例如 Keccak、Pedersen 和 Poseidon，其他例子包括椭圆曲线操作和范围检查（即检查特定数值是否在特定范围内）。
 
-The Cairo stack facilitates provable general computation by compiling Cairo code into instructions for a STARK-friendly CPU architecture: the Cairo VM (henceforth CVM). The many advantages of a general purpose CPU come at an inherent cost: the CVM is not optimized for many frequently used operations. Prominent examples of such operations are hash functions e.g Keccak, Pedersen, and Poseidon, with other examples including elliptic curve operations and range checks (i.e checking if a particular number lies in a particular range of values).
+为了解决 CVM 的相对低效问题，Cairo 堆栈引入了针对关键操作的内置函数概念：优化这些操作的证明复杂性的插件。内置函数类似于 ASIC：ASIC 是特定应用集成电路，而内置函数是特定应用代数约束（AIR）。如果你不知道或者不记得什么是 AIR，我们稍后会简单提及；更多的细节请看 link:https://medium.com/starkware/arithmetization-i-15c046390862[这篇初级的 Medium 文章]。
 
-To resolve the relative inefficiency of the CVM, the Cairo stack introduced the concept of builtins for key operations: plugins that optimize those operations’ proving complexity. Builtins are analogous to ASICs: ASICs are application-specific integrated circuits while builtins are application-specific algebraic constraints (AIRs). If you don’t know or remember what AIRs are, we’ll briefly touch on them later on; more details appear in link:https://medium.com/starkware/arithmetization-i-15c046390862[this introductory medium post.]
+简单来说，证明复杂性与称为追踪单元的资源大致线性相关，内置函数通过使用比 Cairo VM 更少的追踪单元来优化特定操作的证明。
 
-In a nutshell, proof complexity is correlated (roughly linearly) to a resource called trace cells, and builtins streamline proofs of particular operations by using far fewer trace cells than the Cairo VM.
+解释了内置函数的好处后，为许多常用操作开发它们似乎是自然的。但这比说起来要难。将新的内置函数引入 Starknet 的当前过程涉及几个步骤：
 
-Having explained the benefit from builtins, it seems natural to develop them for many frequently used operations. This is easier said than done. The current process of introducing new builtins into Starknet involves several steps:
+1. 写出 AIR
+2. 通过创建新的布局（如下解释）将其整合到证明者中
+3. 将其整合到 Starknet 中，即修改其代码库和
 
-1. Write the AIR
-2. Integrate into the prover by creating new layouts (explained below)
-3. Integrate into Starknet, i.e modify its codebase and developer tooling to use the new builtin
+开发者工具以使用新的内置函数
 
-Beyond the challenge of writing an AIR there is much room for improvement in the remaining two stages. This high-level post will go into more detail about builtins as application-specific AIRs, the above issues, and our plans for the upcoming future.
+除了编写 AIR 的挑战之外，在剩下的两个阶段还有很大的改进空间。这篇高级的文章将详细介绍内置函数作为特定应用的 AIR，上述问题，以及我们未来的计划。
 
-== Builtins: Application-Specific AIRs
+== 内置函数：特定应用的 AIR
 
-AIR is an acronym for Algebraic Intermediate Representation. In our context, it is a system of polynomials which represents a virtual machine. For instance, Cairo derives its name from CPU AIR: a system of polynomials which represents a particular CPU architecture. A solution of this polynomial system represents a valid state transition, and is called a valid algebraic execution trace (AET).
+AIR 是 Algebraic Intermediate Representation 的缩写。在我们的上下文中，它是一个表示虚拟机的多项式系统。例如，Cairo 从 CPU AIR 得名：一个表示特定 CPU 架构的多项式系统。这个多项式系统的解代表了一个有效的状态转换，被称为有效的代数执行迹线（AET）。
 
-STARKs prove the correct operation of a virtual machine by proving that the associated execution trace is valid with respect to the given AIR. Roughly speaking, execution traces are organized as tables of numbers, and the STARK protocol proves these numbers jointly solve a polynomial system.
+STARK 通过证明相关的执行迹线相对于给定的 AIR 有效来证明虚拟机的正确操作。粗略地说，执行迹线被组织为数字表格，STARK 协议证明这些数字共同解决了一个多项式系统。
 
-There are many ways to compute the same thing, with some computations more efficient than others. In our context, proof complexity is essentially determined by the trace size, i.e the number of trace cells in the table. Since traces are generated with respect to an AIR, an application-specific AIR can greatly reduce the execution trace of a particular computation. Builtins are application-specific AIRs aiming for precisely this optimization.
+有许多方法可以计算同样的事情，有些计算比其他的更有效。在我们的上下文中，证明复杂性基本上由迹线大小决定，即表格中的迹线单元数量。由于迹线是根据 AIR 生成的，所以特定应用的 AIR 可以大大减少特定计算的执行迹线。内置函数就是针对这种优化的特定应用的 AIR。
 
-Here’s a table that conveys the efficiency improvements of particular builtins (all in production).
+下面是一个表格，展示了特定内置函数（全部在生产中）的效率改进。
 
 image::builtin.png[builtin]
 
-== Trace layouts: present and future
+== 迹线布局：现在和未来
 
-Recall an algebraic execution trace (AET) is (roughly speaking) a table of numbers that encodes a sequence of VM steps (i.e an execution of a program). To compute a proof, the prover executes the STARK protocol on an execution trace with respect to an AIR.
+回忆一下，代数执行迹线（AET）粗略来说是一个编码了 VM 步骤序列（即程序执行）的数字表格。为了计算证明，证明者对一个与 AIR 相关的执行迹线执行 STARK 协议。
 
-Above, we introduced builtins as application-specific AIRs that aim to minimize proof complexity by reducing the number of trace cells required to encode a computation. However, careless integration of builtins into Starknet can waste many trace cells, diminishing the intended benefits. Let’s elaborate.
+上面，我们将内置函数引入为特定应用的 AIR，旨在通过减少编码计算所需的迹线单元的数量，最小化证明复杂性。然而，将内置函数粗心地整合到 Starknet 可以浪费许多迹线单元，降低了预期的效益。我们来详细说明。
 
-In a nutshell, a trace layout is an allocation of trace cells to different “components”. In our context, these components are the CVM and the builtins. More specifically, a layout specifies the relative amount of trace cells allocated to each component. (Layouts are always structured to streamline proof verification. For more information, see the “succinctness” link:https://medium.com/starkware/arithmetization-ii-403c3b3f4355[section in this medium article].)
+简单来说，迹线布局是将迹线单元分配给不同“组件”的配置。在我们的上下文中，这些组件是 CVM 和内置函数。更具体地说，布局指定了为每个组件分配的迹线单元的相对数量。（布局总是被组织为优化证明验证。有关更多信息，请查看 "succinctness" link:https://medium.com/starkware/arithmetization-ii-403c3b3f4355[这篇 Medium 文章中的部分]。）
 
-Here’s the crucial point: proof complexity depends on the total number of trace cells allocated by the layout, which may be larger than necessary. For example, to prove a sequence of CVM steps, it is roughly doubly efficient to use a layout that only allocates trace cells to the CVM component compared to a layout that allocates half the trace cells to e.g the Poseidon builtin. In summary, the complexity of proving a particular computation can be greatly reduced with a suitable layout.
+这里是关键点：证明
 
-Currently, there is a manually maintained list of layouts, which gradually grows for two main reasons:
+复杂性取决于布局分配的迹线单元的总数，这可能比必要的大。例如，为了证明一系列 CVM 步骤，使用只为 CVM 组件分配迹线单元的布局大致上比使用将一半迹线单元分配给例如 Poseidon 内置函数的布局更有效。总的来说，通过适当的布局，可以大大降低证明特定计算的复杂性。
 
-1. Builtins can only be used in layouts which allocate them trace cells. Hence the addition of a builtin requires at least one new layout.
-2. Tailoring a layout to an execution of Cairo code can improve cell allocation. Hence optimizations of cell utilization often require new layouts.
+目前，有一个手动维护的布局列表，主要因两个原因而逐渐增长：
 
-The code for both prover and verifier (the Solidity and Cairo verifiers) is configured according to the list of layouts.
+1. 内置函数只能在为它们分配迹线单元的布局中使用。因此，添加一个内置函数需要至少一个新的布局。
+2. 根据 Cairo 代码的执行情况定制布局可以改进单元分配。因此，优化单元利用率通常需要新的布局。
 
-With the addition of the Keccak and Poseidon builtins, we found it increasingly difficult to generate a small list of layouts which include many builtins while remaining efficient for the execution of most Starknet blocks. Furthermore, this efficiency is expected to drop wildly with the introduction of additional builtins, since layouts would have to account for the many possible combinations and ratios amongst them.
+证明者和验证者的代码（Solidity 和 Cairo 验证者）根据布局列表进行配置。
 
-We are currently working to improve our system and forgo a prespecified list of layouts in favor of “Dynamic Layouts”: tailored on-the-fly to every execution of Cairo code. Dynamic Layouts will always be optimally proportioned for the proving job at hand. From an engineering perspective, this requires a considerable change in the codebase to support dynamic inputs. However, we expect Dynamic Layouts to streamline Starknet’s proving layer by improving trace cell utilization and consequently making better use of the prover machine.
+随着 Keccak 和 Poseidon 内置函数的增加，我们发现生成一个包含许多内置函数的小布局列表的难度越来越大，同时还能保持执行大多数 Starknet 区块的高效性。此外，随着更多内置函数的引入，这种效率预计会大幅度下降，因为布局必须考虑到它们之间的许多可能的组合和比例。
 
-Dynamic Layouts will dismiss the challenges of manually maintaining efficient layouts for many builtins, consequently streamlining the process of integrating more builtins into Starknet.
+我们目前正在努力改进我们的系统，并放弃预先指定的布局列表，转而采用“动态布局”：根据每一次 Cairo 代码的执行情况进行定制。动态布局总是会为手头的证明工作提供最优的比例。从工程角度来看，这需要在代码库中进行大量的更改以支持动态输入。然而，我们预计动态布局将通过改进迹线单元的使用和 consequently 更好地利用证明机器来优化 Starknet 的证明层。
 
-== Dynamic Layouts and fees
+动态布局将解决手动维护许多内置函数的高效布局的挑战，因此简化了将更多内置函数集成到 Starknet 的过程。
 
-One of the goals of transaction fees is to charge users for the marginal costs incurred on the protocol from their transactions. Since the units of transaction fees are currency, the fee mechanism involves conversion from resources (e.g VM steps, builtins, calldata, Ethereum gas) to tokens (e.g STRK, ETH).
+== 动态布局和费用
 
-Currently, the wasteful resource utilization of the prover comes at the expense of the users since they are charged fees according to the total trace, and not its utilized portion. Dynamic Layouts will improve cell utilization and consequently reduce the “unnecessary” part of the transaction fee (the part covering resource consumption not directly incurred by the user’s transaction).
+交易费用的一个目标是向用户收取由他们的交易在协议上产生的边际成本。由于交易费用的单位是货币，所以费用机制涉及将资源（例如 VM 步骤、内置函数、 calldata、Ethereum gas）转化为代币（例如 STRK、ETH）。
 
-== Starknet builtin integration
+目前，证明者的资源浪费导致用户负担过重，因为他们按照总迹线收取费用，而不是其使用部分。动态布局将改善单元利用率，consequently 减少交易费用的
 
-Currently, the final step in builtin integration involves modifying the Starknet codebase to actually employ them. These modifications are orthogonal to layouts: they are required to ensure the Starknet operating system invokes builtins when possible. For instance, we want the Starknet operating system to invoke the Poseidon builtin during execution of Cairo code that invokes the Poseidon hash function.
+总量。
 
-Starknet builtin support is supported manually now, similarly to layouts. However, unlike the case of layouts, this manual support will remain tame and straightforward even for many builtins. In other words, Starknet builtin support is not a blocker to integration, and Dynamic Layouts will truly pave the way for creation and integration of additional builtins.
+然而，提高资源利用率并不能让费用完全公平。这是因为，虽然证明复杂性大致线性地取决于迹线单元的数量，但每个单位的边际成本可能因组件而异。例如，为 Poseidon 赋值的单元可能比为 CVM 赋值的单元更昂贵。
 
-== Summary
+在当前的费用机制中，所有单位的价格都是相同的，这可能导致一些交易对系统资源的消耗超过其支付的费用。我们计划根据资源类型对单位价格进行区分，以更好地反映其在证明过程中的边际成本。我们将通过观察历史证明来确定这些价格。
 
-The focus is on developing Dynamic Layouts to improve the efficiency of the proving process and facilitate the integration of new builtins. This approach will optimize
+== 结论
 
+我们正在开发一个系统，使证明层能够更好地利用资源，同时简化更多内置函数的引入过程。我们还在改进费用机制，以更好地反映交易对资源的消耗。这些改进将降低 Starknet 的运营成本，从而为用户和开发者带来利益。
+
+[附注]
+====
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
+
+* 无论你是否有所收获，烦请填写此问卷， https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[简单回答三个问题] ，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
+====
+
+
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
+____
+
+释放你的热情，让《Starknet 之书》更加完美
+
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
+____
