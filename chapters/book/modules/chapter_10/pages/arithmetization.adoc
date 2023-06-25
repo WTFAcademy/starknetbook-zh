@@ -262,7 +262,7 @@ image::succinctness3.png[succinctness3]
 
 接下来，我们将详细介绍低度测试的细节，展示如何通过查询少量值来确定某个多项式是否为低度多项式的这种“魔法”是如何实现的。
 
-[附注]
+[NOTE]
 ====
 《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
