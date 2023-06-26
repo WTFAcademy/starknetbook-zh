@@ -15,8 +15,7 @@ https://www.starkware.co/open-source-license/ 获取许可证的副本。除非�
 ==== FieldElement class
 
 我们使用 `+FieldElement+` 类来表示有限域上的元素。您可以使用整数构造 `+FieldElement+` 的实例，然后进行加法、乘法、除法、求逆等运算。这个类的底层域是 latexmath:[\mathbb{F}_{3221225473}]
-(latexmath:[3221225473 = 3 \cdot 2^{30} + 1])，所以所有的运算都是在模 3221225473 意义下进行的。您可以通过运行以下单元格 (shift +
-enter)来尝试。
+(latexmath:[3221225473 = 3 \cdot 2^{30} + 1])，所以所有的运算都是在模 3221225473 意义下进行的。您可以通过运行以下单元格 (shift + enter) 来尝试。
 
 [source,python]
 ----
