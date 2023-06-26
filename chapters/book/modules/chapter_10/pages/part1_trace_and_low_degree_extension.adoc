@@ -1,38 +1,22 @@
-_Copyright 2019 Starkware Industries Ltd. Licensed under the Apache
-License, Version 2.0 (the "License"). You may not use this file except
-in compliance with the License. You may obtain a copy of the License at
-https://www.starkware.co/open-source-license/ Unless required by
-applicable law or agreed to in writing, software distributed under the
-License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-CONDITIONS OF ANY KIND, either express or implied. See the License for
-the specific language governing permissions and limitations under the
-License._
+_版权所有 © 2019 Starkware Industries Ltd。根据 Apache 许可证版本 2.0（“许可证”）许可。除非符合许可证的规定，否则您不得使用此文件。您可以在
+https://www.starkware.co/open-source-license/ 获取许可证的副本。除非适用法律要求或书面同意，否则根据许可证分发的软件是基于“按原样”分发的，没有任何形式的明示或暗示的保证或条件。请参阅许可证以了解许可权限和限制的具体语言。_
 
-== Part 1: Trace and Low-Degree Extension
+== Part 1: 轨迹和低次扩展
 
-* https://www.youtube.com/watch?v=Y0uJz9VL3Fo[Video Lecture (youtube)]
-* https://starkware.co/wp-content/uploads/2021/12/STARK101-Part1.pdf[Slides
+* https://www.youtube.com/watch?v=Y0uJz9VL3Fo[视频讲解 (youtube)]
+* https://starkware.co/wp-content/uploads/2021/12/STARK101-Part1.pdf[幻灯片
 (PDF)]
 
-Today we will develop a STARK prover for the FibonacciSq sequence over a
-finite field. The FibonacciSq sequence is defined by the recurrence
-relation latexmath:[a_{n+2} = a_{n+1} ^2 + a_n ^2]. By the end of the
-day, your code will produce a _STARK_ proof attesting to the following
-statement: *I know a field element latexmath:[X\in \mathbb{F}] such that
-the 1023rd element of the FibonacciSq sequence starting with
-latexmath:[1, X] is latexmath:[2338775057]*.
+今天我们将为有限域上的 FibonacciSq 序列开发一个 STARK 证明程序。FibonacciSq 序列由递推关系 latexmath:[a_{n+2} = a_{n+1} ^2 + a_n ^2] 定义。到最后的时候，您的代码将产生一个 _STARK_ 证明，证明以下
+陈述：*我知道一个域元素 latexmath:[X\in \mathbb{F}]，由此，以 latexmath:[1, X] 开始的 FibonacciSq 序列的第1023个元素是 latexmath:[2338775057]*。
 
-=== The Basics
+=== 基本原则
 
 ==== FieldElement class
 
-We use our `+FieldElement+` class to represent field elements. You can
-construct instances of `+FieldElement+` from integers, and then add,
-multiply, divide, get inverse, and so on. The underlying field of this
-class is latexmath:[\mathbb{F}_{3221225473}]
-(latexmath:[3221225473 = 3 \cdot 2^{30} + 1]), so all operations are
-done modulo 3221225473. Try it by running the following cell (shift +
-enter):
+我们使用 `+FieldElement+` 类来表示有限域上的元素。您可以使用整数构造 `+FieldElement+` 的实例，然后进行加法、乘法、除法、求逆等运算。这个类的底层域是 latexmath:[\mathbb{F}_{3221225473}]
+(latexmath:[3221225473 = 3 \cdot 2^{30} + 1])，所以所有的运算都是在模 3221225473 意义下进行的。您可以通过运行以下单元格 (shift +
+enter)来尝试。
 
 [source,python]
 ----
