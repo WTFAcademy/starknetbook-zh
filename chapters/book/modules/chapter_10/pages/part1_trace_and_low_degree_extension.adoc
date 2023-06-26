@@ -15,22 +15,18 @@ https://www.starkware.co/open-source-license/ 获取许可证的副本。除非�
 ==== FieldElement class
 
 我们使用 `+FieldElement+` 类来表示有限域上的元素。您可以使用整数构造 `+FieldElement+` 的实例，然后进行加法、乘法、除法、求逆等运算。这个类的底层域是 latexmath:[\mathbb{F}_{3221225473}]
-(latexmath:[3221225473 = 3 \cdot 2^{30} + 1])，所以所有的运算都是在模 3221225473 意义下进行的。您可以通过运行以下单元格 (shift + enter) 来尝试。
+(latexmath:[3221225473 = 3 \cdot 2^{30} + 1])，所以所有的运算都是在模 3221225473 意义下进行的。您可以通过运行以下单元格 (shift
+enter) 来尝试。
 
 [source,python]
 ----
-from field import FieldElement
+从域导入 FieldElement
 FieldElement(3221225472) + FieldElement(10)
 ----
 
 == FibonacciSq Trace
 
-To start, let's construct a list `+a+` of length 1023, whose first two
-elements will be FieldElement objects representing 1 and 3141592,
-respectively. The next 1021 elements will be the FibonacciSq sequence
-induced by these two elements. `+a+` is called the trace of FibonacciSq,
-or, when the context is clear, the trace. We can calculate `+a+` as
-follows:
+首先，让我们构造一个长度为 1023 的列表 `+a+` ，其中前两个元素将分别表示为 1 和 3141592 的 FieldElement 对象。接下来的 1021 个元素将是由这两个元素所诱导的 FibonacciSq 序列。 `+a+` 被称为 FibonacciSq 的轨迹，或者在上下文清晰的情况下，简称为轨迹。我们按照以下方式计算 `+a+` ：
 
 [source,python]
 ----
@@ -39,12 +35,9 @@ while len(a) < 1023:
     a.append(a[-2] * a[-2] + a[-1] * a[-1])
 ----
 
-== Test Your Code
+== 测试你的代码
 
-Run the next cell to test that you have filled `+a+` correctly. Note
-that this is in fact a verifier, albeit very naive and non-succinct one,
-as it goes over the sequence, element by element, making sure it is
-correct.
+运行下一个单元格以测试您是否正确地填充了 `+a+`。请注意，这实际上是一个验证器，尽管它非常简单和冗长，因为它逐个元素地遍历序列，确保它是正确的。
 
 [source,python]
 ----
@@ -56,23 +49,13 @@ assert a[1022] == FieldElement(2338775057), 'Wrong last element!'
 print('Success!')
 ----
 
-== Thinking of Polynomials
+== 多项式的思考
 
-We now want to think of the sequence as the evaluation of some, yet
-unknown, polynomial latexmath:[f] of degree 1022 (due to the Unisolvence
-Theorem). We will choose the domain to be some subgroup
-latexmath:[G \subseteq \mathbb{F}^\times] of size 1024, for reasons that
-will become clear later.
+现在，我们希望将这个序列视为某个未知多项式 latexmath:[f] 的 1022 阶评估结果（由于 Unisolvence 定理）。我们将选择域为某个大小为 1024 的子群 latexmath:[G \subseteq \mathbb{F}^\times]，原因稍后会变得清晰。
 
-(Recall that latexmath:[\mathbb{F}^\times] denotes the multiplicative
-group of latexmath:[\mathbb{F}], which we get from
-latexmath:[\mathbb{F}] by omitting the zero element with the induced
-multiplication from the field. A subgroup of size 1024 exists because
-latexmath:[\mathbb{F}^\times] is a cyclic group of size
-latexmath:[3\cdot 2^{30}], so it contains a subgroup of size
-latexmath:[2^i] for any latexmath:[0 \leq i \leq 30]).
+(回想一下，latexmath:[\mathbb{F}^\times] 表示从域 latexmath:[\mathbb{F}]中删除零元素后的乘法群。大小为 1024 的子群是存在的，因为 latexmath:[\mathbb{F}^\times] 是大小为 latexmath:[3\cdot 2^{30}]的循环群，因此它包含大小为 latexmath:[2^i] 的子群，其中 latexmath:[0 \leq i \leq 30])。
 
-=== Find a Group of Size 1024
+=== 找到一个大小为 1024 的群
 
 If we find an element latexmath:[g \in \mathbb{F}] whose
 (multiplicative) order is 1024, then latexmath:[g] will generate such a
