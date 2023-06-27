@@ -57,23 +57,14 @@ print('Success!')
 
 === 找到一个大小为 1024 的群
 
-If we find an element latexmath:[g \in \mathbb{F}] whose
-(multiplicative) order is 1024, then latexmath:[g] will generate such a
-group. The class `+FieldElement+` provides a static method
-`+generator()+` which returns an element that generates
-latexmath:[\mathbb{F}^\times] (whose order is
-latexmath:[|\mathbb{F}^\times|]).
+如果我们找到一个元素 latexmath:[g \in \mathbb{F}]，其（乘法）阶为1024，则 latexmath:[g] 将生成这样的群。类 `+FieldElement+` 提供了一个静态方法 `+generator()+` 该方法返回生成 latexmath:[\mathbb{F}^\times] （其阶为 latexmath:[|\mathbb{F}^\times|]） 的元素。
 
-. Use it to obtain a generator latexmath:[g] for latexmath:[G].
-. Create a list called `+G+` with all the elements of latexmath:[G],
-such that latexmath:[G[i] := g^i].
+. 使用它来获得生成器 latexmath:[g] 用于 latexmath:[G]。
+. 创建一个名为  `+G+` 的列表，其中包含 latexmath:[G] 的所有元素，使得 latexmath:[G[i] := g^i]。
 
-_Hint: When latexmath:[k] divides latexmath:[|\mathbb{F}^\times|],
-latexmath:[g^k] generates a group of size
-latexmath:[\frac {|\mathbb{F}^\times|}{k}], and the n-th power of some
-`+FieldElement+` latexmath:[x] can be computed by calling `+x ** n+`._
+_提示：当 latexmath:[k] 除以 latexmath:[|\mathbb{F}^\times|]时，latexmath:[g^k] 生成一个大小为 latexmath:[\frac {|\mathbb{F}^\times|}{k}] 的群，某些 `+FieldElement+` latexmath:[x] 的 n次方可以通过调用 `+x ** n+` 来计算。_
 
-Solution:
+解决方案：
 
 [source,python]
 ----
@@ -81,7 +72,7 @@ g = FieldElement.generator() ** (3 * 2 ** 20)
 G = [g ** i for i in range(1024)]
 ----
 
-Run the next cell to test your code.
+运行下一个单元格来测试你的代码。
 
 [source,python]
 ----
@@ -99,12 +90,9 @@ else:
     print('g is of order > 1024')
 ----
 
-== Polynomial class
+== 多项式类
 
-We provide you with a class called `+Polynomial+`. The simplest way to
-construct a `+Polynomial+` is by using the variable `+X+` (note that
-it's a capital `+X+`) which represents the formal variable
-latexmath:[x]:
+我们为您提供了一个名为 `+Polynomial+` 的类。构造一个 `+Polynomial+` 最简单的方法是使用变量 `+X+` (注意它是大写字母 `+X+`) ，它代表变量 latexmath:[x]:
 
 [source,python]
 ----
@@ -115,19 +103,16 @@ p = 2*X**2 + 1
 print(p(2))
 ----
 
-== Interpolating a Polynomial
+== 插值多项式
 
-Our `+polynomial+` module provides a Lagrange interpolation function,
-whose arguments are:
+我们的 `+polynomial+` 模块提供了一个拉格朗日插值函数，其参数为：
 
-* x_values: x-values of G that the polynomial's values for them is
-known. [List]
-* y_values: the corresponding y-values. [List]
+* x_values:G 的 x_values，其多项式的值是已知的。[列表]
+* y_values: 相关的 y-values。[列表]
 
-It returns the unique `+Polynomial+` of degree < `+len(x_values)+`
-instance that evaluates to `+y_values[i]+` on `+x_values[i]+` for all i.
+此函数返回次数小于 < `+len(x_values)+` 的唯一 `+多项式+`，该多项式对于所有 i，其在 `+x_values[i]+` 处的取值为 `+y_values[i]+`。
 
-Run the following cell to get help on the function `+interpolate_poly+`.
+运行以下单元格以获取有关函数 `+interpolate_poly+` 的帮助。
 
 [source,python]
 ----
@@ -135,12 +120,9 @@ from polynomial import interpolate_poly
 interpolate_poly?
 ----
 
-Suppose that `+a+` contains the values of some polynomial over `+G+`
-(except for `+G[-1]+`, since `+a+` is one element shorter). Use
-`+interpolate_poly()+` to get `+f+` and get its value at
-`+FieldElement(2)+`.
+假设 `+a+` 包含某个多项式在 `+G+` 上的值（除了  `+G[-1]+`，因为 `+a+` 比 `+G[-1]+` 短一个元素）。使用 `+interpolate_poly()+` 获取 `+f+`，并获取其在 `+FieldElement(2)+` 处的值。
 
-Solution:
+解决方案：
 
 [source,python]
 ----
@@ -148,7 +130,7 @@ f = interpolate_poly(G[:-1], a)
 v = f(2)
 ----
 
-Run test:
+运行测试：
 
 [source,python]
 ----
@@ -156,33 +138,19 @@ assert v == FieldElement(1302089273)
 print('Success!')
 ----
 
-== Evaluating on a Larger Domain
+== 在更大的域进行评估
 
-The trace, viewed as evaluations of a polynomial latexmath:[f] on
-latexmath:[G], can now be extended by evaluating latexmath:[f] over a
-larger domain, thereby creating a Reed-Solomon error correction code.
+将迹视为多项式 latexmath:[f] 在 latexmath:[G] 上的取值，现在可以通过在更大的域上评估 latexmath:[f] 来扩展它，从而创建一个 Reed-Solomon 纠错码。
 
-=== Cosets
+=== 陪集
 
-To that end, we must decide on a larger domain on which latexmath:[f]
-will be evaluated. We will work with a domain that is 8 times larger
-than latexmath:[G]. A natural choice for such a domain is to take some
-group latexmath:[H] of size 8192 (which exists because 8192 divides
-latexmath:[|\mathbb{F}^\times|]), and shift it by the generator of
-latexmath:[\mathbb{F}^\times], thereby obtaining a
-https://en.wikipedia.org/wiki/Coset[coset] of latexmath:[H].
+为此，我们必须决定一个更大的域，用于评估 latexmath:[f]。 我们将使用一个比 latexmath:[G] 大8倍的域。这样一个域的自然选择是选择一个大小为 8192 的群 latexmath:[H] (因为 8192 可以整除 latexmath:[|\mathbb{F}^\times|])，并将它位移到 latexmath:[\mathbb{F}^\times] 的生成元处，从而获得一个 latexmath:[H] 的 https://en.wikipedia.org/wiki/Coset[陪集] 。
 
-Create a list called `+H+` of the elements of latexmath:[H], and
-multiply each of them by the generator of latexmath:[\mathbb{F}^\times]
-to obtain a list called `+eval_domain+`. In other words, eval_domain =
-latexmath:[\{w\cdot h^i | 0 \leq i <8192 \}] for latexmath:[h] the
-generator of latexmath:[H] and latexmath:[w] the generator of
-latexmath:[\mathbb{F}^\times].
+创建一个名为 `+H+` 的列表，其中包含 latexmath:[H] 的元素，并将它们乘以 latexmath:[\mathbb{F}^\times] 的生成元，从而获得一个名为 `+eval_domain+` 的列表。换句话说，对于 latexmath:[h] 是 latexmath:[H] 的生成元， latexmath:[w] 是 latexmath:[\mathbb{F}^\times] 的生成元，eval_domain = latexmath:[{w\cdot h^i | 0 \leq i <8192 }]。
 
-Hint: You already know how to obtain latexmath:[H] - similarly to the
-way we got latexmath:[G] a few minutes ago.
+提示：您已经知道如何获得 latexmath:[H]，方法与几分钟前获得 latexmath:[G] 的方法类似。
 
-Solution:
+解决方案：
 
 [source,python]
 ----
@@ -192,7 +160,7 @@ H = [h ** i for i in range(8192)]
 eval_domain = [w * x for x in H]
 ----
 
-Run test:
+运行测试：
 
 [source,python]
 ----
@@ -207,16 +175,11 @@ for i in range(8192):
 print('Success!')
 ----
 
-== Evaluate on a Coset
+== 在陪集上进行评估
 
-Time to use `+interpolate_poly+` and `+Polynomial.poly+` to evaluate
-over the coset. Note that it is implemented fairely naively in our
-Python module, so interpolation may take up to a minute. Indeed -
-interpolating and evaluating the trace polynomial is one of the most
-computationally-intensive steps in the STARK protocol, even when using
-more efficient methods (e.g. FFT).
+现在是时候使用 `+interpolate_poly+` 和 `+Polynomial.poly+` 在陪集上进行评估了。请注意，它在我们的Python模块中实现得相当简单，因此插值可能需要长达一分钟的时间。即使使用更高效的方法（如 FFT），插值和评估迹多项式仍是 STARK协议中计算密集度最高的步骤之一。
 
-Solution:
+解决方案：
 
 [source,python]
 ----
@@ -224,7 +187,7 @@ f = interpolate_poly(G[:-1], a)
 f_eval = [f(d) for d in eval_domain]
 ----
 
-Run test:
+运行测试：
 
 [source,python]
 ----
@@ -235,14 +198,10 @@ assert '1d357f674c27194715d1440f6a166e30855550cb8cb8efeb72827f6a1bf9b5bb' == sha
 print('Success!')
 ----
 
-== Commitments
+== 承诺
 
-We will use https://en.wikipedia.org/wiki/SHA-2[Sha256]-based
-https://en.wikipedia.org/wiki/Merkle_tree[Merkle Trees] as our
-commitment scheme. A simple implementation of it is available to you in
-the `+MerkleTree+` class. Run the next cell (for the sake of this
-tutorial, this also serves as a test for correctness of the entire
-computation so far):
+我们将使用基于 https://en.wikipedia.org/wiki/SHA-2[Sha256] 的
+https://en.wikipedia.org/wiki/Merkle_tree[Merkle Trees] 作为我们的承诺方案。您可以在 `+MerkleTree+` 类找到它的一个简单实现。运行下一个单元格 （为了本教程的目的，这也是对整个计算正确性的测试）：
 
 [source,python]
 ----
@@ -252,20 +211,12 @@ assert f_merkle.root == '6c266a104eeaceae93c14ad799ce595ec8c2764359d7ad1b4b7c57a
 print('Success!')
 ----
 
-== Channel
+== 通道
 
-Theoretically, a STARK proof system is a protocol for interaction
-between two parties - a prover and a verifier. In practice, we convert
-this interactive protocol into a non-interactive proof using the
-https://en.wikipedia.org/wiki/Fiat%E2%80%93Shamir_heuristic[Fiat-Shamir
-Heuristic]. In this tutorial you will use the `+Channel+` class, which
-implements this transformation. This channel replaces the verifier in
-the sense that the prover (which you are writing) will send data, and
-receive random numbers or random `+FieldElement+` instances.
+理论上，STARK证明系统是一个介于两个参与方之间的交互协议 - 证明器和验证者。 实际上，我们使用
+https://en.wikipedia.org/wiki/Fiat%E2%80%93Shamir_heuristic[Fiat-Shamir 启发式算法] 将这个交互协议转换为非交互式证明。在本教程中，您将使用实现此转换的 `+Channel+` 类。这个通道在某种意义上取代了验证者的角色， 因为证明器（即您编写的程序）将发送数据，并接收随机数或随机的 `+FieldElement+` 的实例。
 
-This simple piece of code instantiates a channel object, sends the root
-of your Merkle Tree to it. Later, the channel object can be called to
-provide random numbers or random field elements.
+这段简单的代码实例化了一个通道对象，并将您的 Merkle Tree 根节点发送给它。稍后，可以调用通道对象以提供随机数或随机场元素。
 
 [source,python]
 ----
@@ -274,9 +225,7 @@ channel = Channel()
 channel.send(f_merkle.root)
 ----
 
-Lastly - you can retrieve the proof-so-far (i.e., everything that was
-passed in the channel up until a certain point) by printing the member
-`+Channel.proof+`.
+最后，您可以通过打印成员变量 `+Channel.proof+` 来检索到目前为止的证明（即，在某个点之前通过通道传递的所有内容）。
 
 [source,python]
 ----
