@@ -1,37 +1,52 @@
 [id="hints"]
 
-= Deep into Hints
 
-Python code can be invoked with the %{ %} block called a hint, which is executed right before the next Cairo instruction.
-The hint can interact with the program's variables/memory as shown in the following code sample.
-Note that the hint is not actually part of the Cairo program, and can thus be replaced by a malicious prover.
-We can run a Cairo program with the --program_input flag, which allows providing a json input file that can be referenced inside a hint.
+= 深入理解 Hints
+
+Python 代码可以通过被称为 hint 的 %{ %} 块来调用，这个块在下一个 Cairo 指令之前执行。
+如下面的代码示例所示，hint 可以与程序的变量/内存进行交互。
+请注意，hint 实际上并不是 Cairo 程序的一部分，因此可以被恶意的证明者替换。
+我们可以使用 --program_input 标志来运行一个 Cairo 程序，该标志允许提供一个可以在 hint 内引用的 json 输入文件。
 
 [,Rust]
 ----
 alloc_locals;
-%{ memory[ap] = 100 %}  // Assign to memory.
-[ap] = [ap], ap++;  // Increment `ap` after using it in the hint.
-assert [ap - 1] = 100;  // Assert the value has some property.
+%{ memory[ap] = 100 %}  // 分配给内存。
+[ap] = [ap], ap++;  // 在 hint 中使用它后增加 `ap`。
+assert [ap - 1] = 100;  // 断言该值具有某些属性。
 
 local a;
 let b = 7;
 %{
-    # Assigns the value '9' to the local variable 'a'.
+    # 将值 '9' 分配给本地变量 'a'。
     ids.a = 3 ** 2
-    c = ids.b * 2  # Read a reference inside a hint.
+    c = ids.b * 2  # 在 hint 内读取一个引用。
 %}
 ----
 
-Note that you can access the address of a pointer to a struct using ids.struct_ptr.address_ and you can use memory[addr] for the value of the memory cell at address addr.
-
+请注意，你可以使用 ids.struct_ptr.address_ 访问指向结构的指针的地址，你可以使用 memory[addr] 来获取地址 addr 处内存单元的值。
 == Contributing
 
-[quote, The Starknet Community]
+[附注]
+====
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
+
+* 无论你是否有所收获，烦请填写此问卷， https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[简单回答三个问题] ，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
+====
+
+
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
 ____
-*Unleash Your Passion to Perfect StarknetBook*
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
+释放你的热情，让《Starknet 之书》更加完美
 
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
 ____

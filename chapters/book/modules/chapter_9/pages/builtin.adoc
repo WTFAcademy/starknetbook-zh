@@ -1,69 +1,57 @@
 [id="builtin"]
 
-= Deep into Builtins
+= 深入理解内建函数
 
-The Algebraic RISC can simulate any Turing Machine and hence is Turing-complete (supports any feasible computation).
-However, implementing some basic operations, such as the comparison of elements, using only Cairo instructions would result in a lot of steps which damages the goal of minimizing the number of trace cells used.
-Consider that adding a new instruction to the Instruction Set has a cost even if this instruction is not used.
-To mitigate this without increasing the number of trace cells per instruction, Cairo introduces the notion of builtins.
+代数 RISC 可以模拟任何图灵机，因此它是图灵完备的（支持任何可行的计算）。然而，使用仅有的 Cairo 指令实现一些基本操作，例如比较元素，将导致大量步骤，这违反了最小化使用轨迹单元数量的目标。请考虑，即使这个指令未被使用，向指令集添加新的指令也有成本。为了在不增加每个指令的轨迹单元数量的情况下缓解这个问题，Cairo 引入了内建函数的概念。
 
 ____
-Builtins are predefined optimized low-level execution units which are added to the Cairo CPU board to perform predefined computations which are expensive to perform in vanilla Cairo (e.g., range-checks, Pedersen hash, ECDSA, ...).
+内建函数是预定义的优化的低级执行单元，它们被添加到 Cairo CPU 板上执行预定义的计算，这些计算在原生的 Cairo 中执行起来代价很高（例如，范围检查，Pedersen 哈希，ECDSA 等）。
 ____
 
-The communication between the CPU and the builtins is done through memory: each builtin is assigned a continuous area in the memory and applies some constraints (depending on the builtin definition) on the memory cells in that area.
-In terms of building the AIR, it means that adding builtins does not affect the CPU constraints.
-It just means that the same memory is shared between the CPU and the builtins.
-To "`invoke`" a builtin, the Cairo program "`communicates`" with certain memory cells, and the builtin enforces some constraints on those memory cells.
+CPU 和内建函数之间的通信通过内存完成：每个内建函数在内存中都被分配了一个连续的区域，并在该区域中的内存单元上应用一些约束（这些约束取决于内建函数的定义）。在构建 AIR 方面，这意味着添加内建函数不会影响 CPU 约束。这只意味着 CPU 和内建函数共享同样的内存。为了 "调用" 一个内建函数，Cairo 程序通过某些内存单元 "通信"，内建函数在这些内存单元上强制执行一些约束。
 
-For example, the `range-check` builtin enforces that all the values for the memory cells in some fixed address range are within the range $[0, 2{caret}\{128})$.
-The memory cells constrained by the `range-check` builtin are called "range-checked" cells.
+例如，range-check 内建函数确保某个固定地址范围内的所有内存单元的值都在范围 $[0, 2{caret}^{128})$ 内。被 range-check 内建函数约束的内存单元被称为 "范围检查" 单元。
 
-In practical terms, a builtin is utilized by writing (and reading) the inputs to a dedicated memory segment accessed via the "builtin pointer": each builtin has its pointer to access the builtin's memory segment.
-Builtin pointers follow the name convention `<builtin name>_ptr`;
-e.g., `range_check_ptr`.
-In the Cairo case, the builtin directive adds the builtin pointers as parameters to main which can then be passed to any function making use of them.
-Builtin declarations appear at the top of the Cairo code file.
-They are declared with the `%builtins` directive, followed by the name of the builtins;
-e.g., `%builtin range_check`.
-In Starknet contracts, it is not necessary to add them.
+在实践中，通过将输入写入（和读取）一个通过 "内建指针" 访问的专用内存段来使用内建函数：每个内建函数都有自己的指针来访问内建函数的内存段。内建指针遵循 <builtin name>_ptr 的命名约定；例如，range_check_ptr。在 Cairo 的情况下，内建指令将内建指针作为参数添加到主函数中，然后可以将它们传递给任何需要使用它们的函数。内建函数的声明出现在 Cairo 代码文件的顶部。它们用 %builtins 指令声明，后面跟着内建函数的名称；例如，%builtin range_check。在 Starknet 合约中，不需要添加它们。
 
-Builtin pointers can be of different types.
-The following table summarizes the available builtins, what they are for, their pointer names, and their pointer types.
+
+内建指针可以是不同的类型。以下表格总结了可用的内建函数，
+以下表格总结了可用的内建函数，它们的用途，指针名称，以及指针类型。
 
 [cols="^,,^,^"]
+
 |===
-| *Builtin* | For... | *Pointer name* | *Pointer type*
+| 内建函数 | 用于... | 指针名称 | 指针类型
 
 | output
-| Writing program output which appears explicitly in an execution proof
+| 编写程序输出，这些输出在执行证明中明确出现
 | output_ptr
 | felt*
 
 | pedersen
-| Computing the Pedersen hash function
+| 计算 Pedersen 哈希函数
 | pedersen_ptr
 | HashBuiltin*
 
 | range_check
-| Checking that a field element is within a range $[0,2{caret}\{128})$, and for doing various comparisons
+| 检查字段元素是否在范围 $[0,2^{128})$ 内，并进行各种比较
 | range_check_ptr
-| felt (not a pointer)
+| felt （不是指针）
 
 | ecdsa
-| Verifying ECDSA signatures
+| 验证 ECDSA 签名
 | ecdsa_ptr
 | SignatureBuiltin*
 
 | bitwise
-| Performing bitwise operations on felts
+| 在 felts 上执行位操作
 | bitwise_ptr
 | BitwiseBuiltin*
 |===
 
-The details of each type are in the https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/cairo_builtins.cairo[common library].
-Each type, that is not directly a `felt*`, is nothing more than a struct.
-For example, the https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/cairo_builtins.cairo#L5[`HashBuiltin`]:
+每种类型的细节在 https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/cairo_builtins.cairo[公共库]中。
+每种类型，如果不直接是一个 felt*，那就只不过是一个结构体。
+例如，https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/cairo_builtins.cairo#L5[`HashBuiltin`]:
 
 [,Rust]
 ----
@@ -74,7 +62,8 @@ struct HashBuiltin {
 }
 ----
 
-Note the following implementation of the https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/hash.cairo[hash2 function] to compute the hash of two given field elements:
+注意以下实现的 https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/hash.cairo[hash2 函数]，用于计算两个给定字段元素的哈希：
+
 
 [,Rust]
 ----
@@ -93,13 +82,12 @@ func hash2(hash_ptr: HashBuiltin*, x, y) -> (
 }
 ----
 
-`hash_ptr` was added as an explicit argument and explicitly returned updated (`hash_ptr + HashBuiltin.SIZE`).
-We have to keep track of a pointer to the next unused builtin memory cell.
-The convention is that functions that use the builtin should get that pointer as an argument and return an updated pointer to the next unused builtin memory cell.
+hash_ptr 被作为一个显式参数添加，并明确返回更新的（hash_ptr + HashBuiltin.SIZE）。
+我们必须跟踪指向下一个未使用的内建内存单元的指针。
+约定是，使用内建函数的函数应该将该指针作为参数，并返回一个更新的指针，指向下一个未使用的内建内存单元。
 
-It is easier to use implicit arguments: a Cairo syntactic sugar that automatically returns the implicit argument.
-The common library implementation of the https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/hash.cairo[hash2 function] is:
-
+使用隐式参数更为简单：Cairo 的语法糖会自动返回隐式参数。
+公共库中的 https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/hash.cairo[hash2 函数] 的实现是：
 [,Rust]
 ----
 %builtins pedersen
@@ -117,9 +105,8 @@ func hash2{hash_ptr: HashBuiltin*}(x, y) -> (result: felt) {
 }
 ----
 
-`hash_ptr` is updated but this time it was returned implicitly.
-As another example, this is the implementation of the https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/serialize.cairo#L1[serialize_word function] which will output a felt into your terminal:
-
+`hash_ptr` 被更新了，但这次它是隐式返回的。
+再举一个例子，这是 https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/serialize.cairo#L1[serialize_word 函数] 的实现，它会将一个 felt 输出到你的终端：
 [,Rust]
 ----
 func serialize_word{output_ptr: felt*}(word) {
@@ -131,16 +118,38 @@ func serialize_word{output_ptr: felt*}(word) {
 }
 ----
 
-Refer to the implementation in  https://github.com/starknet-edu/starknetbook/blob/main/chapters/modules/chapter_5/pages/builtins/cairo/hash.cairo[builtins/cairo/hash.cairo] for an example using the `output`, `pedersen`, and `range_check` builtins.
+参考 https://github.com/starknet-edu/starknetbook/blob/main/chapters/modules/chapter_5/pages/builtins/cairo/hash.cairo[builtins/cairo/hash.cairo] 中的实现，看一个使用 output、pedersen 和 range_check 内建函数的例子。
 
-At what moment did the `hash2` and `serialize_word` functions invoked the properties of their builtins?
+`hash2` 和 `serialize_word` 函数在什么时候调用了它们内建函数的属性呢？
 
-. When we called `%builtins output pedersen` at the start of the Cairo program, the Cairo VM prepares to use the `output_ptr` and `pedersen_ptr` pointers, and their respective memory segments: usually 2 and 3 (segment 1 is commonly the execution segment, more on the next section).
-. Second, the Cairo code reads or writes to the memory cells in the segments assigned to the `output` and `pedersen`.
-. Finally, when a value is written in a memory cell inside a builtin segment, the builtin properties are invoked.
-For example, when a `struct HashBuiltin` is defined (you have to indicate `x` and `y`, see the structure of https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/cairo_builtins.cairo#L5[`HashBuiltin`]) then the Pedersen builtin enforces that $result == hash(x, y)$.
-We can then retrieve the value of `result` with `let result = hash_ptr.result;` as in the `hash2` function.
-Whenever the program wishes to communicate information to the verifier, it can do so by writing it to a designated memory segment which can be accessed by using the `output` builtin (see more in https://starknet.io/docs/how_cairo_works/program_input_and_output.html#id2[the docs]).
+. 当我们在 Cairo 程序开始时调用了 `%builtins output pedersen`，Cairo VM 准备使用 `output_ptr` 和 `pedersen_ptr` 指针，以及它们各自的内存段：通常是 2 和 3（段 1 通常是执行段，下一节将会讲到更多）。
+. 其次，Cairo 代码会读取或写入分配给 `output` 和 `pedersen` 的段中的内存单元。
+. 最后，当在内建段内的内存单元中写入一个值时，将会调用内建的属性。
+例如，当定义一个 `struct HashBuiltin`（你需要指定 `x` 和 `y`，查看 https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/cairo_builtins.cairo#L5[`HashBuiltin`] 的结构）时，Pedersen 内建会强制使得 $result == hash(x, y)$。
+我们然后可以用 `let result = hash_ptr.result;` 来获取 `result` 的值，就像在 `hash2` 函数中一样。
+每当程序希望将信息传达给验证者，它可以通过将信息写入一个指定的内存段来实现，这个内存段可以通过使用 `output` 内建来访问（在 https://starknet.io/docs/how_cairo_works/program_input_and_output.html#id2[文档]中查看更多）。
+
+
+[附注]
+====
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
+
+* 无论你是否有所收获，烦请填写此问卷， https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[简单回答三个问题] ，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
+====
 
 
 
+== 贡献力量
+
+[quote, Starknet 社区]
+
+____
+
+释放你的热情，让《Starknet 之书》更加完美
+
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
+____

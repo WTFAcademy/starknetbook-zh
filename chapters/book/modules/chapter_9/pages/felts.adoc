@@ -1,16 +1,16 @@
 [id="felts"]
 
-= Deep into Felts
+= 深入理解 Felts
 
-In most of your code (unless you intend to write very algebraic code), you won't have to deal with the fact that the values in Cairo are felts and you can treat them as if they were normal integers (https://www.cairo-lang.org/docs/hello_cairo/intro.html#the-primitive-type-field-element-felt[Cairo documentation]).
-The field element (felt) is the only data type that exists in Cairo, you can even omit its explicit declaration;
-when the type of a variable or argument is not specified, it is automatically assigned the type felt.
-Addresses are also stored as felts.
+在你的大多数代码中（除非你打算编写非常代数化的代码），你不必处理 Cairo 中的值是 felts 的事实，你可以将它们视为正常的整数（参考 https://www.cairo-lang.org/docs/hello_cairo/intro.html#the-primitive-type-field-element-felt[Cairo 文档]）。
+字段元素（felt）是 Cairo 中存在的唯一数据类型，你甚至可以省略它的明确声明；
+当变量或参数的类型没有指定时，它会自动分配 felt 类型。
+地址也以 felts 的形式存储。
 
-A felt can be negative or zero, and can be a large integer: specifically, it can be in the range $-X < felt < X$, where $X = 2{caret}\{251} + 17* 2{caret}\{192} + 1$ . Any value that is not within its range will cause an "`overflow`": an error that occurs when a program, Cairo, receives a number or value outside the scope of its ability to handle.
-Thus, when we add, subtract or multiply and the result is outside the felt's range, there is an overflow.
+一个 felt 可以是负数或零，也可以是大整数：具体来说，它可以在范围 $-X < felt < X$ 内，其中 $X = 2{caret}\{251} + 17 * 2{caret}\{192} + 1$。任何不在此范围内的值都会导致“`溢出`”：当一个程序，Cairo，接收到一个超出其处理能力范围的数字或值时发生的错误。
+因此，当我们进行加、减或乘运算，结果超出了 felt 的范围，就会发生溢出。
 
-Compile and run link:./felts/cairo/felt.cairo[felt.cairo] with:
+用以下命令编译并运行 [felt.cairo](./felts/cairo/felt.cairo)：
 
 [,bash]
 ----
@@ -18,11 +18,11 @@ cairo-compile felts/cairo/felt.cairo --output felt_compiled.json
 cairo-run --program felt_compiled.json --print_output --layout=small
 ----
 
-You will get:
+你将得到：
 
 [,bash]
 ----
-Program output:
+程序输出：
   0
   -1
   1
@@ -31,23 +31,39 @@ Program output:
   7
 ----
 
-`+FELT_SIZE = 2**251 + 17 * 2**192 + 1+` is just outside the range of values a felt can take, then it will overflow to `0` as evidenced when running `serialize_word(FELT_SIZE)`.
+`+FELT_SIZE = 2**251 + 17 * 2**192 + 1+` 刚好超出了 felt 可以取的值的范围，所以它会溢出到 `0`，这在运行 `serialize_word(FELT_SIZE)` 时得到证实。
 
-The most important difference between integers and field elements is division: Division of felts is not the integer division in many programming languages;
-the integral part of the quotient is returned (so you get $(7 / 3 = 2)$.
-As long as the numerator is a multiple of the denominator, it will behave as you expect $(6 / 3 = 2)$.
-If this is not the case, for example when we divide $7/3$, it will result in a felt $x$ that satisfies $(3 * x = 7)$;
-specifically, $x=1206167596222043737899107594365023368541035738443865566657697352045290673496$.
-It won't be $2.3333$ because $x$ has to be an integer and since $3 * x$ is larger than $2{caret}\{251} + 17 * 2{caret}\{192} + 1$ it will overflow to exactly $7$.
-In other words, when we are using modular arithmetic, unless the denominator is zero, there will always be an integer $x$ satisfying $denominator * x = numerator$.
+整数和字段元素之间最重要的区别是除法：felts 的除法并非许多编程语言中的整数除法；
+返回商的整数部分（所以你得到 $(7 / 3 = 2)$。
+只要被除数是除数的倍数，它就会表现如你所期望 $(6 / 3 = 2)$。
+如果不是这样，例如当我们除 $7/3$，它将得到一个满足 $(3 * x = 7)$ 的 felt $x$；
+具体来说，$x=1206167596222043737899107594365023368541035738443865566657697352045290673496$。
+它不会是 $2.3333$，因为 $x$ 必须是整数，而且因为 $3 * x$ 大于 $2{caret}\{251} + 17 * 2{caret}\{192} + 1
 
+$，所以它会溢出到正好是 $7$。
+换句话说，当我们使用模运算时，除非除数是零，总会有一个整数 $x$ 满足 $分母 * x = 分子$。
 == Contributing
 
-[quote, The Starknet Community]
+[附注]
+====
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习之用。
+
+* 无论你是否有所收获，烦请填写此问卷， https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[简单回答三个问题] ，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库]发起问题单 (Issues)。
+====
+
+
+
+== 贡献力量
+
+[quote, Starknet 社区]
+
 ____
-*Unleash Your Passion to Perfect StarknetBook*
 
-StarknetBook is a work in progress, and your passion, expertise, and unique insights can help transform it into something truly exceptional. Don't be afraid to challenge the status quo or break the Book! Together, we can create an invaluable resource that empowers countless others.
+释放你的热情，让《Starknet 之书》更加完美
 
-Embrace the excitement of contributing to something bigger than ourselves. If you see room for improvement, seize the opportunity! Check out our https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[guidelines] and join our vibrant community. Let's fearlessly build Starknet! 
+《Starknet 之书》依然在不断完善中，而你的热情、专业知识和独到见解可以将它塑造成一部真正卓越的作品。不要害怕挑战现状或是颠覆这本书！齐心协力，我们一起创造这份宝贵的资源，造福无数人。
+
+为公共事业贡献力量。如果你发现本书有改进的空间，那就抓住机会吧！查看我们的https://github.com/starknet-edu/starknetbook/blob/main/CONTRIBUTING.adoc[指南]并加入活力满满的社区。一起无畏共建 Starknet！
+
 ____
