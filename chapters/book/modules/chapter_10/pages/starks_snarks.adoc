@@ -1,22 +1,22 @@
 [id="starks_snarks"]
 
-= STARKs and SNARKs: Differences
+= STARK 和 SNARK 的区别
 
 .STARK vs SNARK
 |======================================
 |                | STARK    | SNARK    
-| Verification   | log^2^(n)| constant 
-| Proof Size     | ~400 KB  | 288 bytes
-| Trusted Setup  | No       | Yes      
-| Quantum Secure | Yes      | No       
+| 验证   | log^2^(n)| 常数 
+| 证明大小     | ~400 KB  | 288 bytes
+| 可信设置  | 否       | 是      
+| 量子安全 | 是      | 否       
 |======================================
 
 [NOTE]
 ====
-The Book is a community-driven effort created for the community.
+《Starknet 之书》是 Starknet 社区成员合力之作，便于社区成员学习只用。
 
-* If you've learned something, or not, please take a moment to provide feedback through https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[this 3-question survey].
-* If you discover any errors or have additional suggestions, don't hesitate to open an https://github.com/starknet-edu/starknetbook/issues[issue on our GitHub repository].
+* 无论你是否有所收获，烦请填写此问卷，简单回答 https://a.sprig.com/WTRtdlh2VUlja09lfnNpZDo4MTQyYTlmMy03NzdkLTQ0NDEtOTBiZC01ZjAyNDU0ZDgxMzU=[三个问题]，给予我们反馈。
+* 若发现任何错误，或有其他建议，请在我们的 https://github.com/starknet-edu/starknetbook/issues[Github 仓库发起问题单（Issue）]。
 ====
 
 == Contributing

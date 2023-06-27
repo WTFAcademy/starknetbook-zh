@@ -83,7 +83,7 @@ image::storage3.png[storage3]
 
 上述代码的输出看起来是这样的：
 
-image::storage1.png[storage4]
+image::storage4.png[storage4]
 
 返回的 “storageProof” 包含 “owner” 变量的存储证明。由于以太坊使用 Merkle Patricia 树来提交其状态、账户状态及其存储，因此生成的存储可用于证明存储槽（或账户状态）。然而，如前所述，这些证明没有足够的可扩展性来讨论跨链信息传输。在此基础上使用复杂的 ZK 数学可以减少验证证明所需的计算量。
 
